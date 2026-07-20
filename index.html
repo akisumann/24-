@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>七年巫女神・親類縁者統合版（固定版）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body><main><section class="section">
+<div class="grid g4 gap2">
+  <div class="metric"><div class="muted">経過年</div><div id="year" class="stats">0年</div></div>
+  <div class="metric"><div class="muted">現役巫女</div><div id="count" class="stats">50人</div></div>
+  <div class="metric"><div class="muted">親類縁者</div><div id="kinTotal" class="stats">0人</div></div>
+  <div class="metric"><div class="muted">国家評判</div><div id="fame" class="stats">0</div></div>
+</div>
+<div class="card space3">
+  <div class="flex wrap start between gap3"><div><h2>国と神の人材育成契約</h2><p class="muted">国は強い人材を生み出すため、一柱の神へ常時五十人の巫女を用立てる。</p></div><span class="badge">国家特別事業</span></div>
+  <p>七年に一度、二十歳から三十五歳までの正式巫女から能力上位十人が選ばれ、神との娘を一人ずつ産む。巫女は高い俸給、生活、医療、出産、育児、退任後の保障を受ける。</p>
+  <p>巫女は大儀以外の恋愛、結婚、出産を自由に行える。ただし別の相手との妊娠が大儀と重ならないよう調整する必要があり、参加できなくなった場合は巫女を脱会して空席を新たな志願者へ譲る。</p>
+</div>
+<div class="card space3"><h2>神の娘の能力計算</h2><p class="muted">HP・MP・ATK・DEF・INT・SPD・DEXの七項目を、それぞれ独立して計算する。</p><p>各ステータスは「母親の該当ステータスと神レベルの平均」に、その項目専用の0.50～1.50倍の乱数を掛けて出生時に確定する。</p><p>七項目は別々の乱数を使うため、同じ娘でもHPは高いがDEFは低い、といった個性が生まれる。年齢上昇では最大能力を変更せず、現在能力の発現率だけが上がる。</p></div>
+<div class="grid g2 gap3">
+  <div class="card space3"><h2>七年の大儀</h2><p class="muted">20・27・34歳の正式巫女から能力上位10人を選抜する。</p><button id="advance" class="btn primary full" type="button">七年進める</button></div>
+  <div class="card space3"><h2>現在の契約状況</h2><div class="grid g2 gap2"><div class="metric"><div class="muted">選抜候補</div><div id="candidateCount" class="stats">30人</div></div><div class="metric"><div class="muted">任期終了予定</div><div id="age34Count" class="stats">10人</div></div></div><div id="fameText" class="callout">契約事業はまだ広く知られていない。</div></div>
+</div>
+<div id="turnResult" class="callout" aria-live="polite">国家契約に基づき、五十人の巫女とその親類縁者で事業を開始した。</div>
+<div class="card space3"><div class="flex center between gap3"><div><h2>親類縁者の人口構成</h2><p class="muted">現役巫女は含まない。</p></div><span id="kinChange" class="badge">初期人口</span></div><div id="kinSummary" class="grid g5 gap2"></div></div>
+<div class="card space3"><div class="flex center between gap3"><div><h2>母系一族の勢力</h2><p class="muted">強い巫女の娘ほど次世代に残りやすい。</p></div><span id="dominantClan" class="badge">群雄状態</span></div><div id="clans" class="grid g2 gap2"></div></div>
+<div class="card space3"><div class="flex center between gap3"><div><h2>年齢構成</h2><p class="muted">現役名簿は6・13・20・27・34歳の五世代。</p></div><span id="generationStatus" class="badge">均等</span></div><div id="ageGroups" class="grid g5 gap2"></div></div>
+<div class="card space3"><div class="flex center between gap3"><div><h2>契約巫女名簿</h2><p class="muted">横へスワイプして選択。</p></div><select id="ageFilter"><option value="all">全員</option><option value="6">6歳</option><option value="13">13歳</option><option value="20">20歳</option><option value="27">27歳</option><option value="34">34歳</option></select></div><div id="roster" class="scroll"></div></div>
+<div id="detail" class="card space3"><p class="muted">巫女を選択してください。</p></div>
+<div class="card space3"><div><h2>巫女団の役務</h2><p class="muted">第一適性へ配属し、定員6人を超えた場合は次の適性へ再分配する。</p></div><div id="roles" class="grid g4 gap2"></div></div>
+<div id="roleMembers" class="card space3 hidden"></div>
+<div class="card space3"><h2>国家事業記録</h2><div id="history" class="space3"></div></div>
+</section></main>
+<script src="data.js"></script>
+<script src="core.js"></script>
+<script src="ui.js"></script></body></html>
