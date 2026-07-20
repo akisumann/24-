@@ -6,6 +6,8 @@
 
 `index.html` を通常のWebブラウザで開いてください。GitHub Pagesを有効にした後は、公開URLからiPhoneでも遊べます。
 
+公開先：`https://akisumann.github.io/24-/`
+
 ## 固定版の扱い
 
 - 現在の固定基準版は **親類縁者統合版 v10** です。
