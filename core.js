@@ -10,12 +10,109 @@ function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=mak
 function makeChild(m,g){const id=nextId++,maxStats={},inheritance={};STATS.forEach(s=>{const multiplier=.5+Math.random();inheritance[s]=multiplier;maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+g)/2)*multiplier))});return{id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-6,6)),bust:Math.round(m.body.bust*.7+92*.3+rand(-7,10)),waist:Math.round(m.body.waist*.7+60*.3+rand(-4,5)),hip:Math.round(m.body.hip*.7+94*.3+rand(-7,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)}}
 function initial(){const out=[];AGES.forEach(age=>{for(let i=0;i<10;i++)out.push(makePerson(age,rand(18,38),age<20?'初期採用・仮巫女':'初期採用・正式巫女'))});return out}
 let mikos=initial();
+
+const KIN_AGE_LABELS=['0〜6歳','7〜13歳','14〜20歳','21〜27歳','28〜34歳','35〜41歳','42〜48歳','49〜55歳','56〜62歳'];
 const kin={};
-function ensureKin(family){if(!kin[family])kin[family]={children:0,adults:0,elderly:0,former:0,partners:0,births:0,deaths:0,marriages:0,migrations:0}}
-mikos.forEach(p=>ensureKin(p.family));Object.keys(kin).forEach(f=>{const n=mikos.filter(p=>p.family===f).length;kin[f].children=n*rand(1,2);kin[f].adults=n*rand(2,4);kin[f].elderly=n*rand(0,2);kin[f].partners=Math.floor(n*.6)});
-function kinPopulation(k){return k.children+k.adults+k.elderly+k.partners}
+
+function emptyBands(){return Array(KIN_AGE_LABELS.length).fill(0)}
+function ensureKin(family){
+  if(!kin[family])kin[family]={
+    bands:emptyBands(),
+    formerBands:emptyBands(),
+    marriedBands:emptyBands(),
+    partnerBands:emptyBands(),
+    births:0,
+    deaths:0,
+    marriages:0,
+    migrations:0
+  };
+}
+function kinBandForAge(age){return Math.max(0,Math.min(KIN_AGE_LABELS.length-1,Math.floor(age/7)))}
+function sumBands(bands){return bands.reduce((n,x)=>n+x,0)}
+function kinRelatives(k){return sumBands(k.bands)}
+function kinPartners(k){return sumBands(k.partnerBands)}
+function kinFormer(k){return sumBands(k.formerBands)}
+function kinMarried(k){return sumBands(k.marriedBands)}
+function kinPopulation(k){return kinRelatives(k)+kinPartners(k)}
 function totalKin(){return Object.values(kin).reduce((n,k)=>n+kinPopulation(k),0)}
-function updateKin(retirees,departures){const before=totalKin();Object.values(kin).forEach(k=>{k.births=0;k.deaths=0;k.marriages=0;k.migrations=0});[...retirees,...departures].forEach(p=>{ensureKin(p.family);kin[p.family].former++;kin[p.family].adults++});const activeByFamily={};mikos.forEach(p=>activeByFamily[p.family]=(activeByFamily[p.family]||0)+1);Object.entries(kin).forEach(([family,k])=>{const active=activeByFamily[family]||0;const growToAdult=binomial(k.children,.32);k.children-=growToAdult;k.adults+=growToAdult;const growToElder=binomial(k.adults,.11);k.adults-=growToElder;k.elderly+=growToElder;const childDeaths=binomial(k.children,.004),adultDeaths=binomial(k.adults,.018),elderlyDeaths=binomial(k.elderly,.21);k.children-=childDeaths;k.adults-=adultDeaths;k.elderly-=elderlyDeaths;k.deaths=childDeaths+adultDeaths+elderlyDeaths;k.former=Math.min(k.former,k.adults);const marriagePool=Math.max(0,Math.floor(k.adults*.45)),marriages=binomial(marriagePool,.24);k.partners+=marriages;k.marriages=marriages;const ordinaryBirthPotential=Math.max(0,Math.floor((k.adults+k.partners)*.18)),births=binomial(ordinaryBirthPotential,.31)+binomial(active,.20);k.children+=births;k.births=births;const migrations=binomial(Math.max(0,k.adults+k.partners),.018),adultMigration=Math.min(k.adults,Math.ceil(migrations*.6)),partnerMigration=Math.min(k.partners,migrations-adultMigration);k.adults-=adultMigration;k.partners-=partnerMigration;k.former=Math.min(k.former,k.adults);k.migrations=adultMigration+partnerMigration});lastKinChange=totalKin()-before}
+function advanceKinBands(bands){
+  const removed=bands[bands.length-1];
+  for(let i=bands.length-1;i>0;i--)bands[i]=bands[i-1];
+  bands[0]=0;
+  return removed;
+}
+
+mikos.forEach(p=>ensureKin(p.family));
+Object.keys(kin).forEach(f=>{
+  const n=mikos.filter(p=>p.family===f).length;
+  const k=kin[f];
+  const seed=[rand(1,2),rand(0,1),rand(0,1),rand(1,2),rand(1,2),rand(0,1),rand(0,1),rand(0,1),0];
+  k.bands=seed.map(x=>x*n);
+  for(let i=3;i<=7;i++){
+    const married=binomial(k.bands[i],.25);
+    k.marriedBands[i]=married;
+    k.partnerBands[i]=married;
+  }
+});
+
+function updateKin(retirees,departures){
+  const before=totalKin();
+
+  Object.values(kin).forEach(k=>{
+    k.births=0;
+    k.deaths=0;
+    k.marriages=0;
+    k.migrations=0;
+
+    const relativesLeaving=advanceKinBands(k.bands);
+    advanceKinBands(k.formerBands);
+    advanceKinBands(k.marriedBands);
+    const partnersLeaving=advanceKinBands(k.partnerBands);
+    k.deaths=relativesLeaving+partnersLeaving;
+  });
+
+  [...retirees,...departures].forEach(p=>{
+    ensureKin(p.family);
+    const k=kin[p.family];
+    const band=kinBandForAge(p.age);
+    k.bands[band]++;
+    k.formerBands[band]++;
+
+    if(band>=3&&band<=7&&Math.random()<.35){
+      k.marriedBands[band]++;
+      k.partnerBands[band]++;
+    }
+  });
+
+  const activeByFamily={};
+  mikos.forEach(p=>activeByFamily[p.family]=(activeByFamily[p.family]||0)+1);
+
+  Object.entries(kin).forEach(([family,k])=>{
+    let marriages=0;
+    for(let band=3;band<=7;band++){
+      const unmarried=Math.max(0,k.bands[band]-k.marriedBands[band]);
+      const newMarriages=binomial(unmarried,.15);
+      k.marriedBands[band]+=newMarriages;
+      k.partnerBands[band]+=newMarriages;
+      marriages+=newMarriages;
+    }
+    k.marriages=marriages;
+
+    const childbearingCouples=k.marriedBands.slice(3,6).reduce((n,x)=>n+x,0);
+    const active=activeByFamily[family]||0;
+    const births=binomial(childbearingCouples,.35)+binomial(active,.20);
+    k.bands[0]+=births;
+    k.births=births;
+
+    for(let i=0;i<KIN_AGE_LABELS.length;i++){
+      k.formerBands[i]=Math.min(k.formerBands[i],k.bands[i]);
+      k.marriedBands[i]=Math.min(k.marriedBands[i],k.bands[i]);
+    }
+  });
+
+  lastKinChange=totalKin()-before;
+}
+
 function assignments(){const workers=mikos.filter(p=>p.age>=13).map(p=>{const stats=current(p);return{person:p,stats,prefs:rank(stats),role:null}}),groups=Object.fromEntries(STATS.map(s=>[s,[]]));workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w)});let changed=true,safe=0;while(changed&&safe++<100){changed=false;for(const role of STATS){if(groups[role].length<=ROLE_LIMIT)continue;groups[role].sort((a,b)=>a.stats[role]-b.stats[role]);const overflow=groups[role].slice(0,groups[role].length-ROLE_LIMIT);for(const w of overflow){const dest=w.prefs.find(s=>s!==role&&groups[s].length<ROLE_LIMIT);if(!dest)continue;groups[role]=groups[role].filter(x=>x.person.id!==w.person.id);w.role=dest;groups[dest].push(w);changed=true}}}return{workers,groups}}
 function roleOf(p){return assignments().workers.find(w=>w.person.id===p.id)?.role||null}
 function reputation(){return Math.round(year*.25+mikos.filter(p=>p.age>=20).reduce((n,p)=>n+level(p),0)/30)}
