@@ -30,6 +30,16 @@
 <div class="card space3"><div class="flex center between gap3"><div><h2>年齢構成</h2><p class="muted">現役名簿は6・13・20・27・34歳の五世代。</p></div><span id="generationStatus" class="badge">均等</span></div><div id="ageGroups" class="grid g5 gap2"></div></div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>契約巫女名簿</h2><p class="muted">横へスワイプして選択。</p></div><select id="ageFilter"><option value="all">全員</option><option value="6">6歳</option><option value="13">13歳</option><option value="20">20歳</option><option value="27">27歳</option><option value="34">34歳</option></select></div><div id="roster" class="scroll"></div></div>
 <div id="detail" class="card space3"><p class="muted">巫女を選択してください。</p></div>
+<div class="card space3">
+  <div><h2>巫女模擬戦</h2><p class="muted">二人を選び、七能力を使った三本勝負を行う。既存スキルがその攻防に使える場合は合計値が1.1倍になる。</p></div>
+  <div class="grid g2 gap3 battle-grid">
+    <label class="metric"><span class="muted">巫女A</span><select id="battleA" class="full mt2"></select></label>
+    <label class="metric"><span class="muted">巫女B</span><select id="battleB" class="full mt2"></select></label>
+  </div>
+  <div class="flex wrap gap2"><button id="battleRandom" class="btn" type="button">二人をランダム選択</button><button id="battleStart" class="btn primary" type="button">対戦開始</button></div>
+  <div id="battlePreview" class="grid g2 gap3 battle-grid"></div>
+  <div id="battleResult" class="callout" aria-live="polite">二人を選び、「対戦開始」を押してください。</div>
+</div>
 <div class="card space3"><div><h2>巫女団の役務</h2><p class="muted">第一適性へ配属し、定員6人を超えた場合は次の適性へ再分配する。</p></div><div id="roles" class="grid g4 gap2"></div></div>
 <div id="roleMembers" class="card space3 hidden"></div>
 <div class="card space3"><h2>国家事業記録</h2><div id="history" class="space3"></div></div>
@@ -37,5 +47,6 @@
 <script src="data.js"></script>
 <script src="core.js"></script>
 <script src="ui.js"></script>
+<script src="battle.js"></script>
 <script src="hold.js"></script>
 <script src="batch.js"></script></body></html>
