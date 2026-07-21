@@ -1,0 +1,1173 @@
+{
+  "simulation": {
+    "seed": 10,
+    "turns": 43,
+    "year": 301,
+    "godLevel": 50,
+    "shinraMikos": []
+  },
+  "roster": [
+    {
+      "id": 690,
+      "name": "岩戸 シエラ",
+      "family": "岩戸",
+      "given": "シエラ",
+      "age": 6,
+      "maxStats": {
+        "HP": 63,
+        "MP": 50,
+        "ATK": 92,
+        "DEF": 88,
+        "INT": 81,
+        "SPD": 55,
+        "DEX": 34
+      },
+      "potentialLevel": 66,
+      "currentLevel": 13,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ノエル"
+    },
+    {
+      "id": 693,
+      "name": "守屋 ナディア",
+      "family": "守屋",
+      "given": "ナディア",
+      "age": 6,
+      "maxStats": {
+        "HP": 53,
+        "MP": 68,
+        "ATK": 70,
+        "DEF": 77,
+        "INT": 33,
+        "SPD": 47,
+        "DEX": 70
+      },
+      "potentialLevel": 60,
+      "currentLevel": 12,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 リディア"
+    },
+    {
+      "id": 692,
+      "name": "岩戸 ロゼ",
+      "family": "岩戸",
+      "given": "ロゼ",
+      "age": 6,
+      "maxStats": {
+        "HP": 69,
+        "MP": 38,
+        "ATK": 80,
+        "DEF": 65,
+        "INT": 48,
+        "SPD": 40,
+        "DEX": 64
+      },
+      "potentialLevel": 58,
+      "currentLevel": 12,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 サツキ"
+    },
+    {
+      "id": 696,
+      "name": "榊原 ライラ",
+      "family": "榊原",
+      "given": "ライラ",
+      "age": 6,
+      "maxStats": {
+        "HP": 56,
+        "MP": 52,
+        "ATK": 52,
+        "DEF": 69,
+        "INT": 45,
+        "SPD": 57,
+        "DEX": 60
+      },
+      "potentialLevel": 56,
+      "currentLevel": 11,
+      "origin": "神の娘・国家育成対象",
+      "mother": "榊原 ネリネ"
+    },
+    {
+      "id": 694,
+      "name": "岩戸 セリナ",
+      "family": "岩戸",
+      "given": "セリナ",
+      "age": 6,
+      "maxStats": {
+        "HP": 56,
+        "MP": 33,
+        "ATK": 42,
+        "DEF": 73,
+        "INT": 46,
+        "SPD": 69,
+        "DEX": 60
+      },
+      "potentialLevel": 54,
+      "currentLevel": 11,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 フェリス"
+    },
+    {
+      "id": 691,
+      "name": "岩戸 カレン",
+      "family": "岩戸",
+      "given": "カレン",
+      "age": 6,
+      "maxStats": {
+        "HP": 37,
+        "MP": 64,
+        "ATK": 67,
+        "DEF": 35,
+        "INT": 59,
+        "SPD": 61,
+        "DEX": 51
+      },
+      "potentialLevel": 53,
+      "currentLevel": 11,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 タマキ"
+    },
+    {
+      "id": 697,
+      "name": "守屋 マリア",
+      "family": "守屋",
+      "given": "マリア",
+      "age": 6,
+      "maxStats": {
+        "HP": 54,
+        "MP": 35,
+        "ATK": 48,
+        "DEF": 47,
+        "INT": 55,
+        "SPD": 53,
+        "DEX": 52
+      },
+      "potentialLevel": 49,
+      "currentLevel": 10,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シエラ"
+    },
+    {
+      "id": 698,
+      "name": "如月 スミレ",
+      "family": "如月",
+      "given": "スミレ",
+      "age": 6,
+      "maxStats": {
+        "HP": 56,
+        "MP": 42,
+        "ATK": 46,
+        "DEF": 51,
+        "INT": 49,
+        "SPD": 44,
+        "DEX": 40
+      },
+      "potentialLevel": 47,
+      "currentLevel": 9,
+      "origin": "神の娘・国家育成対象",
+      "mother": "如月 セリナ"
+    },
+    {
+      "id": 699,
+      "name": "岩戸 マシロ",
+      "family": "岩戸",
+      "given": "マシロ",
+      "age": 6,
+      "maxStats": {
+        "HP": 43,
+        "MP": 49,
+        "ATK": 35,
+        "DEF": 38,
+        "INT": 55,
+        "SPD": 45,
+        "DEX": 57
+      },
+      "potentialLevel": 46,
+      "currentLevel": 9,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ユキノ"
+    },
+    {
+      "id": 695,
+      "name": "守屋 セシリア",
+      "family": "守屋",
+      "given": "セシリア",
+      "age": 6,
+      "maxStats": {
+        "HP": 43,
+        "MP": 48,
+        "ATK": 47,
+        "DEF": 44,
+        "INT": 37,
+        "SPD": 46,
+        "DEX": 42
+      },
+      "potentialLevel": 44,
+      "currentLevel": 9,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 ミレイ"
+    },
+    {
+      "id": 700,
+      "name": "綾小路 レイナ",
+      "family": "綾小路",
+      "given": "レイナ",
+      "age": 6,
+      "maxStats": {
+        "HP": 31,
+        "MP": 41,
+        "ATK": 56,
+        "DEF": 55,
+        "INT": 37,
+        "SPD": 37,
+        "DEX": 43
+      },
+      "potentialLevel": 43,
+      "currentLevel": 9,
+      "origin": "神の娘・国家育成対象",
+      "mother": "綾小路 アカリ"
+    },
+    {
+      "id": 679,
+      "name": "守屋 ミーナ",
+      "family": "守屋",
+      "given": "ミーナ",
+      "age": 13,
+      "maxStats": {
+        "HP": 89,
+        "MP": 79,
+        "ATK": 35,
+        "DEF": 68,
+        "INT": 48,
+        "SPD": 42,
+        "DEX": 63
+      },
+      "potentialLevel": 61,
+      "currentLevel": 24,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 アズサ"
+    },
+    {
+      "id": 674,
+      "name": "岩戸 ユズハ",
+      "family": "岩戸",
+      "given": "ユズハ",
+      "age": 13,
+      "maxStats": {
+        "HP": 73,
+        "MP": 64,
+        "ATK": 67,
+        "DEF": 72,
+        "INT": 54,
+        "SPD": 48,
+        "DEX": 42
+      },
+      "potentialLevel": 60,
+      "currentLevel": 24,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 レナ"
+    },
+    {
+      "id": 676,
+      "name": "岩戸 レティシア",
+      "family": "岩戸",
+      "given": "レティシア",
+      "age": 13,
+      "maxStats": {
+        "HP": 60,
+        "MP": 46,
+        "ATK": 75,
+        "DEF": 54,
+        "INT": 54,
+        "SPD": 53,
+        "DEX": 66
+      },
+      "potentialLevel": 58,
+      "currentLevel": 23,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 サツキ"
+    },
+    {
+      "id": 677,
+      "name": "守屋 カミラ",
+      "family": "守屋",
+      "given": "カミラ",
+      "age": 13,
+      "maxStats": {
+        "HP": 55,
+        "MP": 67,
+        "ATK": 49,
+        "DEF": 53,
+        "INT": 53,
+        "SPD": 63,
+        "DEX": 55
+      },
+      "potentialLevel": 56,
+      "currentLevel": 22,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 リディア"
+    },
+    {
+      "id": 680,
+      "name": "岩戸 ライラ",
+      "family": "岩戸",
+      "given": "ライラ",
+      "age": 13,
+      "maxStats": {
+        "HP": 58,
+        "MP": 59,
+        "ATK": 53,
+        "DEF": 62,
+        "INT": 47,
+        "SPD": 55,
+        "DEX": 57
+      },
+      "potentialLevel": 56,
+      "currentLevel": 22,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 フェリス"
+    },
+    {
+      "id": 673,
+      "name": "榊原 ナツメ",
+      "family": "榊原",
+      "given": "ナツメ",
+      "age": 13,
+      "maxStats": {
+        "HP": 57,
+        "MP": 38,
+        "ATK": 56,
+        "DEF": 47,
+        "INT": 64,
+        "SPD": 62,
+        "DEX": 58
+      },
+      "potentialLevel": 55,
+      "currentLevel": 22,
+      "origin": "神の娘・国家育成対象",
+      "mother": "榊原 ウタ"
+    },
+    {
+      "id": 678,
+      "name": "岩戸 アイラ",
+      "family": "岩戸",
+      "given": "アイラ",
+      "age": 13,
+      "maxStats": {
+        "HP": 54,
+        "MP": 46,
+        "ATK": 62,
+        "DEF": 57,
+        "INT": 55,
+        "SPD": 48,
+        "DEX": 56
+      },
+      "potentialLevel": 54,
+      "currentLevel": 22,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 タマキ"
+    },
+    {
+      "id": 681,
+      "name": "守屋 アニエス",
+      "family": "守屋",
+      "given": "アニエス",
+      "age": 13,
+      "maxStats": {
+        "HP": 48,
+        "MP": 45,
+        "ATK": 54,
+        "DEF": 57,
+        "INT": 54,
+        "SPD": 49,
+        "DEX": 45
+      },
+      "potentialLevel": 50,
+      "currentLevel": 20,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シエラ"
+    },
+    {
+      "id": 675,
+      "name": "如月 エレナ",
+      "family": "如月",
+      "given": "エレナ",
+      "age": 13,
+      "maxStats": {
+        "HP": 42,
+        "MP": 59,
+        "ATK": 53,
+        "DEF": 44,
+        "INT": 46,
+        "SPD": 51,
+        "DEX": 48
+      },
+      "potentialLevel": 49,
+      "currentLevel": 20,
+      "origin": "神の娘・国家育成対象",
+      "mother": "如月 セリナ"
+    },
+    {
+      "id": 682,
+      "name": "綾小路 シオン",
+      "family": "綾小路",
+      "given": "シオン",
+      "age": 13,
+      "maxStats": {
+        "HP": 35,
+        "MP": 48,
+        "ATK": 46,
+        "DEF": 52,
+        "INT": 42,
+        "SPD": 41,
+        "DEX": 47
+      },
+      "potentialLevel": 44,
+      "currentLevel": 18,
+      "origin": "神の娘・国家育成対象",
+      "mother": "綾小路 ユズハ"
+    },
+    {
+      "id": 638,
+      "name": "守屋 カグラ",
+      "family": "守屋",
+      "given": "カグラ",
+      "age": 20,
+      "maxStats": {
+        "HP": 94,
+        "MP": 83,
+        "ATK": 79,
+        "DEF": 58,
+        "INT": 64,
+        "SPD": 64,
+        "DEX": 59
+      },
+      "potentialLevel": 72,
+      "currentLevel": 43,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 アズサ"
+    },
+    {
+      "id": 651,
+      "name": "岩戸 ノエル",
+      "family": "岩戸",
+      "given": "ノエル",
+      "age": 20,
+      "maxStats": {
+        "HP": 61,
+        "MP": 75,
+        "ATK": 65,
+        "DEF": 70,
+        "INT": 62,
+        "SPD": 74,
+        "DEX": 57
+      },
+      "potentialLevel": 66,
+      "currentLevel": 40,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 レナ"
+    },
+    {
+      "id": 654,
+      "name": "岩戸 タマキ",
+      "family": "岩戸",
+      "given": "タマキ",
+      "age": 20,
+      "maxStats": {
+        "HP": 58,
+        "MP": 61,
+        "ATK": 65,
+        "DEF": 70,
+        "INT": 72,
+        "SPD": 66,
+        "DEX": 63
+      },
+      "potentialLevel": 65,
+      "currentLevel": 39,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ミレイ"
+    },
+    {
+      "id": 647,
+      "name": "綾小路 アカリ",
+      "family": "綾小路",
+      "given": "アカリ",
+      "age": 20,
+      "maxStats": {
+        "HP": 73,
+        "MP": 59,
+        "ATK": 59,
+        "DEF": 69,
+        "INT": 57,
+        "SPD": 69,
+        "DEX": 60
+      },
+      "potentialLevel": 64,
+      "currentLevel": 38,
+      "origin": "神の娘・国家育成対象",
+      "mother": "綾小路 ユズハ"
+    },
+    {
+      "id": 650,
+      "name": "文月 アリア",
+      "family": "文月",
+      "given": "アリア",
+      "age": 20,
+      "maxStats": {
+        "HP": 68,
+        "MP": 60,
+        "ATK": 60,
+        "DEF": 65,
+        "INT": 67,
+        "SPD": 54,
+        "DEX": 63
+      },
+      "potentialLevel": 62,
+      "currentLevel": 37,
+      "origin": "神の娘・国家育成対象",
+      "mother": "文月 ミコト"
+    },
+    {
+      "id": 649,
+      "name": "岩戸 レナ",
+      "family": "岩戸",
+      "given": "レナ",
+      "age": 20,
+      "maxStats": {
+        "HP": 66,
+        "MP": 57,
+        "ATK": 66,
+        "DEF": 65,
+        "INT": 56,
+        "SPD": 63,
+        "DEX": 60
+      },
+      "potentialLevel": 62,
+      "currentLevel": 37,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 シオン"
+    },
+    {
+      "id": 653,
+      "name": "榊原 ウタ",
+      "family": "榊原",
+      "given": "ウタ",
+      "age": 20,
+      "maxStats": {
+        "HP": 56,
+        "MP": 65,
+        "ATK": 63,
+        "DEF": 57,
+        "INT": 67,
+        "SPD": 58,
+        "DEX": 65
+      },
+      "potentialLevel": 62,
+      "currentLevel": 37,
+      "origin": "神の娘・国家育成対象",
+      "mother": "榊原 リナ"
+    },
+    {
+      "id": 652,
+      "name": "岩戸 サツキ",
+      "family": "岩戸",
+      "given": "サツキ",
+      "age": 20,
+      "maxStats": {
+        "HP": 57,
+        "MP": 68,
+        "ATK": 60,
+        "DEF": 58,
+        "INT": 57,
+        "SPD": 66,
+        "DEX": 63
+      },
+      "potentialLevel": 61,
+      "currentLevel": 37,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ミツキ"
+    },
+    {
+      "id": 648,
+      "name": "守屋 アズサ",
+      "family": "守屋",
+      "given": "アズサ",
+      "age": 20,
+      "maxStats": {
+        "HP": 63,
+        "MP": 56,
+        "ATK": 57,
+        "DEF": 61,
+        "INT": 61,
+        "SPD": 63,
+        "DEX": 61
+      },
+      "potentialLevel": 60,
+      "currentLevel": 36,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シズク"
+    },
+    {
+      "id": 707,
+      "name": "春日 ヒナタ",
+      "family": "春日",
+      "given": "ヒナタ",
+      "age": 20,
+      "maxStats": {
+        "HP": 56,
+        "MP": 60,
+        "ATK": 65,
+        "DEF": 56,
+        "INT": 59,
+        "SPD": 58,
+        "DEX": 66
+      },
+      "potentialLevel": 60,
+      "currentLevel": 36,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "岩戸 アリア"
+    },
+    {
+      "id": 614,
+      "name": "岩戸 フェリス",
+      "family": "岩戸",
+      "given": "フェリス",
+      "age": 27,
+      "maxStats": {
+        "HP": 72,
+        "MP": 68,
+        "ATK": 62,
+        "DEF": 65,
+        "INT": 63,
+        "SPD": 67,
+        "DEX": 63
+      },
+      "potentialLevel": 66,
+      "currentLevel": 53,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 カナデ"
+    },
+    {
+      "id": 612,
+      "name": "榊原 マリア",
+      "family": "榊原",
+      "given": "マリア",
+      "age": 27,
+      "maxStats": {
+        "HP": 65,
+        "MP": 68,
+        "ATK": 59,
+        "DEF": 62,
+        "INT": 70,
+        "SPD": 65,
+        "DEX": 61
+      },
+      "potentialLevel": 64,
+      "currentLevel": 52,
+      "origin": "神の娘・国家育成対象",
+      "mother": "榊原 ウタ"
+    },
+    {
+      "id": 613,
+      "name": "岩戸 サツキ",
+      "family": "岩戸",
+      "given": "サツキ",
+      "age": 27,
+      "maxStats": {
+        "HP": 61,
+        "MP": 64,
+        "ATK": 65,
+        "DEF": 66,
+        "INT": 64,
+        "SPD": 63,
+        "DEX": 66
+      },
+      "potentialLevel": 64,
+      "currentLevel": 51,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ミツキ"
+    },
+    {
+      "id": 615,
+      "name": "岩戸 タマキ",
+      "family": "岩戸",
+      "given": "タマキ",
+      "age": 27,
+      "maxStats": {
+        "HP": 64,
+        "MP": 61,
+        "ATK": 64,
+        "DEF": 65,
+        "INT": 63,
+        "SPD": 66,
+        "DEX": 62
+      },
+      "potentialLevel": 64,
+      "currentLevel": 51,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 ミレイ"
+    },
+    {
+      "id": 610,
+      "name": "岩戸 レナ",
+      "family": "岩戸",
+      "given": "レナ",
+      "age": 27,
+      "maxStats": {
+        "HP": 63,
+        "MP": 65,
+        "ATK": 62,
+        "DEF": 64,
+        "INT": 63,
+        "SPD": 61,
+        "DEX": 62
+      },
+      "potentialLevel": 63,
+      "currentLevel": 50,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 シオン"
+    },
+    {
+      "id": 611,
+      "name": "文月 ミコト",
+      "family": "文月",
+      "given": "ミコト",
+      "age": 27,
+      "maxStats": {
+        "HP": 60,
+        "MP": 60,
+        "ATK": 63,
+        "DEF": 61,
+        "INT": 60,
+        "SPD": 65,
+        "DEX": 63
+      },
+      "potentialLevel": 62,
+      "currentLevel": 49,
+      "origin": "神の娘・国家育成対象",
+      "mother": "文月 アリア"
+    },
+    {
+      "id": 617,
+      "name": "守屋 シエラ",
+      "family": "守屋",
+      "given": "シエラ",
+      "age": 27,
+      "maxStats": {
+        "HP": 61,
+        "MP": 60,
+        "ATK": 59,
+        "DEF": 62,
+        "INT": 61,
+        "SPD": 59,
+        "DEX": 61
+      },
+      "potentialLevel": 60,
+      "currentLevel": 48,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シズク"
+    },
+    {
+      "id": 618,
+      "name": "如月 セリナ",
+      "family": "如月",
+      "given": "セリナ",
+      "age": 27,
+      "maxStats": {
+        "HP": 58,
+        "MP": 60,
+        "ATK": 61,
+        "DEF": 60,
+        "INT": 59,
+        "SPD": 62,
+        "DEX": 59
+      },
+      "potentialLevel": 60,
+      "currentLevel": 48,
+      "origin": "神の娘・国家育成対象",
+      "mother": "如月 エレナ"
+    },
+    {
+      "id": 616,
+      "name": "守屋 リディア",
+      "family": "守屋",
+      "given": "リディア",
+      "age": 27,
+      "maxStats": {
+        "HP": 60,
+        "MP": 61,
+        "ATK": 59,
+        "DEF": 61,
+        "INT": 59,
+        "SPD": 58,
+        "DEX": 59
+      },
+      "potentialLevel": 60,
+      "currentLevel": 48,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シズク"
+    },
+    {
+      "id": 705,
+      "name": "鳴海 フユカ",
+      "family": "鳴海",
+      "given": "フユカ",
+      "age": 27,
+      "maxStats": {
+        "HP": 60,
+        "MP": 59,
+        "ATK": 58,
+        "DEF": 57,
+        "INT": 57,
+        "SPD": 55,
+        "DEX": 56
+      },
+      "potentialLevel": 57,
+      "currentLevel": 46,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "岩戸 イリス"
+    },
+    {
+      "id": 701,
+      "name": "柊木 モミジ",
+      "family": "柊木",
+      "given": "モミジ",
+      "age": 27,
+      "maxStats": {
+        "HP": 10,
+        "MP": 18,
+        "ATK": 14,
+        "DEF": 16,
+        "INT": 15,
+        "SPD": 17,
+        "DEX": 14
+      },
+      "potentialLevel": 15,
+      "currentLevel": 12,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "神崎 アリア"
+    },
+    {
+      "id": 575,
+      "name": "岩戸 イオリ",
+      "family": "岩戸",
+      "given": "イオリ",
+      "age": 34,
+      "maxStats": {
+        "HP": 74,
+        "MP": 69,
+        "ATK": 73,
+        "DEF": 70,
+        "INT": 72,
+        "SPD": 68,
+        "DEX": 71
+      },
+      "potentialLevel": 71,
+      "currentLevel": 71,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 シオン"
+    },
+    {
+      "id": 576,
+      "name": "榊原 ネリネ",
+      "family": "榊原",
+      "given": "ネリネ",
+      "age": 34,
+      "maxStats": {
+        "HP": 68,
+        "MP": 65,
+        "ATK": 63,
+        "DEF": 67,
+        "INT": 66,
+        "SPD": 64,
+        "DEX": 65
+      },
+      "potentialLevel": 65,
+      "currentLevel": 65,
+      "origin": "神の娘・国家育成対象",
+      "mother": "榊原 ウタ"
+    },
+    {
+      "id": 706,
+      "name": "花守 カレン",
+      "family": "花守",
+      "given": "カレン",
+      "age": 34,
+      "maxStats": {
+        "HP": 65,
+        "MP": 62,
+        "ATK": 66,
+        "DEF": 64,
+        "INT": 64,
+        "SPD": 65,
+        "DEX": 65
+      },
+      "potentialLevel": 64,
+      "currentLevel": 64,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "如月 ナツメ"
+    },
+    {
+      "id": 580,
+      "name": "風間 エリナ",
+      "family": "風間",
+      "given": "エリナ",
+      "age": 34,
+      "maxStats": {
+        "HP": 64,
+        "MP": 63,
+        "ATK": 62,
+        "DEF": 64,
+        "INT": 64,
+        "SPD": 63,
+        "DEX": 64
+      },
+      "potentialLevel": 63,
+      "currentLevel": 63,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "神崎 セリナ"
+    },
+    {
+      "id": 577,
+      "name": "柊木 ユリア",
+      "family": "柊木",
+      "given": "ユリア",
+      "age": 34,
+      "maxStats": {
+        "HP": 61,
+        "MP": 62,
+        "ATK": 63,
+        "DEF": 62,
+        "INT": 61,
+        "SPD": 62,
+        "DEX": 62
+      },
+      "potentialLevel": 62,
+      "currentLevel": 62,
+      "origin": "国家公募採用・下位退任者能力基準",
+      "mother": "—",
+      "recruitmentSource": "岩戸 エマ"
+    },
+    {
+      "id": 578,
+      "name": "守屋 シズク",
+      "family": "守屋",
+      "given": "シズク",
+      "age": 34,
+      "maxStats": {
+        "HP": 63,
+        "MP": 60,
+        "ATK": 61,
+        "DEF": 60,
+        "INT": 61,
+        "SPD": 62,
+        "DEX": 61
+      },
+      "potentialLevel": 61,
+      "currentLevel": 61,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 ナディア"
+    },
+    {
+      "id": 579,
+      "name": "岩戸 ユキノ",
+      "family": "岩戸",
+      "given": "ユキノ",
+      "age": 34,
+      "maxStats": {
+        "HP": 57,
+        "MP": 58,
+        "ATK": 56,
+        "DEF": 58,
+        "INT": 57,
+        "SPD": 58,
+        "DEX": 58
+      },
+      "potentialLevel": 57,
+      "currentLevel": 57,
+      "origin": "神の娘・国家育成対象",
+      "mother": "岩戸 カナデ"
+    },
+    {
+      "id": 582,
+      "name": "守屋 リディア",
+      "family": "守屋",
+      "given": "リディア",
+      "age": 34,
+      "maxStats": {
+        "HP": 57,
+        "MP": 58,
+        "ATK": 58,
+        "DEF": 57,
+        "INT": 59,
+        "SPD": 58,
+        "DEX": 59
+      },
+      "potentialLevel": 58,
+      "currentLevel": 58,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シズク"
+    },
+    {
+      "id": 581,
+      "name": "守屋 ミレイ",
+      "family": "守屋",
+      "given": "ミレイ",
+      "age": 34,
+      "maxStats": {
+        "HP": 58,
+        "MP": 58,
+        "ATK": 57,
+        "DEF": 58,
+        "INT": 58,
+        "SPD": 59,
+        "DEX": 58
+      },
+      "potentialLevel": 58,
+      "currentLevel": 58,
+      "origin": "神の娘・国家育成対象",
+      "mother": "守屋 シエラ"
+    }
+  ],
+  "recentHistory": [
+    {
+      "year": 301,
+      "births": 10,
+      "retirees": 9,
+      "performanceDepartures": 5,
+      "overlap": 1,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    },
+    {
+      "year": 294,
+      "births": 10,
+      "retirees": 14,
+      "performanceDepartures": 5,
+      "overlap": 1,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 2
+    },
+    {
+      "year": 287,
+      "births": 10,
+      "retirees": 9,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    },
+    {
+      "year": 280,
+      "births": 10,
+      "retirees": 10,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    },
+    {
+      "year": 273,
+      "births": 10,
+      "retirees": 9,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    },
+    {
+      "year": 266,
+      "births": 10,
+      "retirees": 11,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 1
+    },
+    {
+      "year": 259,
+      "births": 10,
+      "retirees": 10,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    },
+    {
+      "year": 252,
+      "births": 10,
+      "retirees": 10,
+      "performanceDepartures": 5,
+      "overlap": 0,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0
+    }
+  ],
+  "storyAnchors": {
+    "dominantFamilies": [
+      [
+        "岩戸",
+        17
+      ],
+      [
+        "守屋",
+        8
+      ],
+      [
+        "榊原",
+        5
+      ],
+      [
+        "綾小路",
+        3
+      ],
+      [
+        "柊木",
+        3
+      ],
+      [
+        "文月",
+        2
+      ],
+      [
+        "風間",
+        2
+      ],
+      [
+        "如月",
+        2
+      ]
+    ],
+    "nextRitualTopTen": [
+      "守屋 カグラ",
+      "岩戸 イオリ",
+      "岩戸 ノエル",
+      "岩戸 フェリス",
+      "榊原 ネリネ",
+      "岩戸 タマキ",
+      "花守 カレン",
+      "榊原 マリア",
+      "岩戸 サツキ",
+      "綾小路 アカリ"
+    ],
+    "currentAdultBottomFive": [
+      "柊木 モミジ",
+      "岩戸 ユキノ",
+      "鳴海 フユカ",
+      "守屋 リディア",
+      "守屋 ミレイ"
+    ],
+    "notes": [
+      "制度開始301年。神羅巫女はまだ誕生していない。",
+      "次の大儀は308年目。",
+      "岩戸一族が現役17人で最大勢力。",
+      "守屋カグラは20歳ながら潜在能力首位。",
+      "岩戸イオリは34歳・現Lv71で、現時点の実戦上の筆頭。"
+    ]
+  }
+}
