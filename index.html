@@ -25,6 +25,11 @@
   <div class="card space3"><h2>七年の大儀</h2><p class="muted">20・27・34歳の正式巫女から能力上位10人を選抜する。</p><button id="advance" class="btn primary full" type="button">七年進める</button><button id="advance70" class="btn full" type="button">七十年進める</button></div>
   <div class="card space3"><h2>現在の契約状況</h2><div class="grid g2 gap2"><div class="metric"><div class="muted">選抜候補</div><div id="candidateCount" class="stats">30人</div></div><div class="metric"><div class="muted">任期終了予定</div><div id="age34Count" class="stats">10人</div></div></div><div id="fameText" class="callout">契約事業はまだ広く知られていない。</div></div>
 </div>
+<div class="card space3">
+  <div><h2>セーブ管理</h2><p class="muted">七年進行のたびに、全巫女・親類縁者・神レベル・履歴をブラウザへ自動保存する。</p></div>
+  <div class="flex wrap gap2"><button id="saveExport" class="btn" type="button">完全セーブを書き出す</button><button id="saveImport" class="btn" type="button">完全セーブを読み込む</button><input id="saveFile" type="file" accept="application/json,.json" class="hidden"></div>
+  <div id="saveStatus" class="callout" aria-live="polite">セーブ状態を確認しています。</div>
+</div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>契約巫女名簿</h2><p class="muted">横へスワイプして選択。</p></div><select id="ageFilter"><option value="all">全員</option><option value="6">6歳</option><option value="13">13歳</option><option value="20">20歳</option><option value="27">27歳</option><option value="34">34歳</option></select></div><div id="roster" class="scroll"></div></div>
 <div id="detail" class="card space3"><p class="muted">巫女を選択してください。</p></div>
 <div id="turnResult" class="callout" aria-live="polite">国家契約に基づき、五十人の巫女とその親類縁者で事業を開始した。</div>
@@ -53,5 +58,6 @@
 <script src="battle.js"></script>
 <script src="hold.js"></script>
 <script src="batch.js"></script>
-<script src="retirement.js?v=15"></script>
-<script src="lineage-display.js"></script></body></html>
+<script src="retirement.js?v=16"></script>
+<script src="lineage-display.js"></script>
+<script src="save.js?v=1"></script></body></html>
