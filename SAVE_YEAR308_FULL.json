@@ -1,0 +1,31 @@
+{
+  "saveVersion": 1,
+  "savedAt": "2026-07-22T06:40:00+00:00",
+  "ruleset": "bottom-five-potential-level-plus-5-v16",
+  "year": 308,
+  "nextId": 711,
+  "selectedId": null,
+  "selectedRole": null,
+  "history": [
+    {
+      "year": 308,
+      "births": 10,
+      "retirees": 9,
+      "voluntary": 5,
+      "performanceDepartures": 5,
+      "overlap": 1,
+      "rerolledRecruits": 5,
+      "fallbackRecruits": 0,
+      "recruits": 5,
+      "rejectedApplicants": 0,
+      "processOrder": "ritual-departures-recruitment",
+      "kinChange": 10,
+      "kinTotal": 335
+    }
+  ],
+  "lastKinChange": 10,
+  "godLevel": 50,
+  "shinraMikos": [],
+  "mikos": [],
+  "kin": {}
+}
