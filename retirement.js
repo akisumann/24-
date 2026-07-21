@@ -16,9 +16,9 @@ function makeRecruitFromDeparture(source){
     age:pick(AGES),
     maxStats,
     recruitmentInheritance:inheritance,
-    recruitmentSource:`退任者能力基準・${full(source)}`,
+    recruitmentSource:`成人潜在能力下位退任者基準・${full(source)}`,
     body:body(),
-    origin:'国家公募採用・退任者能力基準',
+    origin:'国家公募採用・下位退任者能力基準',
     mother:'—',
     skills:makeSkills(maxStats,id)
   };
@@ -62,24 +62,24 @@ function runTurnWithBottomFourRetirement(){
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
-  // 第5段階：全退任・脱会処理が終わって空席数が確定してから、公募候補を生成・採用する。
-  const departures=[...retirees,...performanceDepartures,...overlapDepartures];
-  const vacancies=Math.max(0,50-mikos.length);
-  const applicantPool=departures.map(source=>makeRecruitFromDeparture(source));
-
-  while(applicantPool.length<vacancies){
-    const age=pick(AGES);
-    applicantPool.push(makePerson(age,recruitLevel(),'国家公募採用・初期補充'));
-  }
-
-  applicantPool.sort((a,b)=>avg(b.maxStats)-avg(a.maxStats)||a.id-b.id);
-  const recruits=applicantPool.slice(0,vacancies);
-  const rejectedApplicants=applicantPool.slice(vacancies);
-
-  recruits.forEach(p=>{
+  // 第5段階：潜在能力下位4人それぞれを能力元として、一対一で一般公募者へ入れ替える。
+  // 任期終了者と妊娠時期重複脱会者は、この能力振り直しの元には使用しない。
+  const rerolledRecruits=performanceDepartures.map(source=>makeRecruitFromDeparture(source));
+  rerolledRecruits.forEach(p=>{
     ensureKin(p.family);
     mikos.push(p);
   });
+
+  // 下位4人入れ替え以外の理由で50人を下回った場合だけ、通常の一般公募で補充する。
+  const fallbackRecruits=[];
+  while(mikos.length<50){
+    const age=pick(AGES);
+    const p=makePerson(age,recruitLevel(),'国家公募採用・通常補充');
+    ensureKin(p.family);
+    fallbackRecruits.push(p);
+    mikos.push(p);
+  }
+  const recruits=[...rerolledRecruits,...fallbackRecruits];
 
   updateKin(retirees,[...performanceDepartures,...overlapDepartures]);
   year+=7;
@@ -91,8 +91,10 @@ function runTurnWithBottomFourRetirement(){
     voluntary:performanceDepartures.length,
     performanceDepartures:performanceDepartures.length,
     overlap:overlapDepartures.length,
+    rerolledRecruits:rerolledRecruits.length,
+    fallbackRecruits:fallbackRecruits.length,
     recruits:recruits.length,
-    rejectedApplicants:rejectedApplicants.length,
+    rejectedApplicants:0,
     processOrder:'ritual-departures-recruitment',
     kinChange:lastKinChange,
     kinTotal:totalKin()
@@ -100,7 +102,7 @@ function runTurnWithBottomFourRetirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位4人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位4人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位4人を能力元とする一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -112,7 +114,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位4人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位4人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位退任者基準公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
