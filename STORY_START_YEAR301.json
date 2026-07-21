@@ -1,46 +1,50 @@
 {
   "simulation": {
-    "seed": 2,
+    "seed": 27,
     "turns": 43,
     "year": 301,
     "godLevel": 50,
     "shinraMikos": [],
-    "ruleset": "bottom-five-potential-level-plus-5-v15"
+    "ruleset": "bottom-five-potential-level-plus-5-v16",
+    "fullSave": "SAVE_YEAR301_FULL.json"
   },
   "storyAnchors": {
     "activeMikos": 50,
     "dominantFamilies": [
-      ["御子柴", 25],
-      ["柊木", 5],
-      ["霞野", 4],
-      ["篝火", 3],
-      ["雪代", 2]
+      ["水無月", 16],
+      ["早瀬", 9],
+      ["榊原", 5],
+      ["神崎", 5],
+      ["八雲", 2],
+      ["神楽", 2],
+      ["橘", 1],
+      ["星守", 1]
     ],
     "nextRitualTopTen": [
-      {"name":"御子柴 エマ","age":34,"potentialLevel":77,"currentLevel":77},
-      {"name":"御子柴 サクラ","age":27,"potentialLevel":74,"currentLevel":59},
-      {"name":"御子柴 サツキ","age":20,"potentialLevel":70,"currentLevel":42},
-      {"name":"御子柴 ダリア","age":20,"potentialLevel":68,"currentLevel":41},
-      {"name":"御子柴 セシリア","age":27,"potentialLevel":67,"currentLevel":54},
-      {"name":"柊木 エノハ","age":20,"potentialLevel":67,"currentLevel":40},
-      {"name":"篝火 サクラ","age":20,"potentialLevel":67,"currentLevel":40},
-      {"name":"霞野 ベル","age":20,"potentialLevel":64,"currentLevel":39},
-      {"name":"霞野 ルナ","age":27,"potentialLevel":63,"currentLevel":51},
-      {"name":"御子柴 ルシア","age":27,"potentialLevel":62,"currentLevel":50}
+      {"name":"神崎 ルナ","age":27,"potentialLevel":75,"currentLevel":60},
+      {"name":"水無月 リディア","age":20,"potentialLevel":75,"currentLevel":45},
+      {"name":"水無月 サラ","age":20,"potentialLevel":70,"currentLevel":42},
+      {"name":"神崎 ユリア","age":20,"potentialLevel":69,"currentLevel":42},
+      {"name":"早瀬 ライラ","age":20,"potentialLevel":66,"currentLevel":40},
+      {"name":"榊原 カスミ","age":34,"potentialLevel":65,"currentLevel":65},
+      {"name":"早瀬 ユノ","age":34,"potentialLevel":64,"currentLevel":64},
+      {"name":"水無月 シズク","age":20,"potentialLevel":64,"currentLevel":38},
+      {"name":"水無月 レナ","age":34,"potentialLevel":62,"currentLevel":62},
+      {"name":"早瀬 ウタ","age":34,"potentialLevel":61,"currentLevel":61}
     ],
     "currentAdultBottomFive": [
-      {"name":"霞野 コトネ","age":34,"potentialLevel":26},
-      {"name":"水無月 レイナ","age":34,"potentialLevel":56},
-      {"name":"橘 ダリア","age":27,"potentialLevel":56},
-      {"name":"御子柴 ルリ","age":34,"potentialLevel":57},
-      {"name":"御子柴 ローラ","age":27,"potentialLevel":57}
+      {"name":"御堂 カナデ","age":20,"potentialLevel":22},
+      {"name":"御子柴 ユリア","age":20,"potentialLevel":50},
+      {"name":"星川 セツナ","age":34,"potentialLevel":55},
+      {"name":"羽坂 クララ","age":20,"potentialLevel":57},
+      {"name":"橘 セシリア","age":34,"potentialLevel":57}
     ],
     "notes": [
       "制度開始301年。神羅巫女はまだ誕生していない。",
       "次の大儀は308年目。",
-      "御子柴一族が現役25人で最大勢力。",
-      "御子柴エマは34歳・潜在Lv77・現在Lv77で現役筆頭。",
-      "下位5人公募は各退任者の潜在Lv+5で生成する。"
+      "水無月一族が現役16人で最大勢力。",
+      "神崎 ルナは27歳・潜在Lv75・現在Lv60で潜在能力首位。",
+      "完全状態はSAVE_YEAR301_FULL.jsonに保存する。"
     ]
   }
 }
