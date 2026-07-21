@@ -4,7 +4,7 @@ function makeRecruitFromDeparture(source){
   const inheritance={};
 
   STATS.forEach(stat=>{
-    const multiplier=.9+Math.random()*.2;
+    const multiplier=.8+Math.random()*.3;
     inheritance[stat]=multiplier;
     maxStats[stat]=Math.max(1,Math.round(source.maxStats[stat]*multiplier));
   });
@@ -24,7 +24,7 @@ function makeRecruitFromDeparture(source){
   };
 }
 
-function runTurnWithBottomFiveRetirement(){
+function runTurnWithBottomFourRetirement(){
   // 第1段階：大儀開始時点の名簿を固定する。
   // この後に生まれる娘や公募採用者は、同じ周期の母候補には絶対に入らない。
   const ritualRoster=[...mikos];
@@ -50,11 +50,11 @@ function runTurnWithBottomFiveRetirement(){
   newborns.forEach(child=>child.age=6);
   mikos=[...survivors,...newborns];
 
-  // 第4段階：任期終了後に残った20歳以上を潜在能力順に並べ、下位5人だけを入れ替える。
+  // 第4段階：任期終了後に残った20歳以上を潜在能力順に並べ、下位4人だけを入れ替える。
   const formalRanking=mikos
     .filter(p=>p.age>=20)
     .sort((a,b)=>avg(a.maxStats)-avg(b.maxStats)||a.id-b.id);
-  const performanceDepartures=formalRanking.slice(0,Math.min(5,formalRanking.length));
+  const performanceDepartures=formalRanking.slice(0,Math.min(4,formalRanking.length));
   const performanceDepartureIds=new Set(performanceDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!performanceDepartureIds.has(p.id));
 
@@ -100,19 +100,19 @@ function runTurnWithBottomFiveRetirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位4人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
 }
 
-runTurn=runTurnWithBottomFiveRetirement;
+runTurn=runTurnWithBottomFourRetirement;
 
 renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位4人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
@@ -123,21 +123,21 @@ const newAdvanceButton=oldAdvanceButton.cloneNode(true);
 oldAdvanceButton.replaceWith(newAdvanceButton);
 newAdvanceButton.addEventListener('click',runTurn);
 
-let bottomFiveHoldStartTimer=null;
-let bottomFiveHoldRepeatTimer=null;
-function stopBottomFiveAdvanceHold(){
-  if(bottomFiveHoldStartTimer!==null){clearTimeout(bottomFiveHoldStartTimer);bottomFiveHoldStartTimer=null;}
-  if(bottomFiveHoldRepeatTimer!==null){clearInterval(bottomFiveHoldRepeatTimer);bottomFiveHoldRepeatTimer=null;}
+let bottomFourHoldStartTimer=null;
+let bottomFourHoldRepeatTimer=null;
+function stopBottomFourAdvanceHold(){
+  if(bottomFourHoldStartTimer!==null){clearTimeout(bottomFourHoldStartTimer);bottomFourHoldStartTimer=null;}
+  if(bottomFourHoldRepeatTimer!==null){clearInterval(bottomFourHoldRepeatTimer);bottomFourHoldRepeatTimer=null;}
 }
 newAdvanceButton.addEventListener('pointerdown',event=>{
   if(event.pointerType==='mouse'&&event.button!==0)return;
-  stopBottomFiveAdvanceHold();
-  bottomFiveHoldStartTimer=setTimeout(()=>{
+  stopBottomFourAdvanceHold();
+  bottomFourHoldStartTimer=setTimeout(()=>{
     runTurn();
-    bottomFiveHoldRepeatTimer=setInterval(runTurn,300);
+    bottomFourHoldRepeatTimer=setInterval(runTurn,300);
   },300);
 });
 ['pointerup','pointercancel','lostpointercapture'].forEach(type=>{
-  newAdvanceButton.addEventListener(type,stopBottomFiveAdvanceHold);
+  newAdvanceButton.addEventListener(type,stopBottomFourAdvanceHold);
 });
 newAdvanceButton.addEventListener('contextmenu',event=>event.preventDefault());
