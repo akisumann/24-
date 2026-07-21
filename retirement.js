@@ -1,13 +1,27 @@
 function makeRecruitFromDeparture(source){
   const id=nextId++;
-  const maxStats={};
-  const inheritance={};
+  const sourcePotentialLevel=Math.round(avg(source.maxStats));
+  const targetPotentialLevel=sourcePotentialLevel+5;
+  const targetTotal=targetPotentialLevel*STATS.length;
 
-  STATS.forEach(stat=>{
-    const multiplier=1+Math.random()*.2;
-    inheritance[stat]=multiplier;
-    maxStats[stat]=Math.max(1,Math.round(source.maxStats[stat]*multiplier));
-  });
+  // 能力の偏りはランダムにしつつ、7項目の平均は目標潜在レベルへ正確に合わせる。
+  const weights=STATS.map(()=>0.7+Math.random()*0.6);
+  const weightTotal=weights.reduce((sum,value)=>sum+value,0);
+  const rawValues=weights.map(weight=>targetTotal*weight/weightTotal);
+  const values=rawValues.map(value=>Math.max(1,Math.floor(value)));
+  let remainder=targetTotal-values.reduce((sum,value)=>sum+value,0);
+
+  rawValues
+    .map((value,index)=>({index,fraction:value-Math.floor(value)}))
+    .sort((a,b)=>b.fraction-a.fraction||a.index-b.index)
+    .forEach(entry=>{
+      if(remainder<=0)return;
+      values[entry.index]+=1;
+      remainder-=1;
+    });
+
+  const maxStats={};
+  STATS.forEach((stat,index)=>maxStats[stat]=values[index]);
 
   return{
     id,
@@ -15,10 +29,11 @@ function makeRecruitFromDeparture(source){
     given:pick(GIVEN),
     age:pick(AGES),
     maxStats,
-    recruitmentInheritance:inheritance,
+    recruitmentSourceLevel:sourcePotentialLevel,
+    recruitmentTargetLevel:targetPotentialLevel,
     recruitmentSource:`成人潜在能力下位退任者基準・${full(source)}`,
     body:body(),
-    origin:'国家公募採用・下位退任者能力基準',
+    origin:'国家公募採用・下位退任者潜在レベル+5基準',
     mother:'—',
     skills:makeSkills(maxStats,id)
   };
@@ -68,8 +83,8 @@ function runTurnWithBottomFiveRetirement(){
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
-  // 第5段階：潜在能力下位5人それぞれを能力元として、一対一で一般公募者へ入れ替える。
-  // 任期終了者と妊娠時期重複脱会者は、この能力振り直しの元には使用しない。
+  // 第5段階：潜在能力下位5人だけを基準として、各退任者の潜在レベル+5の一般公募者へ一対一で入れ替える。
+  // 34歳の任期終了者、妊娠時期重複脱会者、通常補充者にはこの+5基準を使用しない。
   const rerolledRecruits=performanceDepartures.map(source=>makeRecruitFromDeparture(source));
   rerolledRecruits.forEach(p=>{
     ensureKin(p.family);
@@ -108,7 +123,7 @@ function runTurnWithBottomFiveRetirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人を能力元とする一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人の潜在レベル+5基準による一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -120,7 +135,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位退任者基準公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
