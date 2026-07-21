@@ -47,7 +47,13 @@ function runTurnWithBottomFiveRetirement(){
     else if(p.age===27)p.age=34;
   });
 
-  newborns.forEach(child=>child.age=6);
+  // 神の娘だけが0歳から6歳になる際、祝福によって潜在能力7項目すべてを+1する。
+  newborns.forEach(child=>{
+    if(child.age===0&&child.origin==='神の娘・国家育成対象'){
+      STATS.forEach(stat=>child.maxStats[stat]+=1);
+    }
+    child.age=6;
+  });
   mikos=[...survivors,...newborns];
 
   // 第4段階：任期終了後に残った20歳以上を潜在能力順に並べ、下位5人だけを入れ替える。
