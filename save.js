@@ -122,6 +122,16 @@ function importSaveGame(file){
   reader.readAsText(file);
 }
 
+function queueAutoSave(){setTimeout(autoSaveGame,0);}
+
+const saveAdvanceButton=document.getElementById('advance');
+const saveAdvance70Button=document.getElementById('advance70');
+saveAdvanceButton.addEventListener('click',queueAutoSave);
+saveAdvanceButton.addEventListener('pointerup',queueAutoSave);
+saveAdvanceButton.addEventListener('pointercancel',queueAutoSave);
+saveAdvanceButton.addEventListener('lostpointercapture',queueAutoSave);
+saveAdvance70Button.addEventListener('click',queueAutoSave);
+
 document.getElementById('saveExport').addEventListener('click',exportSaveGame);
 document.getElementById('saveImport').addEventListener('click',()=>document.getElementById('saveFile').click());
 document.getElementById('saveFile').addEventListener('change',event=>{
