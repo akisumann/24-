@@ -24,7 +24,7 @@ function makeRecruitFromDeparture(source){
   };
 }
 
-function runTurnWithTop15Retirement(){
+function runTurnWithBottomFiveRetirement(){
   // 第1段階：大儀開始時点の名簿を固定する。
   // この後に生まれる娘や公募採用者は、同じ周期の母候補には絶対に入らない。
   const ritualRoster=[...mikos];
@@ -36,7 +36,7 @@ function runTurnWithTop15Retirement(){
   // 第2段階：子作りと神羅判定を全員分完了する。
   const newborns=mothers.map(m=>makeChild(m,ritualRoster.length));
 
-  // 第3段階：大儀完了後に、任期終了・年齢進行・退任処理を行う。
+  // 第3段階：大儀完了後に、任期終了・年齢進行を行う。
   const retirees=ritualRoster.filter(p=>p.age===34);
   let survivors=ritualRoster.filter(p=>p.age!==34);
 
@@ -50,20 +50,20 @@ function runTurnWithTop15Retirement(){
   newborns.forEach(child=>child.age=6);
   mikos=[...survivors,...newborns];
 
+  // 第4段階：任期終了後に残った20歳以上を潜在能力順に並べ、下位5人だけを入れ替える。
   const formalRanking=mikos
     .filter(p=>p.age>=20)
-    .sort((a,b)=>avg(b.maxStats)-avg(a.maxStats)||a.id-b.id);
-  const retainedFormalIds=new Set(formalRanking.slice(0,15).map(p=>p.id));
-  const talentDepartures=formalRanking.filter(p=>!retainedFormalIds.has(p.id));
-  const talentDepartureIds=new Set(talentDepartures.map(p=>p.id));
-  mikos=mikos.filter(p=>!talentDepartureIds.has(p.id));
+    .sort((a,b)=>avg(a.maxStats)-avg(b.maxStats)||a.id-b.id);
+  const performanceDepartures=formalRanking.slice(0,Math.min(5,formalRanking.length));
+  const performanceDepartureIds=new Set(performanceDepartures.map(p=>p.id));
+  mikos=mikos.filter(p=>!performanceDepartureIds.has(p.id));
 
   const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,Math.random()<.38?1:0);
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
-  // 第4段階：全退任・脱会処理が終わって空席数が確定してから、公募候補を生成・採用する。
-  const departures=[...retirees,...talentDepartures,...overlapDepartures];
+  // 第5段階：全退任・脱会処理が終わって空席数が確定してから、公募候補を生成・採用する。
+  const departures=[...retirees,...performanceDepartures,...overlapDepartures];
   const vacancies=Math.max(0,50-mikos.length);
   const applicantPool=departures.map(source=>makeRecruitFromDeparture(source));
 
@@ -81,15 +81,15 @@ function runTurnWithTop15Retirement(){
     mikos.push(p);
   });
 
-  updateKin(retirees,[...talentDepartures,...overlapDepartures]);
+  updateKin(retirees,[...performanceDepartures,...overlapDepartures]);
   year+=7;
 
   history.unshift({
     year,
     births:newborns.length,
     retirees:retirees.length,
-    voluntary:talentDepartures.length,
-    talentDepartures:talentDepartures.length,
+    voluntary:performanceDepartures.length,
+    performanceDepartures:performanceDepartures.length,
     overlap:overlapDepartures.length,
     recruits:recruits.length,
     rejectedApplicants:rejectedApplicants.length,
@@ -100,19 +100,19 @@ function runTurnWithTop15Retirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
 }
 
-runTurn=runTurnWithTop15Retirement;
+runTurn=runTurnWithBottomFiveRetirement;
 
 renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
@@ -123,21 +123,21 @@ const newAdvanceButton=oldAdvanceButton.cloneNode(true);
 oldAdvanceButton.replaceWith(newAdvanceButton);
 newAdvanceButton.addEventListener('click',runTurn);
 
-let top15HoldStartTimer=null;
-let top15HoldRepeatTimer=null;
-function stopTop15AdvanceHold(){
-  if(top15HoldStartTimer!==null){clearTimeout(top15HoldStartTimer);top15HoldStartTimer=null;}
-  if(top15HoldRepeatTimer!==null){clearInterval(top15HoldRepeatTimer);top15HoldRepeatTimer=null;}
+let bottomFiveHoldStartTimer=null;
+let bottomFiveHoldRepeatTimer=null;
+function stopBottomFiveAdvanceHold(){
+  if(bottomFiveHoldStartTimer!==null){clearTimeout(bottomFiveHoldStartTimer);bottomFiveHoldStartTimer=null;}
+  if(bottomFiveHoldRepeatTimer!==null){clearInterval(bottomFiveHoldRepeatTimer);bottomFiveHoldRepeatTimer=null;}
 }
 newAdvanceButton.addEventListener('pointerdown',event=>{
   if(event.pointerType==='mouse'&&event.button!==0)return;
-  stopTop15AdvanceHold();
-  top15HoldStartTimer=setTimeout(()=>{
+  stopBottomFiveAdvanceHold();
+  bottomFiveHoldStartTimer=setTimeout(()=>{
     runTurn();
-    top15HoldRepeatTimer=setInterval(runTurn,300);
+    bottomFiveHoldRepeatTimer=setInterval(runTurn,300);
   },300);
 });
 ['pointerup','pointercancel','lostpointercapture'].forEach(type=>{
-  newAdvanceButton.addEventListener(type,stopTop15AdvanceHold);
+  newAdvanceButton.addEventListener(type,stopBottomFiveAdvanceHold);
 });
 newAdvanceButton.addEventListener('contextmenu',event=>event.preventDefault());
