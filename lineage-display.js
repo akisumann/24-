@@ -1,8 +1,8 @@
 const makeChildBeforeLineageDisplay=makeChild;
 makeChild=function(mother){
-  const motherLevelAtBirth=level(mother);
+  const motherPotentialLevel=Math.min(MAX_LEVEL,Math.round(avg(mother.maxStats)));
   const child=makeChildBeforeLineageDisplay(mother);
-  child.motherLevel=motherLevelAtBirth;
+  child.motherPotentialLevel=motherPotentialLevel;
   return child;
 };
 
@@ -19,10 +19,10 @@ renderDetail=function(){
   if(!originLine)return;
 
   if(person.origin&&person.origin.startsWith('神の娘')){
-    const motherLevel=Number.isFinite(person.motherLevel)
-      ?`・当時Lv${person.motherLevel}`
+    const motherPotentialLevel=Number.isFinite(person.motherPotentialLevel)
+      ?`・潜在Lv${person.motherPotentialLevel}`
       :'';
-    originLine.textContent=`母親：${person.mother}${motherLevel}`;
+    originLine.textContent=`母親：${person.mother}${motherPotentialLevel}`;
   }else{
     originLine.textContent='出自：一般公募';
   }
