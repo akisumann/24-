@@ -4,7 +4,7 @@ function makeRecruitFromDeparture(source){
   const inheritance={};
 
   STATS.forEach(stat=>{
-    const multiplier=1+Math.random()*.1;
+    const multiplier=1+Math.random()*.2;
     inheritance[stat]=multiplier;
     maxStats[stat]=Math.max(1,Math.round(source.maxStats[stat]*multiplier));
   });
