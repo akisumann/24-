@@ -8,8 +8,9 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body><main><section class="section">
-<div class="grid g4 gap2">
+<div class="grid g5 gap2">
   <div class="metric"><div class="muted">経過年</div><div id="year" class="stats">0年</div></div>
+  <div class="metric"><div class="muted">神レベル</div><div id="godLevel" class="stats">Lv50</div></div>
   <div class="metric"><div class="muted">現役巫女</div><div id="count" class="stats">50人</div></div>
   <div class="metric"><div class="muted">親類縁者</div><div id="kinTotal" class="stats">0人</div></div>
   <div class="metric"><div class="muted">国家評判</div><div id="fame" class="stats">0</div></div>
@@ -27,6 +28,7 @@
 <div id="turnResult" class="callout" aria-live="polite">国家契約に基づき、五十人の巫女とその親類縁者で事業を開始した。</div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>親類縁者の人口構成</h2><p class="muted">現役巫女は含まない。</p></div><span id="kinChange" class="badge">初期人口</span></div><div id="kinSummary" class="grid g5 gap2"></div></div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>母系一族の勢力</h2><p class="muted">強い巫女の娘ほど次世代に残りやすい。</p></div><span id="dominantClan" class="badge">群雄状態</span></div><div id="clans" class="grid g2 gap2"></div></div>
+<div class="card space3"><div class="flex center between gap3"><div><h2>歴代神羅巫女</h2><p class="muted">神を成長させた巫女と、その大儀での功績を記録する。</p></div><span id="shinraCount" class="badge">0人</span></div><div id="shinraMikos" class="space3"><p class="muted">神羅巫女はまだ現れていない。</p></div></div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>年齢構成</h2><p class="muted">現役名簿は6・13・20・27・34歳の五世代。</p></div><span id="generationStatus" class="badge">均等</span></div><div id="ageGroups" class="grid g5 gap2"></div></div>
 <div class="card space3"><div class="flex center between gap3"><div><h2>契約巫女名簿</h2><p class="muted">横へスワイプして選択。</p></div><select id="ageFilter"><option value="all">全員</option><option value="6">6歳</option><option value="13">13歳</option><option value="20">20歳</option><option value="27">27歳</option><option value="34">34歳</option></select></div><div id="roster" class="scroll"></div></div>
 <div id="detail" class="card space3"><p class="muted">巫女を選択してください。</p></div>
@@ -47,6 +49,7 @@
 <script src="data.js"></script>
 <script src="core.js"></script>
 <script src="ui.js"></script>
+<script src="shinra.js"></script>
 <script src="battle.js"></script>
 <script src="hold.js"></script>
 <script src="batch.js"></script></body></html>
