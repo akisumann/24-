@@ -1,3 +1,29 @@
+function makeRecruitFromDeparture(source){
+  const id=nextId++;
+  const maxStats={};
+  const inheritance={};
+
+  STATS.forEach(stat=>{
+    const multiplier=.5+Math.random();
+    inheritance[stat]=multiplier;
+    maxStats[stat]=Math.max(1,Math.round(source.maxStats[stat]*multiplier));
+  });
+
+  return{
+    id,
+    family:pick(FAMILY),
+    given:pick(GIVEN),
+    age:pick(AGES),
+    maxStats,
+    recruitmentInheritance:inheritance,
+    recruitmentSource:`退任者能力基準・${full(source)}`,
+    body:body(),
+    origin:'国家公募採用・退任者能力基準',
+    mother:'—',
+    skills:makeSkills(maxStats,id)
+  };
+}
+
 function runTurnWithTop15Retirement(){
   const mothers=mikos
     .filter(p=>p.age>=20&&p.age<=34)
@@ -29,10 +55,22 @@ function runTurnWithTop15Retirement(){
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
+  const departures=[...retirees,...talentDepartures,...overlapDepartures];
+  const recruitmentSources=shuffle(departures);
   const recruits=[];
+  let sourceIndex=0;
+
   while(mikos.length<50){
-    const age=pick(AGES);
-    const p=makePerson(age,recruitLevel(),age<20?'国家公募採用・仮巫女':'国家公募採用・正式巫女');
+    let p;
+    if(recruitmentSources.length){
+      const source=recruitmentSources[sourceIndex%recruitmentSources.length];
+      sourceIndex++;
+      p=makeRecruitFromDeparture(source);
+    }else{
+      const age=pick(AGES);
+      p=makePerson(age,recruitLevel(),age<20?'国家公募採用・初期補充':'国家公募採用・初期補充');
+    }
+
     ensureKin(p.family);
     recruits.push(p);
     mikos.push(p);
@@ -55,7 +93,7 @@ function runTurnWithTop15Retirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、新規採用${recruits.length}人。`;
+    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、退任者能力基準の新規採用${recruits.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -67,7 +105,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人</div>
+      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人</div>
       <div class="mt1">親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
