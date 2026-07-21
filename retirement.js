@@ -25,14 +25,21 @@ function makeRecruitFromDeparture(source){
 }
 
 function runTurnWithTop15Retirement(){
-  const mothers=mikos
+  // 第1段階：大儀開始時点の名簿を固定する。
+  // この後に生まれる娘や公募採用者は、同じ周期の母候補には絶対に入らない。
+  const ritualRoster=[...mikos];
+  const mothers=ritualRoster
     .filter(p=>p.age>=20&&p.age<=34)
-    .sort((a,b)=>avg(b.maxStats)-avg(a.maxStats))
+    .sort((a,b)=>avg(b.maxStats)-avg(a.maxStats)||a.id-b.id)
     .slice(0,10);
-  const newborns=mothers.map(m=>makeChild(m,mikos.length));
-  const retirees=mikos.filter(p=>p.age===34);
 
-  let survivors=mikos.filter(p=>p.age!==34);
+  // 第2段階：子作りと神羅判定を全員分完了する。
+  const newborns=mothers.map(m=>makeChild(m,ritualRoster.length));
+
+  // 第3段階：大儀完了後に、任期終了・年齢進行・退任処理を行う。
+  const retirees=ritualRoster.filter(p=>p.age===34);
+  let survivors=ritualRoster.filter(p=>p.age!==34);
+
   survivors.forEach(p=>{
     if(p.age===6)p.age=13;
     else if(p.age===13)p.age=20;
@@ -55,6 +62,7 @@ function runTurnWithTop15Retirement(){
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
+  // 第4段階：全退任・脱会処理が終わって空席数が確定してから、公募候補を生成・採用する。
   const departures=[...retirees,...talentDepartures,...overlapDepartures];
   const vacancies=Math.max(0,50-mikos.length);
   const applicantPool=departures.map(source=>makeRecruitFromDeparture(source));
@@ -85,13 +93,14 @@ function runTurnWithTop15Retirement(){
     overlap:overlapDepartures.length,
     recruits:recruits.length,
     rejectedApplicants:rejectedApplicants.length,
+    processOrder:'ritual-departures-recruitment',
     kinChange:lastKinChange,
     kinTotal:totalKin()
   });
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -103,8 +112,8 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
-      <div class="mt1">親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
+      <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
 };
