@@ -56,25 +56,22 @@ function runTurnWithTop15Retirement(){
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
   const departures=[...retirees,...talentDepartures,...overlapDepartures];
-  const recruitmentSources=shuffle(departures);
-  const recruits=[];
-  let sourceIndex=0;
+  const vacancies=Math.max(0,50-mikos.length);
+  const applicantPool=departures.map(source=>makeRecruitFromDeparture(source));
 
-  while(mikos.length<50){
-    let p;
-    if(recruitmentSources.length){
-      const source=recruitmentSources[sourceIndex%recruitmentSources.length];
-      sourceIndex++;
-      p=makeRecruitFromDeparture(source);
-    }else{
-      const age=pick(AGES);
-      p=makePerson(age,recruitLevel(),age<20?'国家公募採用・初期補充':'国家公募採用・初期補充');
-    }
-
-    ensureKin(p.family);
-    recruits.push(p);
-    mikos.push(p);
+  while(applicantPool.length<vacancies){
+    const age=pick(AGES);
+    applicantPool.push(makePerson(age,recruitLevel(),'国家公募採用・初期補充'));
   }
+
+  applicantPool.sort((a,b)=>avg(b.maxStats)-avg(a.maxStats)||a.id-b.id);
+  const recruits=applicantPool.slice(0,vacancies);
+  const rejectedApplicants=applicantPool.slice(vacancies);
+
+  recruits.forEach(p=>{
+    ensureKin(p.family);
+    mikos.push(p);
+  });
 
   updateKin(retirees,[...talentDepartures,...overlapDepartures]);
   year+=7;
@@ -87,13 +84,14 @@ function runTurnWithTop15Retirement(){
     talentDepartures:talentDepartures.length,
     overlap:overlapDepartures.length,
     recruits:recruits.length,
+    rejectedApplicants:rejectedApplicants.length,
     kinChange:lastKinChange,
     kinTotal:totalKin()
   });
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、退任者能力基準の新規採用${recruits.length}人。`;
+    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、成人上位15位外による退任${talentDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、退任者能力基準の新規採用${recruits.length}人、公募落選${rejectedApplicants.length}人。`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -105,7 +103,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人</div>
+      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／成人上位15位外退任${h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人／公募落選${h.rejectedApplicants??0}人</div>
       <div class="mt1">親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
