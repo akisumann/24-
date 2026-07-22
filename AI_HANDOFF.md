@@ -220,7 +220,9 @@ SPD 52 → 1d52
 - `role-balance.js`
   - 役務の上限撤廃と時代の需要（時代年表・`window.MikoEra` API）。
 - `events.js`
-  - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。
+  - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
+- `ceremony.js`
+  - 大儀の対話。七年ごとに神が顕現し、選ばれた十人が七年間の報告と暮らしを過去形で語る物語サイクルを表示する。
 - `GAME_RULES.md`
   - ゲームルールの説明。
 - `WORLD_SETTING.md`

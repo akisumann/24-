@@ -117,6 +117,12 @@
     renderEventUI();
   };
 
+  // 他モジュール（ceremony.js など）から直近の出来事を参照するための小さなAPI。
+  window.MikoEvents={
+    latest(){for(let i=eventLog.length-1;i>=0;i--)if(!eventLog[i].calm)return eventLog[i];return null;},
+    recent(n){return eventLog.filter(e=>!e.calm).slice(-(n||3));}
+  };
+
   lastEventYear=(typeof year!=='undefined')?year:null;
   render();
 })();
