@@ -20,7 +20,7 @@ function makeChild(m){
     inheritance[s]=multiplier;
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
-  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-6,6)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.8+62*.2+rand(-10,10)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
+  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-3,3)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.8+62*.2+rand(-10,10)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
   const motherLevel=level(m);
   const raisedFromChildhood=m.origin==='神の娘・国家育成対象';
   if(raisedFromChildhood&&usedGodLevel<MAX_LEVEL&&motherLevel>=usedGodLevel+30){
