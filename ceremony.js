@@ -50,17 +50,48 @@
   }
   // 神のイタズラで、真面目な報告が嬌声・絶頂混じりに乱れた版。
   const MOANS=['……っ','ぁ……っ、','んっ、','はぁっ、','ひ……ぁっ、','あっ、あっ、'];
-  const CLIMAX=[
+  // 性格（＝最も高い能力）ごとの「イキ方」。締めの絶頂セリフをその気質に合わせる。
+  const CLIMAX_BY_STAT={
+    HP:[ // 粘り強い：耐えて耐えて、なお粘って達する
+      'ま、まだ……耐えられ、ます……っ、く……ぅっ、ま、負けませ……ぁ、あ、あーーーっ、イ……くっ!!」',
+      'こ、この程度……っ、まだ、まだ……へっちゃ、ら……ぁ、あ、ひぁあああっ——!!」'
+    ],
+    MP:[ // 落ち着き：気丈に取り繕うが、声が抑えられず
+      'お、落ち着い……て、くださ……っ、わ、わたくしは、平気……ぁ、あっ、へ、平気で……ひぅっ、イ……っ!!」',
+      'だ、大丈夫、です……から……っ、あ、あっ、こ、声が……抑え、られ……ぁあああっ!!」'
+    ],
+    ATK:[ // 押し通す：強気に抗うが、呑まれて
+      'そ、そこは、だめ、と……申して、おり……っ、あ、あっ、き、効きすぎ……ぁあああイくっ!!」',
+      'ま、待て、と……言った、はず……っ、ひぁっ、あ、あっ、も、もぉっ——!!」'
+    ],
+    DEF:[ // 流されない：自分を保とうと踏ん張り、崩れて
+      'わ、わたくしは、流され……ませ……っ、ぁ、あ、こんな……ので、は……ひっ、ぅっ、だ、だめっ、イっ……!!」',
+      'こ、こんなことでは、乱れ……ま、せ……っ、あっ、あっ、ぅ、うそ……ぁあああっ!!」'
+    ],
+    INT:[ // 筋道立て：理路整然と話そうとして、頭が白く
+      'こ、これは、つまり……せつ、めい……っ、あ、あっ、あたま、が……し、白く……ひぅっ、イ……くっ!!」',
+      'せ、正確に、申し上げ……ま、す、と……っ、ぁ、あ、ろ、論理、が……とんで……ぁあああっ!!」'
+    ],
+    SPD:[ // 切り替えが早い：一気に平静から陥落
+      'へ、平気……って、あ、あっ、む、無理っ、はやい……ぁあああっ、も、もうイくっ!!」',
+      'だ、だいじょ……っ、ぁ、だめ、だめっ、はやい、はやいっ——!!」'
+    ],
+    DEX:[ // 器用に取り繕う：ごまかしきれず
+      'こ、この、くらい……うま、く……っ、あ、あっ、ご、ごまかせ……ない……ひぅっ、イっ!!」',
+      'う、うまく……やり、過ご……っ、ぁ、あ、む、むりぃっ——!!」'
+    ]
+  };
+  const CLIMAX_FALLBACK=[
     'も、もう申し上げられませ……っ、ぁ、あ、イ……くぅっ——!!」',
-    'ひぁっ、そ、そこは……らめ、です……っ、〜〜〜っ、飛んで……しまいます……!!」',
     'あっ、あっ、報告は……っ、ま、まだ途中な、のに……ぁあああっ——!!」'
   ];
-  // 真面目な冒頭（openText：言いかけのセリフ・「開き含む）を、嬌声・絶頂で乱れさせる。
-  function teaseFrom(openText,seed){
+  // openText（言いかけのセリフ・「開き含む）を嬌声で乱し、topStat（＝性格）に応じたイキ方で締める。
+  function teaseFrom(openText,seed,topStat){
     const s=((seed%1000)+1000)%1000;
     const a=MOANS[s%MOANS.length];
     const b=MOANS[(s+3)%MOANS.length];
-    const cl=CLIMAX[s%CLIMAX.length];
+    const pool=(topStat&&CLIMAX_BY_STAT[topStat])||CLIMAX_FALLBACK;
+    const cl=pool[s%pool.length];
     return `${openText}${a}——ひぁっ!? か、神さま、そこは……${b}${cl}`;
   }
   // 真面目な報告本文の冒頭を途中で切り出す（イタズラ変換の土台）。
@@ -78,6 +109,7 @@
       id:m.id,
       name:full(m),
       apt:ROLES[rank(m.maxStats)[0]],
+      topStat:rank(m.maxStats)[0],
       age:m.age,
       level:level(m),
       potentialLevel:Math.round(avg(m.maxStats)),
@@ -130,20 +162,20 @@
       leadEntries.push({
         head:`時代について（首位　${rank1.name}）`,
         serious:`「恐れながら、まず時代のことを。いまは${theme||'色の定まらぬ時代'}にございます。その求めに応じ、巫女らは務めを果たしてまいりました。」`,
-        teased:teaseFrom(`「い、いまは${theme||'……'}`,rank1.id+c.year)
+        teased:teaseFrom(`「い、いまは${theme||'……'}`,rank1.id+c.year,rank1.topStat)
       });
       leadEntries.push({
         head:`この七年の出来事（首位　${rank1.name}）`,
         serious:ev
           ?`「この七年の出来事にございます。${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けました':'担い手が足らず、民に痛手が及びました'}。」`
           :`「この七年、大きな波乱はなく、国は穏やかに過ぎました。」`,
-        teased:teaseFrom(ev?`「こ、この七年は${ev.threat}が`:`「こ、この七年は穏やかに`,rank1.id+c.year+7)
+        teased:teaseFrom(ev?`「こ、この七年は${ev.threat}が`:`「こ、この七年は穏やかに`,rank1.id+c.year+7,rank1.topStat)
       });
     }
     logEntries=leadEntries.concat(c.mothers.map(m=>({
       head:`${m.name}（${m.apt}・${m.age}歳・Lv${m.level}）`,
       serious:seriousBody(m,c.year),
-      teased:teaseFrom(`「こ、この七年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year)
+      teased:teaseFrom(`「こ、この七年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year,m.topStat)
     })));
     if(logIndex>=logEntries.length)logIndex=Math.max(0,logEntries.length-1);
 
