@@ -87,35 +87,56 @@ function runTurnWithBottomFiveRetirement(){
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 
-  // 第5段階：潜在能力下位5人だけを基準として、各退任者の潜在レベル+5の一般公募者へ一対一で入れ替える。
-  // 34歳の任期終了者、妊娠時期重複脱会者、通常補充者にはこの+5基準を使用しない。
-  const rerolledRecruits=performanceDepartures.map(source=>makeRecruitFromDeparture(source));
-  rerolledRecruits.forEach(p=>{
-    ensureKin(p.family);
-    mikos.push(p);
-  });
+  // 第5段階：定員50の空き枠の分だけ公募で補充する。
+  // 既存の巫女は、設計どおりの退任（34歳の任期終了・下位5人・妊娠時期重複脱会）以外では一切弾かない。
+  // 新生児が必ず10人入る一方で退任が10人とは限らないため、超過は「弾く」のではなく「補充を減らす」で吸収する。
+  const openSlots=50-mikos.length;
 
-  // 下位5人入れ替え以外の理由で50人を下回った場合だけ、通常の一般公募で補充する。
+  const rerolledRecruits=[];
   const fallbackRecruits=[];
-  while(mikos.length<50){
-    const age=pick(AGES);
-    const p=makePerson(age,recruitLevel(),'国家公募採用・通常補充');
-    ensureKin(p.family);
-    fallbackRecruits.push(p);
-    mikos.push(p);
+  const droppedNewborns=[];
+  if(openSlots>=0){
+    // 空き枠の範囲で、下位5人退任者を基準にした潜在レベル+5公募を一対一補充する。
+    // 34歳の任期終了者、妊娠時期重複脱会者、通常補充者にはこの+5基準を使用しない。
+    const rerollN=Math.min(openSlots,performanceDepartures.length);
+    for(let i=0;i<rerollN;i++){
+      const p=makeRecruitFromDeparture(performanceDepartures[i]);
+      ensureKin(p.family);
+      rerolledRecruits.push(p);
+      mikos.push(p);
+    }
+    // まだ50人に満たなければ、通常の一般公募で残り枠を補充する。
+    while(mikos.length<50){
+      const p=makePerson(pick(AGES),recruitLevel(),'国家公募採用・通常補充');
+      ensureKin(p.family);
+      fallbackRecruits.push(p);
+      mikos.push(p);
+    }
+  }else{
+    // 退任がごく少なく、補充を0人にしても50人を超える稀なターン。
+    // 既存の巫女は弾かず、今回生まれた神の娘のうち潜在能力が下位の子だけを、超過分だけ入団見送りにする（強い娘を優先して残す）。
+    const surplus=-openSlots;
+    const newbornPool=mikos
+      .filter(p=>p.age===6&&p.origin==='神の娘・国家育成対象')
+      .sort((a,b)=>avg(a.maxStats)-avg(b.maxStats)||a.id-b.id);
+    const dropIds=new Set(newbornPool.slice(0,surplus).map(p=>p.id));
+    droppedNewborns.push(...mikos.filter(p=>dropIds.has(p.id)));
+    mikos=mikos.filter(p=>!dropIds.has(p.id));
   }
   const recruits=[...rerolledRecruits,...fallbackRecruits];
+  const admittedBirths=newborns.length-droppedNewborns.length;
 
   updateKin(retirees,[...performanceDepartures,...overlapDepartures]);
   year+=7;
 
   history.unshift({
     year,
-    births:newborns.length,
+    births:admittedBirths,
     retirees:retirees.length,
     voluntary:performanceDepartures.length,
     performanceDepartures:performanceDepartures.length,
     overlap:overlapDepartures.length,
+    droppedNewborns:droppedNewborns.length,
     rerolledRecruits:rerolledRecruits.length,
     fallbackRecruits:fallbackRecruits.length,
     recruits:recruits.length,
@@ -127,7 +148,7 @@ function runTurnWithBottomFiveRetirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人の潜在レベル+5基準による一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${admittedBirths}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人の潜在レベル+5基準による一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。${droppedNewborns.length?`定員により神の娘${droppedNewborns.length}人が入団見送り。`:''}`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -139,7 +160,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人${h.droppedNewborns?`／定員で娘${h.droppedNewborns}人入団見送り`:''}</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
