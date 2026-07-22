@@ -54,11 +54,11 @@
     lastEventYear=year;
     if(prevYear===null||year===0)return; // 開始・読込直後は起こさない
 
-    if(Math.random()>EVENT_CHANCE){eventLog.push({year,calm:true});trim();return;}
+    if(srandom()>EVENT_CHANCE){eventLog.push({year,calm:true});trim();return;}
 
     const era=window.MikoEra.current();
     let key;
-    if(era&&era.picks&&era.picks.length&&Math.random()<ERA_BIAS){
+    if(era&&era.picks&&era.picks.length&&srandom()<ERA_BIAS){
       key=era.picks[rand(0,era.picks.length-1)].key;      // その時代の分野の危機
     }else{
       key=ALL_KEYS[rand(0,ALL_KEYS.length-1)];             // 手薄な分野への不意打ちもありうる
@@ -66,7 +66,7 @@
     const info=DOMAIN_EVENT[key];
     const count=domainCount(key);
     const p=Math.min(0.9,Math.max(0.12,0.14+count*0.11));  // 担い手が多いほど切り抜けやすい
-    const success=Math.random()<p;
+    const success=srandom()<p;
 
     reputation();  // この年の評判減衰を先に確定させてから、出来事の増減を上乗せする
     const delta=success?rand(6,13):-rand(6,14);

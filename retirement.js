@@ -9,7 +9,7 @@ function makeRecruitFromDeparture(source){
   const targetTotal=targetPotentialLevel*STATS.length;
 
   // 能力の偏りはランダムにしつつ、7項目の平均は目標潜在レベルへ正確に合わせる。
-  const weights=STATS.map(()=>0.7+Math.random()*0.6);
+  const weights=STATS.map(()=>0.7+srandom()*0.6);
   const weightTotal=weights.reduce((sum,value)=>sum+value,0);
   const rawValues=weights.map(weight=>targetTotal*weight/weightTotal);
   const values=rawValues.map(value=>Math.max(1,Math.floor(value)));
@@ -83,7 +83,7 @@ function runTurnWithBottomFiveRetirement(){
   const performanceDepartureIds=new Set(performanceDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!performanceDepartureIds.has(p.id));
 
-  const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,Math.random()<.38?1:0);
+  const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,srandom()<.38?1:0);
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 

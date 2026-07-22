@@ -11,14 +11,18 @@ const BATTLE_SKILL_NAMES=new Set([
 
 let battleAId=null,battleBId=null,lastBattleResult=null;
 
+// 模擬戦は「今この場の余興」で歴史の一部ではないため、タイムラインのシード乱数を消費しない。
+// 独立した非決定的な乱数（Math.random）を使い、シード＋年数による再現性を壊さないようにする。
+const brand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,bpick=a=>a[brand(0,a.length-1)];
+
 function battleEligible(){
   return [...mikos].sort((a,b)=>level(b)-level(a)||b.age-a.age||a.id-b.id);
 }
 
 function battleSampleTwo(list){
   const copy=[...list];
-  const first=copy.splice(rand(0,copy.length-1),1)[0];
-  const second=copy.splice(rand(0,copy.length-1),1)[0];
+  const first=copy.splice(brand(0,copy.length-1),1)[0];
+  const second=copy.splice(brand(0,copy.length-1),1)[0];
   return [first,second];
 }
 
@@ -67,7 +71,7 @@ function battleAction(pair){
 
 function battleRollSide(p,pair){
   const stats=current(p);
-  const rolls=pair.map(s=>rand(1,stats[s]));
+  const rolls=pair.map(s=>brand(1,stats[s]));
   const raw=rolls.reduce((n,x)=>n+x,0);
   const skill=battleSkillFor(p,pair);
   const total=skill?Math.round(raw*1.1):raw;
@@ -166,7 +170,7 @@ function runBattle(){
   const topA=rank(statsA),topB=rank(statsB);
   const round1=battleRound(1,'得意分野',a,b,topA.slice(0,2),topB.slice(0,2));
   const round2=battleRound(2,'対応力',a,b,battleSampleTwo(STATS.filter(s=>!topA.slice(0,2).includes(s))),battleSampleTwo(STATS.filter(s=>!topB.slice(0,2).includes(s))));
-  const round3=battleRound(3,'切り札',a,b,[topA[0],pick(STATS.filter(s=>s!==topA[0]))],[topB[0],pick(STATS.filter(s=>s!==topB[0]))]);
+  const round3=battleRound(3,'切り札',a,b,[topA[0],bpick(STATS.filter(s=>s!==topA[0]))],[topB[0],bpick(STATS.filter(s=>s!==topB[0]))]);
   const rounds=[round1,round2,round3];
   const wins={[a.id]:0,[b.id]:0};
   rounds.forEach(r=>wins[r.winner.id]++);

@@ -10,6 +10,8 @@ function buildSaveData(){
     saveVersion:SAVE_VERSION,
     savedAt:new Date().toISOString(),
     ruleset:'bottom-five-potential-level-plus-5-v16',
+    seed:__seed,
+    rngState:__rng,
     year,
     nextId,
     selectedId,
@@ -36,6 +38,8 @@ function validateSaveData(data){
 
 function restoreSaveData(raw){
   const data=validateSaveData(typeof raw==='string'?JSON.parse(raw):raw);
+  if(typeof data.seed==='number')__seed=data.seed>>>0;      // 再現用シードを引き継ぐ
+  if(typeof data.rngState==='number')__rng=data.rngState|0;  // 乱数の位置も引き継ぎ、続きが再現と一致する
   year=data.year;
   nextId=data.nextId;
   selectedId=data.selectedId??null;
@@ -80,6 +84,8 @@ function autoSaveGame(){
 }
 
 function loadLatestSave(){
+  // 再現モード（URLに ?seed= 指定）では既存セーブを復元せず、シードから作り直す。
+  if(typeof __seedForced!=='undefined'&&__seedForced)return;
   const raw=localStorage.getItem(SAVE_KEYS.latest);
   if(!raw){
     autoSaveGame();
