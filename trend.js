@@ -14,6 +14,8 @@
   let log=[];
   let lastYear=null;
   let panels=null;
+  let trendView='all';          // 'all'＝全時代 / 'recent'＝直近100年（14回）
+  const RECENT_POINTS=14;
 
   function adultAvgLevel(){
     const adults=mikos.filter(p=>p.age>=20);
@@ -163,12 +165,36 @@
     ctx.fillStyle=col;ctx.beginPath();ctx.arc(ex,ey,3,0,Math.PI*2);ctx.fill();
   }
 
+  function initViewToggle(){
+    const host=document.getElementById('trendPanels');
+    if(!host||document.getElementById('trendViewToggle'))return;
+    const bar=document.createElement('div');
+    bar.id='trendViewToggle';
+    bar.className='flex gap2';
+    bar.style.marginBottom='8px';
+    bar.innerHTML='<button type="button" data-view="all" class="btn">全時代</button>'
+      +'<button type="button" data-view="recent" class="btn">100年（14回）</button>';
+    host.insertAdjacentElement('beforebegin',bar);
+    bar.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{
+      trendView=b.dataset.view;
+      drawTrends();
+    }));
+  }
+
   function drawTrends(){
     if(!panels)return;
+    const view=trendView==='recent'?log.slice(-RECENT_POINTS):log;
+
+    const toggle=document.getElementById('trendViewToggle');
+    if(toggle)toggle.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('primary',b.dataset.view===trendView));
+
     const range=document.getElementById('trendRange');
-    if(range)range.textContent=log.length?`${log[0].year}〜${log[log.length-1].year}年・${log.length}点`:'記録なし';
+    if(range)range.textContent=view.length
+      ?`${trendView==='recent'?'直近':'全'} ${view[0].year}〜${view[view.length-1].year}年・${view.length}点`
+      :'記録なし';
+
     panels.forEach(({s,canvas,cur,meta})=>{
-      const vals=log.map(p=>p[s.key]);
+      const vals=view.map(p=>p[s.key]);
       if(cur)cur.textContent=vals.length?s.fmt(vals[vals.length-1]):'—';
       if(meta)meta.textContent=vals.length?`最小 ${s.fmt(Math.min(...vals))}／最大 ${s.fmt(Math.max(...vals))}`:'記録なし';
       drawSparkline(canvas,vals,color(s));
@@ -176,6 +202,7 @@
   }
 
   initPanels();
+  initViewToggle();
   record();
   drawTrends();
 
