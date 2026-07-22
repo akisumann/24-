@@ -27,10 +27,14 @@ main.miko-dash{max-width:1280px}
 .hud-btn.ghost{background:transparent;color:var(--muted);padding:7px 10px}
 .hud-btn.ghost:hover{color:var(--text)}
 .miko-board{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));grid-auto-flow:row dense;gap:12px;align-items:start}
+.miko-board>*{min-width:0}
 .miko-board>.card{margin:0}
 .miko-board>.wide{grid-column:span 2}
 .miko-board>#turnResult{grid-column:1/-1;margin:0}
 @media(max-width:680px){.miko-board{grid-template-columns:1fr}.miko-board>.wide{grid-column:auto}}
+/* 横広な中身はタイル内でスクロール／折り返しさせ、タイルは外へはみ出さない */
+.miko-board .scroll{max-width:100%}
+.miko-board canvas{max-width:100%}
 `;
   document.head.appendChild(style);
   main.classList.add('miko-dash');
