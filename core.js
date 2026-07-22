@@ -1,12 +1,17 @@
 const MAX_LEVEL=100;
 let year=0,nextId=1,selectedId=null,selectedRole=null,history=[],lastKinChange=0,godLevel=50,shinraMikos=[];
+let fame=0,fameYear=null,fameShinra=0;
 function rate(age){if(age===6)return.2;if(age===13)return.4;if(age===20)return.6;if(age===27)return.8;return 1}
 function current(p){const r=rate(p.age);return Object.fromEntries(STATS.map(s=>[s,Math.round(p.maxStats[s]*r)]))}
 function level(p){return Math.min(MAX_LEVEL,Math.round(avg(current(p))))}
 function personality(p){const r=rank(p.maxStats);return`${HIGH[r[0]]}。${HIGH[r[1]]}。一方で、${LOW[r[5]]}うえ、${LOW[r[6]]}。`}
 function makeStats(base){return Object.fromEntries(STATS.map(s=>[s,Math.max(1,Math.round(base*(.5+Math.random()))) ]))}
 function makeSkills(stats,id){const r=rank(stats),src=[r[0],r[0],r[1],r[2],r[3]],used=new Set();return src.map((s,i)=>{const list=SKILLS[s];let n=(id*13+i*7)%list.length;while(used.has(list[n][0]))n=(n+1)%list.length;used.add(list[n][0]);return{name:list[n][0],effect:list[n][1],stat:s}})}
-function body(){return{height:rand(150,177),bust:rand(76,108),waist:rand(54,72),hip:rand(80,108),hair:pick(HAIR)}}
+const BODY_BASE_START=90,BODY_BASE_RATE=0.1;              // 胸・尻の基準値。7年（1ターン）ごとに0.1ずつ上がる。
+function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
+// 初期採用・国家公募など外部出身者は、神の基準ではなく現実の日本人女性の平均からランダムに与える。
+// 中心はおおむね バスト84 / ウエスト64 / ヒップ91 / 身長158cm（JIS 9号相当）。
+function body(){return{height:rand(150,166),bust:rand(76,92),waist:rand(56,72),hip:rand(84,98),hair:pick(HAIR)}}
 function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,skills:makeSkills(maxStats,id)}}
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
@@ -15,7 +20,7 @@ function makeChild(m){
     inheritance[s]=multiplier;
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
-  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-6,6)),bust:Math.round(m.body.bust*.7+92*.3+rand(-7,10)),waist:Math.round(m.body.waist*.7+60*.3+rand(-4,5)),hip:Math.round(m.body.hip*.7+94*.3+rand(-7,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
+  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-6,6)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.8+62*.2+rand(-10,10)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
   const motherLevel=level(m);
   const raisedFromChildhood=m.origin==='神の娘・国家育成対象';
   if(raisedFromChildhood&&usedGodLevel<MAX_LEVEL&&motherLevel>=usedGodLevel+30){
@@ -131,6 +136,25 @@ function updateKin(retirees,departures){
 
 function assignments(){const workers=mikos.filter(p=>p.age>=13).map(p=>{const stats=current(p);return{person:p,stats,prefs:rank(stats),role:null}}),groups=Object.fromEntries(STATS.map(s=>[s,[]]));workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w)});let changed=true,safe=0;while(changed&&safe++<100){changed=false;for(const role of STATS){if(groups[role].length<=ROLE_LIMIT)continue;groups[role].sort((a,b)=>a.stats[role]-b.stats[role]);const overflow=groups[role].slice(0,groups[role].length-ROLE_LIMIT);for(const w of overflow){const dest=w.prefs.find(s=>s!==role&&groups[s].length<ROLE_LIMIT);if(!dest)continue;groups[role]=groups[role].filter(x=>x.person.id!==w.person.id);w.role=dest;groups[dest].push(w);changed=true}}}return{workers,groups}}
 function roleOf(p){return assignments().workers.find(w=>w.person.id===p.id)?.role||null}
-function reputation(){return Math.round(year*.25+mikos.filter(p=>p.age>=20).reduce((n,p)=>n+level(p),0)/30)}
+// 国家評判は「現在の実力に基づく均衡値」へ毎ターン緩やかに減衰しつつ、
+// 神羅巫女の実績でスパイク加点する動的な値。経過年による無制限の増加はしない。
+function reputationTarget(){
+  const adults=mikos.filter(p=>p.age>=20);
+  const avgLv=adults.length?adults.reduce((n,p)=>n+level(p),0)/adults.length:0;
+  return avgLv*1.4+(godLevel-50)*1.2;
+}
+function syncFame(){
+  if(fameYear===year)return;
+  if(fameYear===null){fame=reputationTarget();fameYear=year;fameShinra=shinraMikos.length;return;}
+  const steps=Math.max(1,Math.round((year-fameYear)/7));
+  const gained=Math.max(0,shinraMikos.length-fameShinra);
+  const target=reputationTarget();
+  for(let i=0;i<steps;i++)fame+=(target-fame)*0.34; // 時間経過で均衡へ減衰／接近
+  fame+=gained*6;                                    // 神羅巫女という実績で一時的に加点
+  if(fame<0)fame=0;
+  fameYear=year;
+  fameShinra=shinraMikos.length;
+}
+function reputation(){syncFame();return Math.round(fame)}
 function fameText(){const f=reputation();if(f<40)return'契約事業はまだ広く知られていない。';if(f<90)return'高待遇の国家特別職として近隣で評判になっている。';if(f<170)return'地方各地から優秀な志願者が集まる。';if(f<280)return'国内有数の人材育成事業として知られている。';return'国外の有力者からも志願希望が届いている。'}
 function recruitLevel(){return Math.max(8,Math.min(80,Math.round(14+reputation()/8+rand(-14,14))))}
