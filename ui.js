@@ -17,7 +17,7 @@ function runTurn(){
   newborns.forEach(child=>child.age=6);
   mikos=[...survivors,...newborns];
 
-  const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,Math.random()<.38?1:0);
+  const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,srandom()<.38?1:0);
   const overlapIds=new Set(overlapDepartures.map(p=>p.id));
   mikos=mikos.filter(p=>!overlapIds.has(p.id));
 

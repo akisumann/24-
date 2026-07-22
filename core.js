@@ -5,7 +5,7 @@ function rate(age){if(age===6)return.2;if(age===13)return.4;if(age===20)return.6
 function current(p){const r=rate(p.age);return Object.fromEntries(STATS.map(s=>[s,Math.round(p.maxStats[s]*r)]))}
 function level(p){return Math.min(MAX_LEVEL,Math.round(avg(current(p))))}
 function personality(p){const r=rank(p.maxStats);return`${HIGH[r[0]]}。${HIGH[r[1]]}。一方で、${LOW[r[5]]}うえ、${LOW[r[6]]}。`}
-function makeStats(base){return Object.fromEntries(STATS.map(s=>[s,Math.max(1,Math.round(base*(.5+Math.random()))) ]))}
+function makeStats(base){return Object.fromEntries(STATS.map(s=>[s,Math.max(1,Math.round(base*(.5+srandom()))) ]))}
 function makeSkills(stats,id){const r=rank(stats),src=[r[0],r[0],r[1],r[2],r[3]],used=new Set();return src.map((s,i)=>{const list=SKILLS[s];let n=(id*13+i*7)%list.length;while(used.has(list[n][0]))n=(n+1)%list.length;used.add(list[n][0]);return{name:list[n][0],effect:list[n][1],stat:s}})}
 const BODY_BASE_START=90,BODY_BASE_RATE=0.1;              // 胸・尻の基準値。7年（1ターン）ごとに0.1ずつ上がる。
 function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
@@ -16,11 +16,11 @@ function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=mak
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
   STATS.forEach(s=>{
-    const multiplier=.5+Math.random();
+    const multiplier=.5+srandom();
     inheritance[s]=multiplier;
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
-  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:Math.random()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
+  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:srandom()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
   const motherLevel=level(m);
   const raisedFromChildhood=m.origin==='神の娘・国家育成対象';
   if(raisedFromChildhood&&usedGodLevel<MAX_LEVEL&&motherLevel>=usedGodLevel+30){
@@ -99,7 +99,7 @@ function updateKin(retirees,departures){
     k.bands[band]++;
     k.formerBands[band]++;
 
-    if(band>=3&&band<=7&&Math.random()<.35){
+    if(band>=3&&band<=7&&srandom()<.35){
       k.marriedBands[band]++;
       k.partnerBands[band]++;
     }
