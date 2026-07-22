@@ -55,13 +55,18 @@
     'ひぁっ、そ、そこは……らめ、です……っ、〜〜〜っ、飛んで……しまいます……!!」',
     'あっ、あっ、報告は……っ、ま、まだ途中な、のに……ぁあああっ——!!」'
   ];
-  function teasedBody(m,year){
-    const frag=LIFE[(m.id*7+year)%LIFE.length].replace(/。$/,'');
-    const cut=frag.slice(0,Math.max(4,Math.floor(frag.length*0.45)));
-    const a=MOANS[(m.id+year)%MOANS.length];
-    const b=MOANS[(m.id+year+3)%MOANS.length];
-    const cl=CLIMAX[(m.id+year)%CLIMAX.length];
-    return `「こ、この七年は${cut}${a}——ひぁっ!? か、神さま、そこは……${b}${cl}`;
+  // 真面目な冒頭（openText：言いかけのセリフ・「開き含む）を、嬌声・絶頂で乱れさせる。
+  function teaseFrom(openText,seed){
+    const s=((seed%1000)+1000)%1000;
+    const a=MOANS[s%MOANS.length];
+    const b=MOANS[(s+3)%MOANS.length];
+    const cl=CLIMAX[s%CLIMAX.length];
+    return `${openText}${a}——ひぁっ!? か、神さま、そこは……${b}${cl}`;
+  }
+  // 真面目な報告本文の冒頭を途中で切り出す（イタズラ変換の土台）。
+  function cutFrag(coreFrag){
+    const frag=String(coreFrag).replace(/。$/,'');
+    return frag.slice(0,Math.max(4,Math.floor(frag.length*0.45)));
   }
 
   // makeChild を包み、母（＝選ばれた十人）の情報を捕捉する。
@@ -109,10 +114,6 @@
     const c=lastCeremony;
     const theme=(window.MikoEra&&MikoEra.theme&&MikoEra.theme())||null;
     const ev=(window.MikoEvents&&MikoEvents.latest&&MikoEvents.latest())||null;
-    const backdrop=`${theme?`いまは<b>${theme}</b>。`:''}`
-      +(ev
-        ?`この七年、${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けたとのこと':'担い手が足らず民に痛手が及んだとのこと'}。`
-        :'大きな波乱はなく、七年は穏やかに過ぎたとのこと。');
 
     // 神床殿・入殿の自己紹介（選抜順位一位から十位）。
     // 順に 名前・年齢・役職・潜在レベルを報告 → 中央布を捲り身を晒す → 身長・スリーサイズを報告。
@@ -122,11 +123,28 @@
     }).join('');
 
     // 「この七年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
-    logEntries=c.mothers.map(m=>({
+    // 先頭は首位の巫女が語る「時代」と「この七年の出来事」。以降は十人の個々の報告。イタズラは各件に効く。
+    const rank1=c.mothers[0];
+    const leadEntries=[];
+    if(rank1){
+      leadEntries.push({
+        head:`時代について（首位　${rank1.name}）`,
+        serious:`「恐れながら、まず時代のことを。いまは${theme||'色の定まらぬ時代'}にございます。その求めに応じ、巫女らは務めを果たしてまいりました。」`,
+        teased:teaseFrom(`「い、いまは${theme||'……'}`,rank1.id+c.year)
+      });
+      leadEntries.push({
+        head:`この七年の出来事（首位　${rank1.name}）`,
+        serious:ev
+          ?`「この七年の出来事にございます。${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けました':'担い手が足らず、民に痛手が及びました'}。」`
+          :`「この七年、大きな波乱はなく、国は穏やかに過ぎました。」`,
+        teased:teaseFrom(ev?`「こ、この七年は${ev.threat}が`:`「こ、この七年は穏やかに`,rank1.id+c.year+7)
+      });
+    }
+    logEntries=leadEntries.concat(c.mothers.map(m=>({
       head:`${m.name}（${m.apt}・${m.age}歳・Lv${m.level}）`,
       serious:seriousBody(m,c.year),
-      teased:teasedBody(m,c.year)
-    }));
+      teased:teaseFrom(`「こ、この七年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year)
+    })));
     if(logIndex>=logEntries.length)logIndex=Math.max(0,logEntries.length-1);
 
     const q=GODQ[c.year%GODQ.length];
@@ -134,8 +152,7 @@
     const hope=HOPES[c.year%HOPES.length];
 
     el.innerHTML=`
-      <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 神、七年ぶりに顕現する</p></div><span class="badge">十人の報告</span></div>
-      <div class="callout">${backdrop}</div>
+      <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 神、七年ぶりに顕現する</p></div><span class="badge">神床殿</span></div>
       <div class="muted medium">神床殿・入殿の自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
       <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
@@ -170,7 +187,7 @@
     const e=logEntries[i];
     if(!e){bodyEl.textContent='';return;}
     const teased=teasedSet.has(i);
-    headEl.textContent=(i+1)+'人目　'+e.head+(teased?'　（神のイタズラ中）':'');
+    headEl.textContent=e.head+(teased?'　（神のイタズラ中）':'');
     if(countEl)countEl.textContent=(i+1)+' / '+logEntries.length;
     if(teaseEl)teaseEl.textContent=teased?'イタズラをやめる':'神のイタズラ';
     typeOut(bodyEl,teased?e.teased:e.serious);
