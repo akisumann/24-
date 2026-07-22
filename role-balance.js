@@ -18,14 +18,17 @@
 
   // 役務を「国の需要」ドメインへまとめる。戦闘系（討魔＋守護）は〈武〉。
   const DOMAINS=[
-    {key:'武',   roles:['ATK','DEF'], desc:'魔物や戦乱への備えが国の急務となっている', theme:'武の時代'},
-    {key:'祈り', roles:['MP'],        desc:'神事と祈りで加護と人心を保つことが求められている', theme:'祈りの時代'},
-    {key:'地鎮', roles:['HP'],        desc:'土地と国土の安定が国の礎となっている', theme:'地鎮の時代'},
-    {key:'学識', roles:['INT'],       desc:'儀礼と学識で制度を整えることが重んじられている', theme:'学識の時代'},
-    {key:'巡行', roles:['SPD'],       desc:'各地を結ぶ巡行と伝令が国を支えている', theme:'巡行の時代'},
-    {key:'制作', roles:['DEX'],       desc:'神具や祭具の制作と技術が栄えている', theme:'制作の時代'}
+    {key:'まもり',     roles:['ATK','DEF'], desc:'魔物や戦乱から人々を守る力が求められている', theme:'まもりの時代'},
+    {key:'いのり',     roles:['MP'],        desc:'祈りと癒やしで人々の心と体を支えることが大切にされている', theme:'いのりの時代'},
+    {key:'大地',       roles:['HP'],        desc:'土地と実りを守り、暮らしの土台を整えることが重んじられている', theme:'大地の時代'},
+    {key:'知恵',       roles:['INT'],       desc:'学びと知恵で、決まりごとや神事を整えることが求められている', theme:'知恵の時代'},
+    {key:'つなぎ',     roles:['SPD'],       desc:'各地を行き来して、人と知らせをつなぐことが国を支えている', theme:'つなぎの時代'},
+    {key:'ものづくり', roles:['DEX'],       desc:'神具や道具をつくる技が栄えている', theme:'ものづくりの時代'}
   ];
-  const ROLE_TENDENCY={HP:'国土と土地の安定',MP:'神事と祈り',ATK:'武と討伐',DEF:'守り',INT:'学識と儀礼',SPD:'機動と連絡',DEX:'制作と技術'};
+  // 旧セーブに残る硬い呼び名を、やわらかい表記へ読み替える。
+  const LEGACY={'武':'まもり','祈り':'いのり','地鎮':'大地','学識':'知恵','巡行':'つなぎ','制作':'ものづくり'};
+  const normKey=k=>LEGACY[k]||k;
+  const ROLE_TENDENCY={HP:'大地とみのり',MP:'いのりと癒やし',ATK:'たたかい',DEF:'まもり',INT:'学びと知恵',SPD:'行き来と連絡',DEX:'ものづくり'};
   const MAXLOG=400;
 
   let eraLog=[],lastEraYear=null;
@@ -45,7 +48,7 @@
   // 既存セーブから時代年表を復元し、以後のセーブへ追記する。
   try{
     const raw=localStorage.getItem('mikoGameSave_latest');
-    if(raw){const d=JSON.parse(raw);if(Array.isArray(d.eraLog)){eraLog=d.eraLog.slice(-MAXLOG);lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}}
+    if(raw){const d=JSON.parse(raw);if(Array.isArray(d.eraLog)){eraLog=d.eraLog.slice(-MAXLOG).map(e=>({year:e.year,key:normKey(e.key)}));lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}}
   }catch(e){}
   if(typeof buildSaveData==='function'){
     const before=buildSaveData;
@@ -55,7 +58,7 @@
     const before=restoreSaveData;
     restoreSaveData=function(raw){
       let p=null;try{p=typeof raw==='string'?JSON.parse(raw):raw;}catch(e){}
-      if(p&&Array.isArray(p.eraLog)){eraLog=p.eraLog.slice(-MAXLOG);lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}
+      if(p&&Array.isArray(p.eraLog)){eraLog=p.eraLog.slice(-MAXLOG).map(e=>({year:e.year,key:normKey(e.key)}));lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}
       before(raw);
     };
   }
@@ -125,7 +128,7 @@
       else runs.push({key:e.key,from:e.year,to:e.year});
     });
     const recent=runs.slice(-6);
-    const themeOf=k=>(DOMAINS.find(d=>d.key===k)||{}).theme||k;
+    const themeOf=k=>{k=normKey(k);return (DOMAINS.find(d=>d.key===k)||{}).theme||k;};
     const rows=recent.map((r,i)=>{
       const isNow=i===recent.length-1;
       const span=r.from===r.to?`${r.from}年`:`${r.from}〜${r.to}年`;
@@ -141,7 +144,7 @@
   const rolesEl=document.getElementById('roles');
   const card=rolesEl&&rolesEl.closest('.card');
   const desc=card&&card.querySelector('p.muted');
-  if(desc)desc.textContent='各巫女を第一適性へ配属（上限なし）。役務構成がその時代の需要を映す。';
+  if(desc)desc.textContent='各巫女を得意な役務へ配属（上限なし）。役務の顔ぶれが、その時代に求められたものを映す。';
 
   render();
 })();
