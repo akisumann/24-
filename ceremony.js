@@ -34,6 +34,36 @@
   let lastCeremony=null;    // 直近の大儀の記録
   let ceremonyYear=null;
 
+  // 「この七年の報告」ログの表示状態。
+  let logEntries=[];        // 現在の大儀の報告ログ（真面目版と嬌声版を各件持つ）
+  let logIndex=0;           // いま表示中の報告
+  let teasedSet=new Set();  // 神のイタズラで嬌声に変換済みの報告インデックス
+  let typeTimer=null;       // タイプライター表示のタイマー
+
+  // 真面目な報告文（この七年の暮らしと、授かった娘）。
+  function seriousBody(m,year){
+    const life=LIFE[(m.id*7+year)%LIFE.length];
+    let body=`「この七年、${life}`;
+    if(m.becameShinra)body+=` そして大儀のさなか、私を通じて神の力が一段と増したとのこと、身に余る誉れにございます。`;
+    body+=` こたびの大儀にて、あなたの娘・${m.child}を授かりました。」`;
+    return body;
+  }
+  // 神のイタズラで、真面目な報告が嬌声・絶頂混じりに乱れた版。
+  const MOANS=['……っ','ぁ……っ、','んっ、','はぁっ、','ひ……ぁっ、','あっ、あっ、'];
+  const CLIMAX=[
+    'も、もう申し上げられませ……っ、ぁ、あ、イ……くぅっ——!!」',
+    'ひぁっ、そ、そこは……らめ、です……っ、〜〜〜っ、飛んで……しまいます……!!」',
+    'あっ、あっ、報告は……っ、ま、まだ途中な、のに……ぁあああっ——!!」'
+  ];
+  function teasedBody(m,year){
+    const frag=LIFE[(m.id*7+year)%LIFE.length].replace(/。$/,'');
+    const cut=frag.slice(0,Math.max(4,Math.floor(frag.length*0.45)));
+    const a=MOANS[(m.id+year)%MOANS.length];
+    const b=MOANS[(m.id+year+3)%MOANS.length];
+    const cl=CLIMAX[(m.id+year)%CLIMAX.length];
+    return `「こ、この七年は${cut}${a}——ひぁっ!? か、神さま、そこは……${b}${cl}`;
+  }
+
   // makeChild を包み、母（＝選ばれた十人）の情報を捕捉する。
   const makeChildBeforeCeremony=makeChild;
   makeChild=function(m){
@@ -71,6 +101,7 @@
   function renderCeremonyUI(){
     const el=ensureTile();
     if(!el)return;
+    if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
     if(!lastCeremony){
       el.innerHTML='<h2>大儀の対話</h2><p class="muted">神はいま眠っている。七年を進めると顕現し、選ばれた十人の報告を聞く。</p>';
       return;
@@ -90,14 +121,13 @@
         +`<div class="muted mt1">「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}にございます。」<br>——中央布を捲り上げ、身を神の御前へ晒す——<br>「身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
     }).join('');
 
-    const reports=c.mothers.map(m=>{
-      const life=LIFE[(m.id*7+c.year)%LIFE.length];
-      let s=`<div class="node"><div class="flex wrap center between gap2"><span class="medium">${m.name}</span><span class="badge">${m.apt}・${m.age}歳・Lv${m.level}</span></div>`;
-      let body=`「この七年、${life}`;
-      if(m.becameShinra)body+=` そして大儀のさなか、私を通じて神の力が一段と増したとのこと、身に余る誉れにございます。`;
-      body+=` こたびの大儀にて、あなたの娘・${m.child}を授かりました。」`;
-      return s+`<div class="muted mt1">${body}</div></div>`;
-    }).join('');
+    // 「この七年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
+    logEntries=c.mothers.map(m=>({
+      head:`${m.name}（${m.apt}・${m.age}歳・Lv${m.level}）`,
+      serious:seriousBody(m,c.year),
+      teased:teasedBody(m,c.year)
+    }));
+    if(logIndex>=logEntries.length)logIndex=Math.max(0,logEntries.length-1);
 
     const q=GODQ[c.year%GODQ.length];
     const hopeM=c.mothers.length?c.mothers[c.year%c.mothers.length]:null;
@@ -108,10 +138,53 @@
       <div class="callout">${backdrop}</div>
       <div class="muted medium">神床殿・入殿の自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
-      <div class="muted medium">この七年の報告</div>
-      <div class="space3">${reports}</div>
+      <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
+      <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
+      <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>
       <div class="callout">${q}${hopeM?`<br><span class="medium">${hopeM.name}</span>は答えた——「${hope}」`:''}</div>
       <div class="muted">神は十人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。満足した神は再び眠りにつく——次に目覚めるとき、また七年が過ぎている。</div>`;
+
+    bindLog();
+    showLogEntry(logIndex);
+  }
+
+  function bindLog(){
+    const prev=document.getElementById('cerePrev');
+    const next=document.getElementById('cereNext');
+    const tease=document.getElementById('cereTease');
+    if(prev)prev.onclick=function(){if(logIndex>0){logIndex--;showLogEntry(logIndex);}};
+    if(next)next.onclick=function(){if(logIndex<logEntries.length-1){logIndex++;showLogEntry(logIndex);}};
+    if(tease)tease.onclick=function(){
+      if(!logEntries.length)return;
+      if(teasedSet.has(logIndex))teasedSet.delete(logIndex);else teasedSet.add(logIndex);
+      showLogEntry(logIndex);
+    };
+  }
+
+  function showLogEntry(i){
+    const headEl=document.getElementById('cereLogHead');
+    const bodyEl=document.getElementById('cereLogBody');
+    const countEl=document.getElementById('cereCount');
+    const teaseEl=document.getElementById('cereTease');
+    if(!headEl||!bodyEl)return;
+    const e=logEntries[i];
+    if(!e){bodyEl.textContent='';return;}
+    const teased=teasedSet.has(i);
+    headEl.textContent=(i+1)+'人目　'+e.head+(teased?'　（神のイタズラ中）':'');
+    if(countEl)countEl.textContent=(i+1)+' / '+logEntries.length;
+    if(teaseEl)teaseEl.textContent=teased?'イタズラをやめる':'神のイタズラ';
+    typeOut(bodyEl,teased?e.teased:e.serious);
+  }
+
+  function typeOut(el,text){
+    if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
+    el.textContent='';
+    let idx=0;
+    typeTimer=setInterval(function(){
+      idx++;
+      el.textContent=text.slice(0,idx);
+      if(idx>=text.length){clearInterval(typeTimer);typeTimer=null;}
+    },30);
   }
 
   const renderBeforeCeremony=render;
@@ -121,6 +194,8 @@
       if(currentBatch.length)lastCeremony={year,n:Math.round(year/7),mothers:currentBatch.slice()};
       currentBatch=[];
       ceremonyYear=year;
+      logIndex=0;
+      teasedSet.clear();
     }
     renderCeremonyUI();
   };
