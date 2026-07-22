@@ -1,7 +1,9 @@
 function makeRecruitFromDeparture(source){
   const id=nextId++;
   const sourcePotentialLevel=Math.round(avg(source.maxStats));
-  const targetPotentialLevel=sourcePotentialLevel+5;
+  // 退任者の潜在レベル+5 と、国家評判−10 の高い方を目標潜在レベルとする。
+  // 評判が高いほど、弱い退任者の穴でも良い人材が集まる。
+  const targetPotentialLevel=Math.max(sourcePotentialLevel+5,reputation()-10);
   const targetTotal=targetPotentialLevel*STATS.length;
 
   // 能力の偏りはランダムにしつつ、7項目の平均は目標潜在レベルへ正確に合わせる。
