@@ -38,10 +38,17 @@
 
   let eraLog=[],lastEraYear=null;
 
-  function domainOf(g){
-    const scored=DOMAINS.map(d=>({d,n:d.roles.reduce((s,r)=>s+g[r].length,0)}));
-    scored.sort((a,b)=>b.n-a.n||DOMAINS.indexOf(a.d)-DOMAINS.indexOf(b.d));
-    return scored[0];
+  function rankedDomains(g){
+    return DOMAINS.map(d=>({d,n:d.roles.reduce((s,r)=>s+g[r].length,0)}))
+      .sort((a,b)=>b.n-a.n||DOMAINS.indexOf(a.d)-DOMAINS.indexOf(b.d));
+  }
+  // 数が上位2つのドメインを合わせて、その時代とする。
+  function eraOf(g){
+    const ranked=rankedDomains(g).filter(x=>x.n>0);
+    if(!ranked.length)return null;
+    const picks=ranked.slice(0,Math.min(2,ranked.length)).map(x=>x.d)
+      .sort((a,b)=>DOMAINS.indexOf(a)-DOMAINS.indexOf(b)); // 表記が毎ターンぶれないよう定義順へ整える
+    return{picks,key:picks.map(d=>d.key).join('と')};
   }
   function recordEra(key){
     if(lastEraYear===year)return;
@@ -103,22 +110,21 @@
     const counts=STATS.map(s=>({role:s,n:g[s].length})).sort((a,b)=>b.n-a.n||STATS.indexOf(a.role)-STATS.indexOf(b.role));
     const total=counts.reduce((n,c)=>n+c.n,0);
 
+    const era=total?eraOf(g):null;
     const balance=ensureEl('roleBalance','callout mt2',rolesEl);
     if(balance){
-      if(!total){balance.textContent='役務に就く巫女がまだいない。';}
+      if(!era){balance.textContent='役務に就く巫女がまだいない。';}
       else{
-        const {d}=domainOf(g);
-        const domRoles=d.roles.map(r=>ROLES[r]).join('・');
-        const top=counts[0],low=counts[counts.length-1],avg=total/STATS.length;
-        let s=`この時代が必要とするもの：<b>${d.key}</b> — ${domRoles}が多く、${d.desc}。`;
-        if(top.n>=avg*1.6)s+=`役務は<b>${ROLES[top.role]}</b>（${ROLE_TENDENCY[top.role]}）へかなり偏っている。`;
+        const low=counts[counts.length-1],avg=total/STATS.length;
+        const heads=era.picks.map(d=>`<b>${d.key}</b>`).join('と');
+        const bodies=era.picks.map(d=>`${d.roles.map(r=>ROLES[r]).join('・')}が多く、${d.desc}`).join('。また、');
+        let s=`この時代が必要とするもの：${heads}。${bodies}。`;
         if(low.n===0)s+=` 一方、<b>${ROLES[low.role]}</b>は不在で、その分野は手薄だ。`;
         else if(low.n<=Math.max(1,Math.round(avg*0.5)))s+=` 一方、<b>${ROLES[low.role]}</b>は手薄（${low.n}人）。`;
         balance.innerHTML=s;
       }
     }
-
-    if(total)recordEra(domainOf(g).d.key);
+    if(era)recordEra(era.key);
     renderEraTimeline(ensureEl('eraTimeline','space3 mt2',balance));
   }
 
@@ -133,7 +139,7 @@
       else runs.push({key:e.key,from:e.year,to:e.year});
     });
     const recent=runs.slice(-6);
-    const themeOf=k=>{k=normKey(k);return (DOMAINS.find(d=>d.key===k)||{}).theme||k;};
+    const themeOf=k=>{const s=DOMAINS.find(d=>d.key===normKey(k));return s?s.theme:k+'の時代';};
     const rows=recent.map((r,i)=>{
       const isNow=i===recent.length-1;
       const span=r.from===r.to?`${r.from}年`:`${r.from}〜${r.to}年`;
