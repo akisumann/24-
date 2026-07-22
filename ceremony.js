@@ -45,6 +45,11 @@
       apt:ROLES[rank(m.maxStats)[0]],
       age:m.age,
       level:level(m),
+      potentialLevel:Math.round(avg(m.maxStats)),
+      height:m.body.height,
+      bust:m.body.bust,
+      waist:m.body.waist,
+      hip:m.body.hip,
       becameShinra:shinraMikos.length>shinraBefore,
       child:child.given
     });
@@ -78,6 +83,13 @@
         ?`この七年、${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けたとのこと':'担い手が足らず民に痛手が及んだとのこと'}。`
         :'大きな波乱はなく、七年は穏やかに過ぎたとのこと。');
 
+    // 神床殿・入殿の自己紹介（選抜順位一位から十位）。
+    // 順に 名前・年齢・役職・潜在レベルを報告 → 中央布を捲り身を晒す → 身長・スリーサイズを報告。
+    const introductions=c.mothers.map((m,i)=>{
+      return `<div class="node"><div class="flex wrap center between gap2"><span class="medium">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
+        +`<div class="muted mt1">「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}にございます。」<br>——中央布を捲り上げ、身を神の御前へ晒す——<br>「身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
+    }).join('');
+
     const reports=c.mothers.map(m=>{
       const life=LIFE[(m.id*7+c.year)%LIFE.length];
       let s=`<div class="node"><div class="flex wrap center between gap2"><span class="medium">${m.name}</span><span class="badge">${m.apt}・${m.age}歳・Lv${m.level}</span></div>`;
@@ -94,6 +106,9 @@
     el.innerHTML=`
       <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 神、七年ぶりに顕現する</p></div><span class="badge">十人の報告</span></div>
       <div class="callout">${backdrop}</div>
+      <div class="muted medium">神床殿・入殿の自己紹介（選抜順位一位から十位）</div>
+      <div class="space3">${introductions}</div>
+      <div class="muted medium">この七年の報告</div>
       <div class="space3">${reports}</div>
       <div class="callout">${q}${hopeM?`<br><span class="medium">${hopeM.name}</span>は答えた——「${hope}」`:''}</div>
       <div class="muted">神は十人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。満足した神は再び眠りにつく——次に目覚めるとき、また七年が過ぎている。</div>`;
