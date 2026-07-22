@@ -193,9 +193,19 @@ SPD 52 → 1d52
 - `battle.js`
   - 現在のタイマン模擬戦試作。
 - `batch.js`
-  - 七十年進行。
+  - 七十年進行（`advance70` ボタンの処理）。
 - `hold.js`
-  - 長押し関連の試作。
+  - 七年進行ボタンの長押し連続進行。
+- `trend.js`
+  - 推移グラフ（神レベル・国家評判・親類縁者・成人平均レベル）。
+- `collapse.js`
+  - 各カードの折りたたみ。
+- `dashboard.js`
+  - タイル型ダッシュボードUIと上部固定HUD。既存カードを移設する。
+- `chronicle.js`
+  - 巫女詳細の「国での活躍」物語生成。
+- `role-balance.js`
+  - 役務の上限撤廃と時代の需要（時代年表・`window.MikoEra` API）。
 - `GAME_RULES.md`
   - ゲームルールの説明。
 - `WORLD_SETTING.md`
@@ -209,6 +219,42 @@ SPD 52 → 1d52
 - スキル利用可否は暫定判定。
 - 戦闘描写は能力の組み合わせを元にした短い定型文。
 - 現在の戦闘機能はまずタイマンを完成させる段階であり、部隊戦へ勝手に拡張しない。
+
+## 10. v11で加わった表示レイヤーと拡張設計
+
+v11では、固定版の既存関数を極力書き換えず、グローバル関数を**ラップ／上書き**して機能を足す方式で拡張している。新しい機能を足す際もこの作法に合わせること。
+
+### 拡張の作法
+
+- `render` / `renderDetail` / `renderRoles` / `renderRoleMembers` / `assignments` / `buildSaveData` / `restoreSaveData` などのグローバル関数をラップまたは上書きして機能を追加する。
+- DOMは既存要素の `innerHTML` を作り替えず、ノード移動（`dashboard.js`）や後付け要素（寸評・年表・物語）で拡張する。`getElementById` で参照される要素のIDは保持する。
+- モジュール間は `window.MikoEra` のような小さなAPIで疎結合につなぐ。
+- 読み込み順が重要（後のモジュールが前のラップを包む）。`role-balance.js` を最後に読み込む。
+- 各モジュールは自分のスタイルを `<style>` 注入で持ち、`index.html` へは `<script>` 参照のみを足す。
+
+### 固定ロジックへ入れた変更
+
+- `core.js`：`reputation()` を動的な `fame` 方式へ変更（`GAME_RULES.md`「国家評判」参照）。`reputationTarget()` / `syncFame()` を追加した。
+- `save.js`：`fame` / `fameYear` / `fameShinra` を保存・復元する。
+- `trend.js` と `role-balance.js` が `buildSaveData` / `restoreSaveData` をラップし、`trendLog` / `eraLog` を追記する。
+
+### セーブ形式の追加キー
+
+`fame` `fameYear` `fameShinra`（core/save）、`trendLog`（trend.js）、`eraLog`（role-balance.js）。旧セーブは各モジュールが後方互換で補完する。
+
+### `window.MikoEra` API（`role-balance.js` が公開）
+
+- `current()` → `{picks:[domain,...], key}` または `null`
+- `theme()` → `"討魔と国土の時代"` のような文字列
+- `isInDemand(role)` → その役務（ステータスキー）が今の時代の上位2ドメインに入るか
+- `domainKeyOfRole(role)` / `domainDesc(role)`
+
+### 既知の課題・未対応
+
+- **氏族の一強化**：長期進行で1氏族が現役40人近くまで寡占しうる（強い巫女の娘が残る仕様の帰結）。多様性を保つ抑制は未実装。
+- 時代の需要は現状フレーバーで、ゲーム効果（評判・イベント）へは未接続。
+- `chronicle.js` の物語は「現在の状態」からの生成で、巫女ごとの実際の功績履歴（大儀で産んだ娘の数、就任年など）は蓄積していない。
+- `advance70.js` はリポジトリに存在するが `index.html` から読み込まれておらず未使用（七十年進行は `batch.js` が担当）。
 
 ## 9. 別AIへの依頼テンプレート
 
