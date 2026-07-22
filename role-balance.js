@@ -1,5 +1,6 @@
-// 役務の上限撤廃＋役務バランス寸評（試作）。
+// 役務の上限撤廃＋時代の需要（試作）。
 // 固定版のコードは書き換えず、assignments と役務表示を上書き／ラップする。
+// 巫女の役務構成から「その時代が必要とするもの」を割り出し、歴代の移り変わりを記録する。
 // このファイルを外せば定員6人の再分配（固定版の挙動）に戻る。
 (function(){
   if(typeof assignments!=='function'||typeof render!=='function')return;
@@ -15,25 +16,56 @@
     return{workers,groups};
   };
 
-  // 役務ごとの、国全体としての傾き
-  const ROLE_TENDENCY={
-    HP:'国土と土地の安定に厚い',
-    MP:'神事と祈りに厚い',
-    ATK:'武と討伐に厚い',
-    DEF:'守りに厚い',
-    INT:'学識と儀礼に厚い',
-    SPD:'機動と連絡に厚い',
-    DEX:'制作と技術に厚い'
-  };
+  // 役務を「国の需要」ドメインへまとめる。戦闘系（討魔＋守護）は〈武〉。
+  const DOMAINS=[
+    {key:'武',   roles:['ATK','DEF'], desc:'魔物や戦乱への備えが国の急務となっている', theme:'武の時代'},
+    {key:'祈り', roles:['MP'],        desc:'神事と祈りで加護と人心を保つことが求められている', theme:'祈りの時代'},
+    {key:'地鎮', roles:['HP'],        desc:'土地と国土の安定が国の礎となっている', theme:'地鎮の時代'},
+    {key:'学識', roles:['INT'],       desc:'儀礼と学識で制度を整えることが重んじられている', theme:'学識の時代'},
+    {key:'巡行', roles:['SPD'],       desc:'各地を結ぶ巡行と伝令が国を支えている', theme:'巡行の時代'},
+    {key:'制作', roles:['DEX'],       desc:'神具や祭具の制作と技術が栄えている', theme:'制作の時代'}
+  ];
+  const ROLE_TENDENCY={HP:'国土と土地の安定',MP:'神事と祈り',ATK:'武と討伐',DEF:'守り',INT:'学識と儀礼',SPD:'機動と連絡',DEX:'制作と技術'};
+  const MAXLOG=400;
+
+  let eraLog=[],lastEraYear=null;
+
+  function domainOf(g){
+    const scored=DOMAINS.map(d=>({d,n:d.roles.reduce((s,r)=>s+g[r].length,0)}));
+    scored.sort((a,b)=>b.n-a.n||DOMAINS.indexOf(a.d)-DOMAINS.indexOf(b.d));
+    return scored[0];
+  }
+  function recordEra(key){
+    if(lastEraYear===year)return;
+    eraLog.push({year,key});
+    if(eraLog.length>MAXLOG)eraLog=eraLog.slice(-MAXLOG);
+    lastEraYear=year;
+  }
+
+  // 既存セーブから時代年表を復元し、以後のセーブへ追記する。
+  try{
+    const raw=localStorage.getItem('mikoGameSave_latest');
+    if(raw){const d=JSON.parse(raw);if(Array.isArray(d.eraLog)){eraLog=d.eraLog.slice(-MAXLOG);lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}}
+  }catch(e){}
+  if(typeof buildSaveData==='function'){
+    const before=buildSaveData;
+    buildSaveData=function(){const data=before();data.eraLog=eraLog;return data;};
+  }
+  if(typeof restoreSaveData==='function'){
+    const before=restoreSaveData;
+    restoreSaveData=function(raw){
+      let p=null;try{p=typeof raw==='string'?JSON.parse(raw):raw;}catch(e){}
+      if(p&&Array.isArray(p.eraLog)){eraLog=p.eraLog.slice(-MAXLOG);lastEraYear=eraLog.length?eraLog[eraLog.length-1].year:null;}
+      before(raw);
+    };
+  }
 
   // 2) 表示の「/6」「定員6人」を上限なし表記へ、説明文も更新する。
   const renderRolesBefore=renderRoles;
   renderRoles=function(){
     renderRolesBefore();
     const box=document.getElementById('roles');
-    if(box)box.querySelectorAll('.badge').forEach(b=>{
-      b.textContent=b.textContent.replace(/^(\d+)\/6$/,'$1人');
-    });
+    if(box)box.querySelectorAll('.badge').forEach(b=>{b.textContent=b.textContent.replace(/^(\d+)\/6$/,'$1人');});
     renderRoleBalance();
   };
 
@@ -46,40 +78,70 @@
     if(p)p.textContent=p.textContent.replace('定員6人','上限なし');
   };
 
-  // 3) 「〇〇の役職が多い」寸評
-  function ensureBalanceEl(){
-    let el=document.getElementById('roleBalance');
+  // 3) 「この時代が必要とするもの」の寸評＋役務の偏り
+  function ensureEl(id,cls,afterEl){
+    let el=document.getElementById(id);
     if(el)return el;
-    const rolesEl=document.getElementById('roles');
-    if(!rolesEl)return null;
+    if(!afterEl)return null;
     el=document.createElement('div');
-    el.id='roleBalance';
-    el.className='callout mt2';
-    rolesEl.insertAdjacentElement('afterend',el);
+    el.id=id;el.className=cls;
+    afterEl.insertAdjacentElement('afterend',el);
     return el;
   }
   function renderRoleBalance(){
-    const el=ensureBalanceEl();
-    if(!el)return;
+    const rolesEl=document.getElementById('roles');
+    if(!rolesEl)return;
     const g=assignments().groups;
     const counts=STATS.map(s=>({role:s,n:g[s].length})).sort((a,b)=>b.n-a.n||STATS.indexOf(a.role)-STATS.indexOf(b.role));
     const total=counts.reduce((n,c)=>n+c.n,0);
-    if(!total){el.textContent='役務に就く巫女がまだいない。';return;}
-    const top=counts[0],low=counts[counts.length-1];
-    const avg=total/STATS.length;
 
-    let s=`巫女団は<b>${ROLES[top.role]}</b>が最も多く（${top.n}人）、いまの国は${ROLE_TENDENCY[top.role]}。`;
-    if(top.n>=avg*1.6)s+=`役務がかなり偏っている。`;
-    if(low.n===0)s+=` 一方、<b>${ROLES[low.role]}</b>を担う者は不在で、その分野は手薄だ。`;
-    else if(low.n<=Math.max(1,Math.round(avg*0.5)))s+=` 一方、<b>${ROLES[low.role]}</b>は手薄（${low.n}人）。`;
-    el.innerHTML=s;
+    const balance=ensureEl('roleBalance','callout mt2',rolesEl);
+    if(balance){
+      if(!total){balance.textContent='役務に就く巫女がまだいない。';}
+      else{
+        const {d}=domainOf(g);
+        const domRoles=d.roles.map(r=>ROLES[r]).join('・');
+        const top=counts[0],low=counts[counts.length-1],avg=total/STATS.length;
+        let s=`この時代が必要とするもの：<b>${d.key}</b> — ${domRoles}が多く、${d.desc}。`;
+        if(top.n>=avg*1.6)s+=`役務は<b>${ROLES[top.role]}</b>（${ROLE_TENDENCY[top.role]}）へかなり偏っている。`;
+        if(low.n===0)s+=` 一方、<b>${ROLES[low.role]}</b>は不在で、その分野は手薄だ。`;
+        else if(low.n<=Math.max(1,Math.round(avg*0.5)))s+=` 一方、<b>${ROLES[low.role]}</b>は手薄（${low.n}人）。`;
+        balance.innerHTML=s;
+      }
+    }
+
+    if(total)recordEra(domainOf(g).d.key);
+    renderEraTimeline(ensureEl('eraTimeline','space3 mt2',balance));
+  }
+
+  function renderEraTimeline(box){
+    if(!box)return;
+    if(!eraLog.length){box.innerHTML='';return;}
+    // 連続する同一テーマの期間へ圧縮
+    const runs=[];
+    eraLog.forEach(e=>{
+      const last=runs[runs.length-1];
+      if(last&&last.key===e.key)last.to=e.year;
+      else runs.push({key:e.key,from:e.year,to:e.year});
+    });
+    const recent=runs.slice(-6);
+    const themeOf=k=>(DOMAINS.find(d=>d.key===k)||{}).theme||k;
+    const rows=recent.map((r,i)=>{
+      const isNow=i===recent.length-1;
+      const span=r.from===r.to?`${r.from}年`:`${r.from}〜${r.to}年`;
+      return `<div class="flex center between gap2">
+        <span class="muted">${span}</span>
+        <span class="medium">${themeOf(r.key)}${isNow?'（現在）':''}</span>
+      </div>`;
+    }).join('');
+    box.innerHTML=`<div class="muted medium">時代の移り変わり</div>${rows}`;
   }
 
   // 説明文を上限撤廃に合わせて更新
   const rolesEl=document.getElementById('roles');
   const card=rolesEl&&rolesEl.closest('.card');
   const desc=card&&card.querySelector('p.muted');
-  if(desc)desc.textContent='各巫女を第一適性へそのまま配属する（役務の上限は撤廃中）。';
+  if(desc)desc.textContent='各巫女を第一適性へ配属（上限なし）。役務構成がその時代の需要を映す。';
 
   render();
 })();
