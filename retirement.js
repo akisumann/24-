@@ -106,7 +106,19 @@ function runTurnWithBottomFiveRetirement(){
   }
   const recruits=[...rerolledRecruits,...fallbackRecruits];
 
-  updateKin(retirees,[...performanceDepartures,...overlapDepartures]);
+  // 定員維持（上限ガード）：50人を超えた分は、成人(20歳以上)の潜在能力下位から退任させる。
+  // 新生児・年少者(20歳未満)は対象外。下限側の通常補充と対になり、毎ターン必ず50人になる。
+  // ※新生児は必ず10人入るが退任(34歳)は毎ターン10人とは限らないため、この上限ガードが無いと
+  //   50人を超えたまま溜まっていく（従来のバグ）。
+  const capacityDepartures=[];
+  if(mikos.length>50){
+    const trimPool=mikos.filter(p=>p.age>=20).sort((a,b)=>avg(a.maxStats)-avg(b.maxStats)||a.id-b.id);
+    const trimIds=new Set(trimPool.slice(0,mikos.length-50).map(p=>p.id));
+    capacityDepartures.push(...mikos.filter(p=>trimIds.has(p.id)));
+    mikos=mikos.filter(p=>!trimIds.has(p.id));
+  }
+
+  updateKin(retirees,[...performanceDepartures,...overlapDepartures,...capacityDepartures]);
   year+=7;
 
   history.unshift({
@@ -116,6 +128,7 @@ function runTurnWithBottomFiveRetirement(){
     voluntary:performanceDepartures.length,
     performanceDepartures:performanceDepartures.length,
     overlap:overlapDepartures.length,
+    capacityDepartures:capacityDepartures.length,
     rerolledRecruits:rerolledRecruits.length,
     fallbackRecruits:fallbackRecruits.length,
     recruits:recruits.length,
@@ -127,7 +140,7 @@ function runTurnWithBottomFiveRetirement(){
   history=history.slice(0,8);
 
   document.getElementById('turnResult').textContent=
-    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人の潜在レベル+5基準による一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。`;
+    `${year}年目：大儀と子作りを完了。神の娘${newborns.length}人、任期終了${retirees.length}人、成人潜在能力下位5人の入れ替え${performanceDepartures.length}人、妊娠時期重複による脱会${overlapDepartures.length}人。その後、下位5人の潜在レベル+5基準による一般公募${rerolledRecruits.length}人、通常補充${fallbackRecruits.length}人。${capacityDepartures.length?`定員超過による退任${capacityDepartures.length}人。`:''}`;
 
   if(!mikos.some(p=>p.id===selectedId))selectedId=null;
   render();
@@ -139,7 +152,7 @@ renderHistory=function(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人</div>
+      <div class="muted">大儀・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人${h.capacityDepartures?`／定員超過退任${h.capacityDepartures}人`:''}</div>
       <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
