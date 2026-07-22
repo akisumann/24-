@@ -44,8 +44,11 @@
 
     if(p.age<13){
       const topStat=rank(p.maxStats)[0];
-      return `${p.given}はまだ幼く、${p.family}一族のもとで巫女としての修練を始めたばかりだ。`
+      let s=`${p.given}はまだ幼く、${p.family}一族のもとで巫女としての修練を始めたばかりだ。`
         +`国への務めはこれからだが、${STAT_JP[topStat]}に秀でた素質を早くも覗かせている。`;
+      const theme=window.MikoEra&&MikoEra.theme();
+      if(theme)s+=`${theme}のただ中に生を受けた世代である。`;
+      return s;
     }
 
     const role=roleOf(p)||rank(current(p))[0];
@@ -68,6 +71,16 @@
 
     if(clanCount>=3){
       s+=`${p.family}一族は現役${clanCount}人を擁し、その一門の中心にある。`;
+    }
+
+    // その時代の需要（上位2役務）と、本人の役割の噛み合いを織り込む
+    const theme=window.MikoEra&&MikoEra.theme();
+    if(theme){
+      if(MikoEra.isInDemand(role)){
+        s+=`折しも${theme}にあって、その働きはいま国が最も求めるものと重なっている。`;
+      }else{
+        s+=`いまは${theme}。時流の中心ではないが、${ROLES[role]}の務めは欠かせぬものとして国を下支えしている。`;
+      }
     }
     return s;
   }

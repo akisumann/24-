@@ -157,5 +157,14 @@
   const desc=card&&card.querySelector('p.muted');
   if(desc)desc.textContent='各巫女を得意な役務へ配属（上限なし）。役務の顔ぶれが、その時代に求められたものを映す。';
 
+  // 他モジュール（chronicle.js など）から時代情報を参照するための小さなAPI。
+  window.MikoEra={
+    current:()=>eraOf(assignments().groups),
+    theme(){const e=eraOf(assignments().groups);return e?e.key+'の時代':null;},
+    domainKeyOfRole(role){const d=DOMAINS.find(dd=>dd.roles.includes(role));return d?d.key:null;},
+    isInDemand(role){const e=eraOf(assignments().groups);return !!e&&e.picks.some(d=>d.roles.includes(role));},
+    domainDesc(role){const d=DOMAINS.find(dd=>dd.roles.includes(role));return d?d.desc:'';}
+  };
+
   render();
 })();
