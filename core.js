@@ -1,5 +1,6 @@
 const MAX_LEVEL=100;
 let year=0,nextId=1,selectedId=null,selectedRole=null,history=[],lastKinChange=0,godLevel=50,shinraMikos=[];
+let fame=0,fameYear=null,fameShinra=0;
 function rate(age){if(age===6)return.2;if(age===13)return.4;if(age===20)return.6;if(age===27)return.8;return 1}
 function current(p){const r=rate(p.age);return Object.fromEntries(STATS.map(s=>[s,Math.round(p.maxStats[s]*r)]))}
 function level(p){return Math.min(MAX_LEVEL,Math.round(avg(current(p))))}
@@ -131,6 +132,25 @@ function updateKin(retirees,departures){
 
 function assignments(){const workers=mikos.filter(p=>p.age>=13).map(p=>{const stats=current(p);return{person:p,stats,prefs:rank(stats),role:null}}),groups=Object.fromEntries(STATS.map(s=>[s,[]]));workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w)});let changed=true,safe=0;while(changed&&safe++<100){changed=false;for(const role of STATS){if(groups[role].length<=ROLE_LIMIT)continue;groups[role].sort((a,b)=>a.stats[role]-b.stats[role]);const overflow=groups[role].slice(0,groups[role].length-ROLE_LIMIT);for(const w of overflow){const dest=w.prefs.find(s=>s!==role&&groups[s].length<ROLE_LIMIT);if(!dest)continue;groups[role]=groups[role].filter(x=>x.person.id!==w.person.id);w.role=dest;groups[dest].push(w);changed=true}}}return{workers,groups}}
 function roleOf(p){return assignments().workers.find(w=>w.person.id===p.id)?.role||null}
-function reputation(){return Math.round(year*.25+mikos.filter(p=>p.age>=20).reduce((n,p)=>n+level(p),0)/30)}
+// 国家評判は「現在の実力に基づく均衡値」へ毎ターン緩やかに減衰しつつ、
+// 神羅巫女の実績でスパイク加点する動的な値。経過年による無制限の増加はしない。
+function reputationTarget(){
+  const adults=mikos.filter(p=>p.age>=20);
+  const avgLv=adults.length?adults.reduce((n,p)=>n+level(p),0)/adults.length:0;
+  return avgLv*1.4+(godLevel-50)*1.2;
+}
+function syncFame(){
+  if(fameYear===year)return;
+  if(fameYear===null){fame=reputationTarget();fameYear=year;fameShinra=shinraMikos.length;return;}
+  const steps=Math.max(1,Math.round((year-fameYear)/7));
+  const gained=Math.max(0,shinraMikos.length-fameShinra);
+  const target=reputationTarget();
+  for(let i=0;i<steps;i++)fame+=(target-fame)*0.34; // 時間経過で均衡へ減衰／接近
+  fame+=gained*6;                                    // 神羅巫女という実績で一時的に加点
+  if(fame<0)fame=0;
+  fameYear=year;
+  fameShinra=shinraMikos.length;
+}
+function reputation(){syncFame();return Math.round(fame)}
 function fameText(){const f=reputation();if(f<40)return'契約事業はまだ広く知られていない。';if(f<90)return'高待遇の国家特別職として近隣で評判になっている。';if(f<170)return'地方各地から優秀な志願者が集まる。';if(f<280)return'国内有数の人材育成事業として知られている。';return'国外の有力者からも志願希望が届いている。'}
 function recruitLevel(){return Math.max(8,Math.min(80,Math.round(14+reputation()/8+rand(-14,14))))}

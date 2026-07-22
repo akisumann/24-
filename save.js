@@ -18,6 +18,9 @@ function buildSaveData(){
     lastKinChange,
     godLevel,
     shinraMikos,
+    fame,
+    fameYear,
+    fameShinra,
     mikos,
     kin
   };
@@ -41,6 +44,14 @@ function restoreSaveData(raw){
   lastKinChange=Number(data.lastKinChange)||0;
   godLevel=data.godLevel;
   shinraMikos=Array.isArray(data.shinraMikos)?data.shinraMikos:[];
+  if(typeof data.fame==='number'){
+    fame=data.fame;
+    fameYear=typeof data.fameYear==='number'?data.fameYear:data.year;
+    fameShinra=typeof data.fameShinra==='number'?data.fameShinra:shinraMikos.length;
+  }else{
+    fameYear=null; // 旧セーブ：復元後の初回同期で現在の実力から均衡値に再設定
+    fameShinra=0;
+  }
   mikos=data.mikos;
   Object.keys(kin).forEach(key=>delete kin[key]);
   Object.entries(data.kin).forEach(([family,value])=>kin[family]=value);
