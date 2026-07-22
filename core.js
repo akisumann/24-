@@ -9,8 +9,9 @@ function makeStats(base){return Object.fromEntries(STATS.map(s=>[s,Math.max(1,Ma
 function makeSkills(stats,id){const r=rank(stats),src=[r[0],r[0],r[1],r[2],r[3]],used=new Set();return src.map((s,i)=>{const list=SKILLS[s];let n=(id*13+i*7)%list.length;while(used.has(list[n][0]))n=(n+1)%list.length;used.add(list[n][0]);return{name:list[n][0],effect:list[n][1],stat:s}})}
 const BODY_BASE_START=90,BODY_BASE_RATE=0.1;              // 胸・尻の基準値。7年（1ターン）ごとに0.1ずつ上がる。
 function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
-// 初期採用・国家公募など外部出身者は、神の基準ではなく現実の女性の平均からランダムに与える。
-function body(){return{height:rand(150,172),bust:rand(80,100),waist:rand(66,84),hip:rand(88,106),hair:pick(HAIR)}}
+// 初期採用・国家公募など外部出身者は、神の基準ではなく現実の日本人女性の平均からランダムに与える。
+// 中心はおおむね バスト84 / ウエスト64 / ヒップ91 / 身長158cm（JIS 9号相当）。
+function body(){return{height:rand(150,166),bust:rand(76,92),waist:rand(56,72),hip:rand(84,98),hair:pick(HAIR)}}
 function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,skills:makeSkills(maxStats,id)}}
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
