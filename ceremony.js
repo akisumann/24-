@@ -149,10 +149,10 @@
     const ev=(window.MikoEvents&&MikoEvents.latest&&MikoEvents.latest())||null;
 
     // 神床殿・入殿の自己紹介（選抜順位一位から十位）。
-    // 順に 名前・年齢・役職・潜在レベルを報告 → 中央布を捲り身を晒す → 身長・スリーサイズを報告。
+    // 順に 名前・年齢・役職・潜在レベルを報告 → 中央布を首元で背へ回し身を晒す → 身長・スリーサイズを報告。
     const introductions=c.mothers.map((m,i)=>{
       return `<div class="node"><div class="flex wrap center between gap2"><span class="medium">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
-        +`<div class="muted mt1">「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}にございます。」<br>——中央布を捲り上げ、身を神の御前へ晒す——<br>「身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
+        +`<div class="muted mt1">「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}にございます。」<br>——中央布を首元で背へ回し、身を神の御前へ晒す——<br>「身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
     }).join('');
 
     // 「この七年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
