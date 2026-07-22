@@ -1,9 +1,11 @@
 function makeRecruitFromDeparture(source){
   const id=nextId++;
   const sourcePotentialLevel=Math.round(avg(source.maxStats));
-  // 退任者の潜在レベル+5 と、国家評判−10 の高い方を目標潜在レベルとする。
-  // 評判が高いほど、弱い退任者の穴でも良い人材が集まる。
-  const targetPotentialLevel=Math.max(sourcePotentialLevel+5,reputation()-10);
+  // 退任者の潜在レベル+5 を下限、神レベルを上限として、その範囲で目標潜在レベルを定める。
+  // 神レベルは緩やかにしか上がらない上限付きの値なので、評判との暴走ループを避けられる。
+  // 上限が下限を下回る場合（強い退任者×低い神レベル）は下限をそのまま用いる。
+  const floorLevel=sourcePotentialLevel+5;
+  const targetPotentialLevel=godLevel>floorLevel?rand(floorLevel,godLevel):floorLevel;
   const targetTotal=targetPotentialLevel*STATS.length;
 
   // 能力の偏りはランダムにしつつ、7項目の平均は目標潜在レベルへ正確に合わせる。
