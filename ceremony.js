@@ -141,18 +141,19 @@
     if(!el)return;
     if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
     if(!lastCeremony){
-      el.innerHTML='<h2>大儀の対話</h2><p class="muted">神はいま眠っている。七年を進めると顕現し、選ばれた十人の報告を聞く。</p>';
+      el.innerHTML='<h2>大儀の対話</h2><p class="muted">淫欲神はいま眠っている。七年を進めると、選ばれた十人が潮吹きの儀で神を招き降ろし、その報告を聞く。</p>';
       return;
     }
     const c=lastCeremony;
     const theme=(window.MikoEra&&MikoEra.theme&&MikoEra.theme())||null;
     const ev=(window.MikoEvents&&MikoEvents.latest&&MikoEvents.latest())||null;
 
-    // 神床殿・入殿の自己紹介（選抜順位一位から十位）。
-    // 順に 名前・年齢・役職・潜在レベルを報告 → 中央布を首元で背へ回し身を晒す → 身長・スリーサイズを報告。
+    // 神床殿・降臨と自己紹介（選抜順位一位から十位）。
+    // 十人は半円に立ち、中央布を外して足元へ横長に敷き、布の両端に足を置いた開脚のガニ股で全身を晒す。
+    // その姿勢で自淫し、潮吹きの愛液が淫欲神を招き降ろす。以降、一位から十位まで一続きに自己紹介する。
     const introductions=c.mothers.map((m,i)=>{
       return `<div class="node"><div class="flex wrap center between gap2"><span class="medium">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
-        +`<div class="muted mt1">「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}にございます。」<br>——中央布を首元で背へ回し、身を神の御前へ晒す——<br>「身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
+        +`<div class="muted mt1">開脚のまま——「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}。身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
     }).join('');
 
     // 「この七年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
@@ -185,15 +186,16 @@
     const hope=HOPES[c.year%HOPES.length];
 
     el.innerHTML=`
-      <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 神、七年ぶりに顕現する</p></div><span class="badge">神床殿</span></div>
-      <div class="muted medium">神床殿・入殿の自己紹介（選抜順位一位から十位）</div>
+      <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、七年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
+      <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布の両端に足を置いて大きく開脚し（カカトを浮かせたつま先立ち気味のガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が御前へ降りかかると、淫欲神が七年ぶりに降臨する。</div>
+      <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
       ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
       <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
       <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
       <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>
       <div class="callout">${q}${hopeM?`<br><span class="medium">${hopeM.name}</span>は答えた——「${hope}」`:''}</div>
-      <div class="muted">神は十人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。満足した神は再び眠りにつく——次に目覚めるとき、また七年が過ぎている。</div>`;
+      <div class="muted">淫欲神は十人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。手練手管に骨抜きにされ、報告はしばしば嬌声に溶けた。満足した神は再び眠りにつく——次の降臨は、また七年ののち、十人の潮吹きの儀によって招かれる。</div>`;
 
     bindLog();
     showLogEntry(logIndex);
