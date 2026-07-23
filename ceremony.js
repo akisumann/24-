@@ -188,7 +188,7 @@
       <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 神、七年ぶりに顕現する</p></div><span class="badge">神床殿</span></div>
       <div class="muted medium">神床殿・入殿の自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
-      ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ヒップ${f.hip}）であった——その寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
+      ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
       <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
       <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
       <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>
