@@ -161,7 +161,7 @@ function renderRoster(){
         <span class="badge">Lv${level(p)}</span>
       </div>
       <div class="mt2">${p.age<13?'役務修練前':role?ROLES[role]:'役務待機'}</div>
-      ${p.favored?'<div class="mt2 medium">寵愛の子</div>':''}
+      ${p.favored?'<div class="mt2 medium">最寵の子</div>':''}
       ${clanCount>=3?`<div class="mt2">${p.family}一族・現役${clanCount}人</div>`:''}
       ${p.age===34?'<div class="mt2 medium">次の大儀後に任期終了</div>':''}
     </button>`;
@@ -195,7 +195,7 @@ function renderDetail(){
     <span class="badge">${p.age<20?'仮巫女':'正式巫女'}</span>
     ${p.age>=20?'<span class="badge">大儀選抜対象</span>':''}
     ${role?`<span class="badge">${ROLES[role]}</span>`:''}
-    ${p.favored?'<span class="badge">寵愛の子</span>':''}
+    ${p.favored?'<span class="badge">最寵の子</span>':''}
     ${clan.length>=3?`<span class="badge">${p.family}一族 ${clan.length}人</span>`:''}
   </div>
   <div class="grid g4 gap2">
