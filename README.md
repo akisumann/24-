@@ -10,11 +10,21 @@
 
 ## 設定資料
 
+全体の地図は [`INDEX.md`](INDEX.md)（AI向け文書地図）を参照してください。話題からどのファイルを見ればよいかを引けます。
+
 ゲーム上の処理と、世界の中での意味を混同しないよう、資料を分けています。
 
-- [`GAME_RULES.md`](GAME_RULES.md) — 年齢進行、能力計算、選抜、役務、親類縁者などのゲーム仕様
+- [`INDEX.md`](INDEX.md) — 設定資料インデックス（どこに何が書いてあるかの地図）
+- [`AI_HANDOFF.md`](AI_HANDOFF.md) — AI向け引き継ぎ書（データ検証ゲート・数値/描写ルール・ファイル構成）
+- [`GAME_RULES.md`](GAME_RULES.md) — 年齢進行、能力計算、選抜、退任、役務、評判、親類縁者などのゲーム仕様
+- [`RETIREMENT_RULE.md`](RETIREMENT_RULE.md) — 成人巫女の下位5人退任ルール
+- [`MIKO_TURNOVER_SETTING.md`](MIKO_TURNOVER_SETTING.md) — 登録枠の流動制度と神羅巫女の初出時期
 - [`LEVEL_GUIDE.md`](LEVEL_GUIDE.md) — 世界共通の1〜100レベル指標と物語上の強さの目安
-- [`WORLD_SETTING.md`](WORLD_SETTING.md) — 巫女の生活、仕事、政治、婚姻、国家制度としての意味
+- [`WORLD_SETTING.md`](WORLD_SETTING.md) — 巫女の生活、仕事、政治、婚姻、遺伝、加護、国家制度としての意味
+- [`SHINSHODEN.md`](SHINSHODEN.md) — 神床殿（大儀の場）の進行
+- [`MIKO_FORMAL_WEAR.md`](MIKO_FORMAL_WEAR.md) — 巫女の基本正装＝御種衣の構造仕様
+- [`MIKO_FORMAL_ATTIRE.md`](MIKO_FORMAL_ATTIRE.md) — 正装の露出と役割・対人での意味
+- [`MIKO_CLOTHING_AND_MARRIAGE.md`](MIKO_CLOTHING_AND_MARRIAGE.md) — 御種衣の機能・婚姻での扱い
 
 巫女団の役務はゲーム上の適性分類であり、巫女本人の日常の本業を固定するものではありません。
 巫女は7年ごとの大儀に備えつつ、普段は別の仕事、政治、家庭生活、穏やかな暮らしなどを自由に送ります。
