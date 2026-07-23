@@ -13,11 +13,11 @@ function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
 // 中心はおおむね バスト84 / ウエスト64 / ヒップ91 / 身長158cm（JIS 9号相当）。
 function body(){return{height:rand(150,166),bust:rand(76,92),waist:rand(56,72),hip:rand(84,98),hair:pick(HAIR)}}
 function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,skills:makeSkills(maxStats,id)}}
-let favoredMotherId=null; // 最寵：この大儀で胸＋尻が最大の母のid（retirement.jsが毎大儀に設定）。
+let favoredMotherId=null; // 大寵愛：この大儀で胸＋尻が最大の母のid（retirement.jsが毎大儀に設定）。
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
-  // 最寵された母（最も豊満＝神が最も激しく求めた者）の娘は、能力乱数の下限だけ 0.5→0.6 に上がる（上限1.5は据え置き）。
-  // 最寵の有無で srandom の消費回数は変わらない（各項目1回）ため、シード再現性は保たれる。
+  // 大寵愛された母（最も豊満＝神が最も激しく求めた者）の娘は、能力乱数の下限だけ 0.5→0.6 に上がる（上限1.5は据え置き）。
+  // 大寵愛の有無で srandom の消費回数は変わらない（各項目1回）ため、シード再現性は保たれる。
   const favored=(favoredMotherId!==null&&m.id===favoredMotherId);
   STATS.forEach(s=>{
     const multiplier=favored?(.6+srandom()*.9):(.5+srandom());
@@ -25,7 +25,7 @@ function makeChild(m){
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
   const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:srandom()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
-  if(favored)child.favored=true; // 最寵の子（娘バッジ用）
+  if(favored)child.favored=true; // 大寵愛の子（娘バッジ用）
   const motherLevel=level(m);
   const raisedFromChildhood=m.origin==='神の娘・国家育成対象';
   if(raisedFromChildhood&&usedGodLevel<MAX_LEVEL&&motherLevel>=usedGodLevel+30){
