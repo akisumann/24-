@@ -187,7 +187,7 @@
 
     el.innerHTML=`
       <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、七年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
-      <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が御前へ降りかかると、淫欲神が七年ぶりに降臨する。</div>
+      <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が七年ぶりに降臨する。</div>
       <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
       ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
