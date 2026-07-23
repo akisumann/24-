@@ -1,5 +1,5 @@
 // AI・自動解析ツール向け 実行規約（v16拡張）。全モジュールの後（最後）に読む。
-// このゲームの状態は「本物のHTMLを実ブラウザで走らせて読む」以外の方法で得てはならない。
+// このゲームの状態は「本物の無改変コードを（実ブラウザでも、DOMをスタブしたヘッドレスNodeでも）最後まで走らせて読む」以外の方法で得てはならない。
 // 再実装・別言語への移植・乱数(srandom)消費順の手動再現・コードからの推測は、結果がずれるため禁止。
 (function(){
   // 機械可読の実行規約。
@@ -31,7 +31,7 @@
       throw new Error("ゲームの実行が完了していません（MIKO_GAME_RUNTIME_READY が未設定）。");
     if(typeof buildSaveData!=='function')
       throw new Error("buildSaveData が見つかりません。本物のゲームが読み込まれていない可能性があります。");
-    return structuredClone(Object.assign({executionPolicy:"REAL_BROWSER_ONLY"},buildSaveData()));
+    return structuredClone(Object.assign({executionPolicy:"UNMODIFIED_GAME_CODE_RUN_IN_FULL_ANY_JS_RUNTIME"},buildSaveData()));
   };
 
   // 画面にも小さく注意書きを出す（人間の遊びを邪魔しない程度に、末尾へ控えめに）。
