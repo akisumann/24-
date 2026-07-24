@@ -91,6 +91,8 @@
       +(strongWilled?'気位は高く強気だが、いざ抱かれれば結局は攻め落とされ、悦んで屈する。'
                     :'責められると脆く、翻弄されて果てる側になりがち。')+'</div>';
     h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
+    // 一般公募（外部出身の1世代目）の一部は、御種衣にまだ慣れず稀に恥じらう。
+    if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="mt1 muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
     if(isMarried(p))h+=`<div class="mt1">婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
     else h+=`<div class="mt1">婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
     if(clanCount>=4)h+=`<div class="mt1 muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
