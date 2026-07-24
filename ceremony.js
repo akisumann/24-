@@ -190,7 +190,7 @@
       <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が七年ぶりに降臨する。</div>
       <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
-      ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
+      ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ウエスト${f.waist}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
       <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
       <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
       <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>

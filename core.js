@@ -13,7 +13,7 @@ function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
 // 中心はおおむね バスト84 / ウエスト64 / ヒップ91 / 身長158cm（JIS 9号相当）。
 function body(){return{height:rand(150,166),bust:rand(76,92),waist:rand(56,72),hip:rand(84,98),hair:pick(HAIR)}}
 function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,skills:makeSkills(maxStats,id)}}
-let favoredMotherId=null; // 大寵愛：この大儀で胸＋尻が最大の母のid（retirement.jsが毎大儀に設定）。
+let favoredMotherId=null; // 大寵愛：この大儀で「胸＋尻−腰×0.5」が最大の母のid（retirement.jsが毎大儀に設定）。
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
   // 大寵愛された母（最も豊満＝神が最も激しく求めた者）の娘は、能力乱数の下限だけ 0.5→0.6 に上がる（上限1.5は据え置き）。
