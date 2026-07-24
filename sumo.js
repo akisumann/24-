@@ -1,5 +1,6 @@
-// 三点相撲（お遊び）：半径1メートルの土俵で、二つの乳首とクリトリスの三点だけを
-// 相手に擦りつけ合い、先に尻餅をついた方が負け。成人（20歳以上）の巫女のみ。
+// 三点相撲（お遊び）：御種衣の布を地に敷いて体が触れ合うほど間近に相対し、二つの
+// 乳首とクリトリスの三点だけを擦りつけ合い、布から足が出るか尻餅をついた方が負け。
+// 成人（20歳以上）の巫女のみ。
 // 模擬戦と同じく「今この場の余興」なので、タイムラインのシード乱数（srandom）は
 // 一切消費しない。独立した Math.random を使い、シード＋年数の再現性を壊さない。
 // 深い世代ほどクリトリスが巨大で攻めは強いが、その分過敏で脆く、耐えは下がる。
@@ -61,11 +62,13 @@
     '押し当てられるたびに乳がビュッと噴き、股から潮が滴った',
     'ぷっくり尖った乳首から乳を漏らし、潮でしとどに濡れた'
   ];
-  // 尻餅をつく側の、絶頂を伴う決まり。
+  // 負けの決まり（絶頂を伴う）。尻餅をつくか、耐えかねて布から足が出る。
   const FALLS=[
     '「い、イっ……くぅっ!!」とこらえきれず達し、潮を高く吹き上げながらぺたんと尻餅をついた',
     '乳をビュクビュク噴きこぼしながら「んぁあああっ——!!」と絶頂し、腰砕けに尻餅をついた',
-    'クリトリスを擦り潰されて「イくっ、イっちゃうっ!!」と達し、潮を撒き散らして土俵に尻餅をついた'
+    'クリトリスを擦り潰されて「イくっ、イっちゃうっ!!」と達し、潮を撒き散らして布に尻餅をついた',
+    '「あっ、あっ、で、出るっ——!!」と達しながらよろけ、たまらず布から足を踏み出してしまった',
+    '膝を震わせて後ずさり、こらえた拍子に潮を吹きながら片足が布の外へこぼれ落ちた'
   ];
 
   function roll(max){return srand(1,Math.max(1,Math.round(max)));}
@@ -109,12 +112,12 @@
         ?`${full(loser)}は巨大なクリトリスゆえに過敏で、かえって先に音を上げた。`
         :`際どい擦り合いを${full(winner)}が制した。`);
     box.innerHTML=`<div class="space3">
-      <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三点相撲・二本先取（半径1mの土俵）</p></div><span class="badge">${full(winner)} 勝利</span></div>
+      <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三点相撲・二本先取（御種衣の布の上）</p></div><span class="badge">${full(winner)} 勝利</span></div>
       ${rounds.map(r=>{const rl=r.winner.id===a.id?b:a;return `<div class="node space3">
         <div class="flex between gap2"><span class="medium">第${r.n}番</span><span class="badge">${full(r.winner)}</span></div>
-        <p>${full(r.winner)}は${r.move}。${full(rl)}は「${r.moan}」と嬌声をあげてのけぞり、${r.fluid}。そのまま土俵際まで押し込まれた。</p>
+        <p>${full(r.winner)}は${r.move}。${full(rl)}は「${r.moan}」と嬌声をあげてのけぞり、${r.fluid}。そのまま布の端まで押し込まれた。</p>
       </div>`;}).join('')}
-      <div class="callout"><span class="medium">決着：</span>${full(loser)}は${lastSumo.fall}。${full(winner)}が${wins[winner.id]}本先取で勝利した。${clitNote}</div>
+      <div class="callout"><span class="medium">決着：</span>${full(loser)}は${lastSumo.fall}。${full(winner)}が${wins[winner.id]}勝${3-wins[winner.id]}敗で勝利した。${clitNote}</div>
     </div>`;
   }
 
