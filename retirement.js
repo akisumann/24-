@@ -39,6 +39,7 @@ function makeRecruitFromDeparture(source){
     body:body(),
     origin:'国家公募採用・下位退任者潜在レベル+5基準',
     mother:'—',
+    generation:1,
     skills:makeSkills(maxStats,id)
   };
 }
