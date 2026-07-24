@@ -30,6 +30,18 @@
   const CLIT_SENS=['','敏感','鋭敏','過敏','掠めるだけで達するほど過敏'];
   function clitMm(gen){return 6+(Math.max(1,gen)-1);}
   function clitSens(gen){return CLIT_SENS[Math.min(Math.max(1,gen),CLIT_SENS.length-1)];}
+  // 婚姻と夫との実子（決定論的・id基準、乱数は一切消費しない）。
+  // 早ければ20歳・遅くとも27歳で全員結婚。夫との子：20歳0〜1／〜27で+1〜3／〜34で+1〜3。
+  function hp(id,salt,mod){return (id*31+salt*17)%mod;}
+  function earlyMarried(p){return hp(p.id,1,5)<3;}                 // 約6割が20歳で既婚
+  function isMarried(p){return p.age>=27||earlyMarried(p);}         // 27歳以降は例外なく夫あり
+  function kidsByHusband(p){
+    let n=0;
+    if(p.age>=20&&earlyMarried(p))n+=hp(p.id,2,2);                 // 20歳までに0〜1（早婚のみ）
+    if(p.age>=27)n+=1+hp(p.id,3,3);                                // 〜27で+1〜3
+    if(p.age>=34)n+=1+hp(p.id,4,3);                                // 〜34で+1〜3
+    return n;
+  }
   function clitStage(gen){
     if(gen>=35)return'・小陰茎化（自ら擦り続けねば疼きに耐えられぬ）';
     if(gen>=30)return'・歩くだけで揺れて絶頂';
@@ -79,6 +91,8 @@
       +(strongWilled?'気位は高く強気だが、いざ抱かれれば結局は攻め落とされ、悦んで屈する。'
                     :'責められると脆く、翻弄されて果てる側になりがち。')+'</div>';
     h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
+    if(isMarried(p))h+=`<div class="mt1">婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
+    else h+=`<div class="mt1">婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
     if(clanCount>=4)h+=`<div class="mt1 muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
     return h;
   }
