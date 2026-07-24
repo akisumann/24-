@@ -1,6 +1,6 @@
 // タイル型ダッシュボード（v16・SimCity風）：縦長の書類レイアウトを、
 // 上部固定HUD＋タイル状のパネル群へ組み替える表示レイヤー。
-// ロジック（七年進行・一族計算・セーブ）には触れず、既存カードを移設するだけ。
+// ロジック（7年進行・一族計算・セーブ）には触れず、既存カードを移設するだけ。
 (function(){
   const main=document.querySelector('main');
   const section=main&&main.querySelector('.section');
@@ -50,8 +50,8 @@ main.miko-dash{max-width:1280px}
   const controls=document.createElement('div');
   controls.className='hud-controls';
   controls.innerHTML=`
-    <button type="button" class="hud-btn primary" id="hudAdvance">▶ 七年進める</button>
-    <button type="button" class="hud-btn" id="hudAdvance70">×10（七十年）</button>
+    <button type="button" class="hud-btn primary" id="hudAdvance">▶ 7年進める</button>
+    <button type="button" class="hud-btn" id="hudAdvance70">×10（70年）</button>
     <span class="sep"></span>
     <button type="button" class="hud-btn ghost" id="hudExpandAll">全開く</button>
     <button type="button" class="hud-btn ghost" id="hudCollapseAll">全畳む</button>`;

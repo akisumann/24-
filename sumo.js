@@ -1,4 +1,4 @@
-// 三点相撲（お遊び）：御種衣の布を地に敷いて体が触れ合うほど間近に相対し、二つの
+// 三点相撲（お遊び）：御種衣の布を地に敷いて体が触れ合うほど間近に相対し、2つの
 // 乳首とクリトリスの三点だけを擦りつけ合い、布から足が出るか尻餅をついた方が負け。
 // 成人（20歳以上）の巫女のみ。
 // 模擬戦と同じく「今この場の余興」なので、タイムラインのシード乱数（srandom）は
@@ -41,7 +41,7 @@
   const MOVES=[
     '乳首を相手の乳首へ押し当て、ぐりぐりと擦り立てた',
     '硬く尖ったクリトリスを相手の秘玉へ突き当て、腰を使って捏ね回した',
-    '胸を押し付けて二つの乳首を同時に擦り上げた',
+    '胸を押し付けて2つの乳首を同時に擦り上げた',
     '三点すべてを押し付けたまま、腰をうねらせて捏ねくり回した',
     'クリトリス同士を弾き合わせ、相手の膝を笑わせた'
   ];
@@ -104,7 +104,7 @@
   function renderResult(){
     const box=document.getElementById('sumoResult');
     if(!box)return;
-    if(!lastSumo){box.innerHTML='二人を選び、「立合い開始」を押してください。';return;}
+    if(!lastSumo){box.innerHTML='2人を選び、「立合い開始」を押してください。';return;}
     const {a,b,rounds,wins,winner,loser}=lastSumo;
     const clitNote=clitOf(winner)>clitOf(loser)
       ?`より大きなクリトリスを持つ${full(winner)}が三点で押し勝った。`
@@ -112,7 +112,7 @@
         ?`${full(loser)}は巨大なクリトリスゆえに過敏で、かえって先に音を上げた。`
         :`際どい擦り合いを${full(winner)}が制した。`);
     box.innerHTML=`<div class="space3">
-      <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三点相撲・二本先取（御種衣の布の上）</p></div><span class="badge">${full(winner)} 勝利</span></div>
+      <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三点相撲・2本先取（御種衣の布の上）</p></div><span class="badge">${full(winner)} 勝利</span></div>
       ${rounds.map(r=>{const rl=r.winner.id===a.id?b:a;return `<div class="node space3">
         <div class="flex between gap2"><span class="medium">第${r.n}番</span><span class="badge">${full(r.winner)}</span></div>
         <p>${full(r.winner)}は${r.move}。${full(rl)}は「${r.moan}」と嬌声をあげてのけぞり、${r.fluid}。そのまま布の端まで押し込まれた。</p>

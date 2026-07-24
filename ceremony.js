@@ -1,10 +1,10 @@
-// 大淫義の対話（v16拡張）：七年ごとに神が顕現し、選ばれた十人の巫女が
-// この七年の出来事と自らの暮らしを過去形で報告する、一回分の物語サイクルを表示する。
+// 大淫義の対話（v16拡張）：7年ごとに神が顕現し、選ばれた10人の巫女が
+// この7年の出来事と自らの暮らしを過去形で報告する、1回分の物語サイクルを表示する。
 // makeChild で母を捕捉し、render をラップして描く非侵襲モジュール。ceremony は最後に読む。
 (function(){
   if(typeof makeChild!=='function'||typeof render!=='function')return;
 
-  // この七年、巫女の身に起きたこと（暮らしの細部）。母のidと年で決定論的に選ぶ。
+  // この7年、巫女の身に起きたこと（暮らしの細部）。母のidと年で決定論的に選ぶ。
   const LIFE=[
     '務めの傍ら、里の子らに読み書きを教えておりました。',
     '伴侶を得て、新たな家庭を築きました。',
@@ -18,32 +18,32 @@
     '神具や祭具の新しい意匠に、工夫を凝らしておりました。'
   ];
   const GODQ=[
-    '神は「この七年、民は笑っていたか」と問うた。',
+    '神は「この7年、民は笑っていたか」と問うた。',
     '神は「そなた自身は、幸せであったか」と問うた。',
     '神は「次代に、何を遺したいか」と問うた。'
   ];
   const HOPES=[
-    '願わくは、次の七年が民にとって穏やかでありますように。',
+    '願わくは、次の7年が民にとって穏やかでありますように。',
     '一族の若い娘が、無事に巫女として立てるように見守ってほしいのです。',
-    'この身が衰える前に、もう一度あなたの娘を授かりとうございます。',
+    'この身が衰える前に、もう1度あなたの娘を授かりとうございます。',
     '手薄な役務にも、新たな担い手が集まりますように。',
-    '長く争う二つの氏族が、和解できる日を望んでおります。'
+    '長く争う2つの氏族が、和解できる日を望んでおります。'
   ];
 
   let currentBatch=[];      // 進行中のターンで神と交わった母
   let lastCeremony=null;    // 直近の大淫義の記録
   let ceremonyYear=null;
 
-  // 「この七年の報告」ログの表示状態。
+  // 「この7年の報告」ログの表示状態。
   let logEntries=[];        // 現在の大淫義の報告ログ（真面目版と嬌声版を各件持つ）
   let logIndex=0;           // いま表示中の報告
   let teasedSet=new Set();  // 神のイタズラで嬌声に変換済みの報告インデックス
   let typeTimer=null;       // タイプライター表示のタイマー
 
-  // 真面目な報告文（この七年の暮らしと、授かった娘）。
+  // 真面目な報告文（この7年の暮らしと、授かった娘）。
   function seriousBody(m,year){
     const life=LIFE[(m.id*7+year)%LIFE.length];
-    let body=`「この七年、${life}`;
+    let body=`「この7年、${life}`;
     if(m.becameShinra)body+=` そして大淫義のさなか、私を通じて神の力が一段と増したとのこと、身に余る誉れにございます。`;
     body+=` こたびの大淫義にて、あなたの娘・${m.child}を授かりました。」`;
     return body;
@@ -100,7 +100,7 @@
     return frag.slice(0,Math.max(4,Math.floor(frag.length*0.45)));
   }
 
-  // makeChild を包み、母（＝選ばれた十人）の情報を捕捉する。
+  // makeChild を包み、母（＝選ばれた10人）の情報を捕捉する。
   const makeChildBeforeCeremony=makeChild;
   makeChild=function(m){
     const shinraBefore=shinraMikos.length;
@@ -147,23 +147,23 @@
     if(!el)return;
     if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
     if(!lastCeremony){
-      el.innerHTML='<h2>大淫義の対話</h2><p class="muted">淫欲神はいま眠っている。七年を進めると、選ばれた十人が潮吹きの儀で神を招き降ろし、その報告を聞く。</p>';
+      el.innerHTML='<h2>大淫義の対話</h2><p class="muted">淫欲神はいま眠っている。7年を進めると、選ばれた10人が潮吹きの儀で神を招き降ろし、その報告を聞く。</p>';
       return;
     }
     const c=lastCeremony;
     const theme=(window.MikoEra&&MikoEra.theme&&MikoEra.theme())||null;
     const ev=(window.MikoEvents&&MikoEvents.latest&&MikoEvents.latest())||null;
 
-    // 神床殿・降臨と自己紹介（選抜順位一位から十位）。
-    // 十人は半円に立ち、中央布を外して足元へ横長に敷き、その布をまたいで（足は布に触れない）開脚のガニ股で全身を晒す。
-    // その姿勢で自淫し、潮吹きの愛液が淫欲神を招き降ろす。以降、一位から十位まで一続きに自己紹介する。
+    // 神床殿・降臨と自己紹介（選抜順位1位から10位）。
+    // 10人は半円に立ち、中央布を外して足元へ横長に敷き、その布をまたいで（足は布に触れない）開脚のガニ股で全身を晒す。
+    // その姿勢で自淫し、潮吹きの愛液が淫欲神を招き降ろす。以降、1位から10位まで一続きに自己紹介する。
     const introductions=c.mothers.map((m,i)=>{
       return `<div class="node"><div class="flex wrap center between gap2"><span class="medium cere-person" data-ci="${i}" role="button" tabindex="0">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
         +`<div class="muted mt1">開脚のまま——「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}。身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
     }).join('');
 
-    // 「この七年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
-    // 先頭は首位の巫女が語る「時代」と「この七年の出来事」。以降は十人の個々の報告。イタズラは各件に効く。
+    // 「この7年の報告」ログを組み立てる（各件に真面目版と嬌声版を持たせる）。
+    // 先頭は首位の巫女が語る「時代」と「この7年の出来事」。以降は10人の個々の報告。イタズラは各件に効く。
     const rank1=c.mothers[0];
     const leadEntries=[];
     if(rank1){
@@ -173,17 +173,17 @@
         teased:teaseFrom(`「い、いまは${theme||'……'}`,rank1.id+c.year,rank1.topStat)
       });
       leadEntries.push({
-        head:`この七年の出来事（首位　${rank1.name}）`,
+        head:`この7年の出来事（首位　${rank1.name}）`,
         serious:ev
-          ?`「この七年の出来事にございます。${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けました':'担い手が足らず、民に痛手が及びました'}。」`
-          :`「この七年、大きな波乱はなく、国は穏やかに過ぎました。」`,
-        teased:teaseFrom(ev?`「こ、この七年は${ev.threat}が`:`「こ、この七年は穏やかに`,rank1.id+c.year+7,rank1.topStat)
+          ?`「この7年の出来事にございます。${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けました':'担い手が足らず、民に痛手が及びました'}。」`
+          :`「この7年、大きな波乱はなく、国は穏やかに過ぎました。」`,
+        teased:teaseFrom(ev?`「こ、この7年は${ev.threat}が`:`「こ、この7年は穏やかに`,rank1.id+c.year+7,rank1.topStat)
       });
     }
     logEntries=leadEntries.concat(c.mothers.map(m=>({
       head:`${m.name}（${m.apt}・${m.age}歳・Lv${m.level}）`,
       serious:seriousBody(m,c.year),
-      teased:teaseFrom(`「こ、この七年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year,m.topStat)
+      teased:teaseFrom(`「こ、この7年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year,m.topStat)
     })));
     if(logIndex>=logEntries.length)logIndex=Math.max(0,logEntries.length-1);
 
@@ -192,16 +192,16 @@
     const hope=HOPES[c.year%HOPES.length];
 
     el.innerHTML=`
-      <div class="flex wrap center between gap3"><div><h2>大淫義の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、七年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
-      <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が七年ぶりに降臨する。</div>
-      <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
+      <div class="flex wrap center between gap3"><div><h2>大淫義の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、7年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
+      <div class="callout">10人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、10人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が7年ぶりに降臨する。</div>
+      <div class="muted medium">神床殿・自己紹介（選抜順位1位から10位）</div>
       <div class="space3">${introductions}</div>
-      ${(function(){const fi=c.mothers.findIndex(m=>m.favored);if(fi<0)return'';const f=c.mothers[fi];return `<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b class="cere-person" data-ci="${fi}" role="button" tabindex="0">${f.name}</b>（バスト${f.bust}・ウエスト${f.waist}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`;})()}
-      <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
+      ${(function(){const fi=c.mothers.findIndex(m=>m.favored);if(fi<0)return'';const f=c.mothers[fi];return `<div class="callout">神は10人すべてを抱いたが、最も激しく求めたのは<b class="cere-person" data-ci="${fi}" role="button" tabindex="0">${f.name}</b>（バスト${f.bust}・ウエスト${f.waist}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`;})()}
+      <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この7年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
       <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
       <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>
       <div class="callout">${q}${hopeM?`<br><span class="medium">${hopeM.name}</span>は答えた——「${hope}」`:''}</div>
-      <div class="muted">淫欲神は十人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。手練手管に骨抜きにされ、報告はしばしば嬌声に溶けた。満足した神は再び眠りにつく——次の降臨は、また七年ののち、十人の潮吹きの儀によって招かれる。</div>`;
+      <div class="muted">淫欲神は10人の報告に耳を傾け、問いを交わし、その悩みと望みを聞いた。手練手管に骨抜きにされ、報告はしばしば嬌声に溶けた。満足した神は再び眠りにつく——次の降臨は、また7年ののち、10人の潮吹きの儀によって招かれる。</div>`;
 
     bindLog();
     showLogEntry(logIndex);
