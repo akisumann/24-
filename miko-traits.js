@@ -31,6 +31,10 @@
   function clitMm(gen){return 6+(Math.max(1,gen)-1);}
   function clitSens(gen){return CLIT_SENS[Math.min(Math.max(1,gen),CLIT_SENS.length-1)];}
   function clitStage(gen){
+    if(gen>=35)return'・小陰茎化（自ら擦り続けねば疼きに耐えられぬ）';
+    if(gen>=30)return'・歩くだけで揺れて絶頂';
+    if(gen>=25)return'・吹く風にも反応して疼く';
+    if(gen>=20)return'・常にひくつき、触れられるだけで喘ぐ';
     if(gen>=15)return'・かなり肥大（つままれるだけで腰砕け）';
     if(gen>=10)return'・明確に突出（並の下着は刺激で穿けない）';
     if(gen>=5)return'・生涯わずかに突き出たまま';
