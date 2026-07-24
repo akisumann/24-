@@ -41,13 +41,31 @@
     '乳首を相手の乳首へ押し当て、ぐりぐりと擦り立てた',
     '硬く尖ったクリトリスを相手の秘玉へ突き当て、腰を使って捏ね回した',
     '胸を押し付けて二つの乳首を同時に擦り上げた',
-    '土俵際まで攻め寄せ、三点すべてを押し付けて揺さぶった',
+    '三点すべてを押し付けたまま、腰をうねらせて捏ねくり回した',
     'クリトリス同士を弾き合わせ、相手の膝を笑わせた'
   ];
+  // 押し込まれた側の喘ぎ声。
+  const MOANS=[
+    'あっ、あっ、そこ、擦っちゃ……らめぇっ',
+    'ひぁっ、乳首っ、乳首だめっ、んんーっ',
+    'やっ、クリ、当たって……っ、あっ、あっ',
+    'んぁっ、で、出ちゃう、お乳出ちゃうっ',
+    'ああっ、潮っ、吹いちゃ……ひぅっ',
+    'ま、負けな……っ、ぁ、あ、こんなの……っ'
+  ];
+  // 最中に噴きこぼれる乳・潮。
+  const FLUIDS=[
+    '擦られた乳首からお乳がビュルビュルと噴きこぼれた',
+    '堪えきれず潮をぴゅっと吹きこぼした',
+    '両の乳首から白い乳が飛び散り、内腿を潮が伝った',
+    '押し当てられるたびに乳がビュッと噴き、股から潮が滴った',
+    'ぷっくり尖った乳首から乳を漏らし、潮でしとどに濡れた'
+  ];
+  // 尻餅をつく側の、絶頂を伴う決まり。
   const FALLS=[
-    'こらえきれず膝から力が抜け、ぺたんと尻餅をついた',
-    '腰が砕けてその場に崩れ落ち、尻餅をついた',
-    'ひときわ強く擦り立てられて達してしまい、土俵に尻餅をついた'
+    '「い、イっ……くぅっ!!」とこらえきれず達し、潮を高く吹き上げながらぺたんと尻餅をついた',
+    '乳をビュクビュク噴きこぼしながら「んぁあああっ——!!」と絶頂し、腰砕けに尻餅をついた',
+    'クリトリスを擦り潰されて「イくっ、イっちゃうっ!!」と達し、潮を撒き散らして土俵に尻餅をついた'
   ];
 
   function roll(max){return srand(1,Math.max(1,Math.round(max)));}
@@ -58,7 +76,7 @@
     do{ pushOnB=roll(atkA)-roll(endB); pushOnA=roll(atkB)-roll(endA); tries++; }
     while(pushOnB===pushOnA&&tries<50);
     const winner=pushOnB>pushOnA?a:b;
-    return {n,winner,move:spick(MOVES),margin:Math.abs(pushOnB-pushOnA)};
+    return {n,winner,move:spick(MOVES),moan:spick(MOANS),fluid:spick(FLUIDS),margin:Math.abs(pushOnB-pushOnA)};
   }
 
   function fighterCard(p){
@@ -92,11 +110,11 @@
         :`際どい擦り合いを${full(winner)}が制した。`);
     box.innerHTML=`<div class="space3">
       <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三点相撲・二本先取（半径1mの土俵）</p></div><span class="badge">${full(winner)} 勝利</span></div>
-      ${rounds.map(r=>`<div class="node space3">
+      ${rounds.map(r=>{const rl=r.winner.id===a.id?b:a;return `<div class="node space3">
         <div class="flex between gap2"><span class="medium">第${r.n}番</span><span class="badge">${full(r.winner)}</span></div>
-        <p>${full(r.winner)}は${r.move}。${full(r.winner.id===a.id?b:a)}は押し込まれ、土俵際まで下がった。</p>
-      </div>`).join('')}
-      <div class="callout"><span class="medium">決着：</span>${full(loser)}は${spick(FALLS)}。${full(winner)}が${wins[winner.id]}本先取で勝利した。${clitNote}</div>
+        <p>${full(r.winner)}は${r.move}。${full(rl)}は「${r.moan}」と嬌声をあげてのけぞり、${r.fluid}。そのまま土俵際まで押し込まれた。</p>
+      </div>`;}).join('')}
+      <div class="callout"><span class="medium">決着：</span>${full(loser)}は${lastSumo.fall}。${full(winner)}が${wins[winner.id]}本先取で勝利した。${clitNote}</div>
     </div>`;
   }
 
@@ -109,7 +127,7 @@
     rounds.forEach(r=>wins[r.winner.id]++);
     const winner=wins[a.id]>wins[b.id]?a:b;
     const loser=winner.id===a.id?b:a;
-    lastSumo={a,b,rounds,wins,winner,loser};
+    lastSumo={a,b,rounds,wins,winner,loser,fall:spick(FALLS)};
     renderResult();
   }
 
