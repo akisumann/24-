@@ -79,9 +79,12 @@
     return h;
   }
 
+  // 他モジュール（大儀の対話ポップアップ等）からも同じ特徴ブロックを使えるよう公開。
+  try{if(typeof window!=='undefined')window.MikoTraits={traitsHtml,volOf,clitMm,clitSens,clitStage};}catch(e){}
+
   try{
     const st=document.createElement('style');
-    st.textContent='#detail .trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}';
+    st.textContent='.trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}';
     (document.head||document.documentElement).appendChild(st);
   }catch(e){}
 
