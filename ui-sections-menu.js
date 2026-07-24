@@ -1,5 +1,5 @@
 // 縦にずらっと並ぶ各パネルを「ボタンのメニュー→ポップアップ」に畳む（表示のみ・非侵襲）。
-// 大儀タイル・名簿・直近ターン結果はボードに残し、それ以外は隠し置き場(stash)へ退避。
+// 大淫義タイル・名簿・直近ターン結果はボードに残し、それ以外は隠し置き場(stash)へ退避。
 // stash に置いても render() は id で要素を更新するので、中身は毎ターン更新され続ける。
 // ボタンを押すと該当カードをモーダルへ移し込んで表示、閉じると stash へ戻す（操作性そのまま）。
 // dashboard/collapse/ceremony/各renderモジュールの後に読み込むこと。
@@ -51,7 +51,7 @@
       });
       if(infoCards.length)SECTIONS.push({label:'制度・ルール',cardEls:infoCards});
 
-      // 退避対象：各セクションのカード＋冗長な七年の大儀カード（HUDが代替）＋詳細カード（詳細はタップでモーダル）
+      // 退避対象：各セクションのカード＋冗長な七年の大淫義カード（HUDが代替）＋詳細カード（詳細はタップでモーダル）
       var toStash=[];
       SECTIONS.forEach(function(s){s.cardEls.forEach(function(c){if(toStash.indexOf(c)<0)toStash.push(c);});});
       var taigi=cardOf('advance'); if(taigi&&toStash.indexOf(taigi)<0)toStash.push(taigi);

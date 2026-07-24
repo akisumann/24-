@@ -1,4 +1,4 @@
-// 大儀の対話（v16拡張）：七年ごとに神が顕現し、選ばれた十人の巫女が
+// 大淫義の対話（v16拡張）：七年ごとに神が顕現し、選ばれた十人の巫女が
 // この七年の出来事と自らの暮らしを過去形で報告する、一回分の物語サイクルを表示する。
 // makeChild で母を捕捉し、render をラップして描く非侵襲モジュール。ceremony は最後に読む。
 (function(){
@@ -31,11 +31,11 @@
   ];
 
   let currentBatch=[];      // 進行中のターンで神と交わった母
-  let lastCeremony=null;    // 直近の大儀の記録
+  let lastCeremony=null;    // 直近の大淫義の記録
   let ceremonyYear=null;
 
   // 「この七年の報告」ログの表示状態。
-  let logEntries=[];        // 現在の大儀の報告ログ（真面目版と嬌声版を各件持つ）
+  let logEntries=[];        // 現在の大淫義の報告ログ（真面目版と嬌声版を各件持つ）
   let logIndex=0;           // いま表示中の報告
   let teasedSet=new Set();  // 神のイタズラで嬌声に変換済みの報告インデックス
   let typeTimer=null;       // タイプライター表示のタイマー
@@ -44,8 +44,8 @@
   function seriousBody(m,year){
     const life=LIFE[(m.id*7+year)%LIFE.length];
     let body=`「この七年、${life}`;
-    if(m.becameShinra)body+=` そして大儀のさなか、私を通じて神の力が一段と増したとのこと、身に余る誉れにございます。`;
-    body+=` こたびの大儀にて、あなたの娘・${m.child}を授かりました。」`;
+    if(m.becameShinra)body+=` そして大淫義のさなか、私を通じて神の力が一段と増したとのこと、身に余る誉れにございます。`;
+    body+=` こたびの大淫義にて、あなたの娘・${m.child}を授かりました。」`;
     return body;
   }
   // 神のイタズラで、真面目な報告が嬌声・絶頂混じりに乱れた版。
@@ -137,7 +137,7 @@
     el.id='ceremonyCard';
     el.className='card space3 wide';
     const board=document.querySelector('.miko-board');
-    if(board)board.insertBefore(el,board.firstChild); // 大儀は主役なので先頭へ
+    if(board)board.insertBefore(el,board.firstChild); // 大淫義は主役なので先頭へ
     else (document.querySelector('main')||document.body).appendChild(el);
     return el;
   }
@@ -147,7 +147,7 @@
     if(!el)return;
     if(typeTimer){clearInterval(typeTimer);typeTimer=null;}
     if(!lastCeremony){
-      el.innerHTML='<h2>大儀の対話</h2><p class="muted">淫欲神はいま眠っている。七年を進めると、選ばれた十人が潮吹きの儀で神を招き降ろし、その報告を聞く。</p>';
+      el.innerHTML='<h2>大淫義の対話</h2><p class="muted">淫欲神はいま眠っている。七年を進めると、選ばれた十人が潮吹きの儀で神を招き降ろし、その報告を聞く。</p>';
       return;
     }
     const c=lastCeremony;
@@ -192,7 +192,7 @@
     const hope=HOPES[c.year%HOPES.length];
 
     el.innerHTML=`
-      <div class="flex wrap center between gap3"><div><h2>大儀の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、七年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
+      <div class="flex wrap center between gap3"><div><h2>大淫義の対話</h2><p class="muted">第${c.n}回・${c.year}年 — 淫欲神、七年ぶりに降臨する</p></div><span class="badge">神床殿</span></div>
       <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が七年ぶりに降臨する。</div>
       <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
@@ -259,8 +259,8 @@
     renderCeremonyUI();
   };
 
-  // ── 大儀の母をタップ→スナップショット詳細をポップアップ（表示のみ） ──
-  // 大儀の母は直後に退任・加齢して現役名簿に無いことがあるため、大儀時点の記録から表示する。
+  // ── 大淫義の母をタップ→スナップショット詳細をポップアップ（表示のみ） ──
+  // 大淫義の母は直後に退任・加齢して現役名簿に無いことがあるため、大淫義時点の記録から表示する。
   let pOverlay=null;
   function buildPopup(){
     if(pOverlay)return pOverlay;
@@ -294,8 +294,8 @@
     h+='<div class="muted mt1">'+(m.family?esc(m.family)+'一族／':'')+(m.generation||1)+'世代目／潜在Lv'+m.potentialLevel+'・現Lv'+m.level+'</div>';
     h+='<div class="trait-badges mt2">'+stats+'</div>';
     h+='<div class="mt2">身長'+m.height+'／バスト'+m.bust+'／ウエスト'+m.waist+'／ヒップ'+m.hip+'</div>';
-    if(m.favored)h+='<div class="callout mt2">この大儀の<b>大寵愛</b>——神が最も激しく求めた母。</div>';
-    if(m.becameShinra)h+='<div class="callout mt2">この大儀で<b>神羅巫女</b>となり、神の力を一段と高めた。</div>';
+    if(m.favored)h+='<div class="callout mt2">この大淫義の<b>大寵愛</b>——神が最も激しく求めた母。</div>';
+    if(m.becameShinra)h+='<div class="callout mt2">この大淫義で<b>神羅巫女</b>となり、神の力を一段と高めた。</div>';
     h+='<div class="mt2">授かった娘：<b>'+esc(m.child)+'</b></div>';
     if(window.MikoTraits&&MikoTraits.traitsHtml){
       try{h+='<div class="space3 mt2" style="border-top:1px solid var(--border);padding-top:10px">'+MikoTraits.traitsHtml(m)+'</div>';}catch(e){}

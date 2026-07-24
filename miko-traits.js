@@ -83,7 +83,7 @@
     return h;
   }
 
-  // 他モジュール（大儀の対話ポップアップ等）からも同じ特徴ブロックを使えるよう公開。
+  // 他モジュール（大淫義の対話ポップアップ等）からも同じ特徴ブロックを使えるよう公開。
   try{if(typeof window!=='undefined')window.MikoTraits={traitsHtml,volOf,clitMm,clitSens,clitStage};}catch(e){}
 
   try{
