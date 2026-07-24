@@ -23,10 +23,10 @@
   }
   const SCENT=['','ほのかに甘い','甘く匂い立つ','濃厚に甘く漂う','むせ返るほど甘い'];
   const MEIKI=['','並','上物','絶品','比類なき名器'];
-  // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝0.5mm固定、
-  // 以降は1世代ごとに+0.1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
-  const CLIT_SENS=['','並','敏感','鋭敏','過敏','掠めるだけで達するほど過敏'];
-  function clitMm(gen){return(0.5+(Math.max(1,gen)-1)*0.1).toFixed(1);}
+  // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝5mm固定、
+  // 以降は1世代ごとに+1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
+  const CLIT_SENS=['','敏感','鋭敏','過敏','掠めるだけで達するほど過敏'];
+  function clitMm(gen){return 5+(Math.max(1,gen)-1);}
   function clitSens(gen){return CLIT_SENS[Math.min(Math.max(1,gen),CLIT_SENS.length-1)];}
 
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
