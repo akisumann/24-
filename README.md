@@ -1,6 +1,6 @@
 # 七年巫女神
 
-国と神の契約により、常時50人の登録巫女を維持し、7年ごとの大儀と世代推移を観測するブラウザゲームです。
+国と神の契約により、常時50人の登録巫女を維持し、7年ごとの大淫義と世代推移を観測するブラウザゲームです。
 
 ## 遊び方
 
@@ -21,13 +21,13 @@
 - [`MIKO_TURNOVER_SETTING.md`](MIKO_TURNOVER_SETTING.md) — 登録枠の流動制度と神羅巫女の初出時期
 - [`LEVEL_GUIDE.md`](LEVEL_GUIDE.md) — 世界共通の1〜100レベル指標と物語上の強さの目安
 - [`WORLD_SETTING.md`](WORLD_SETTING.md) — 巫女の生活、仕事、政治、婚姻、遺伝、加護、国家制度としての意味
-- [`SHINSHODEN.md`](SHINSHODEN.md) — 神床殿（大儀の場）の進行
+- [`SHINSHODEN.md`](SHINSHODEN.md) — 神床殿（大淫義の場）の進行
 - [`MIKO_FORMAL_WEAR.md`](MIKO_FORMAL_WEAR.md) — 巫女の基本正装＝御種衣の構造仕様
 - [`MIKO_FORMAL_ATTIRE.md`](MIKO_FORMAL_ATTIRE.md) — 正装の露出と役割・対人での意味
 - [`MIKO_CLOTHING_AND_MARRIAGE.md`](MIKO_CLOTHING_AND_MARRIAGE.md) — 御種衣の機能・婚姻での扱い
 
 巫女団の役務はゲーム上の適性分類であり、巫女本人の日常の本業を固定するものではありません。
-巫女は7年ごとの大儀に備えつつ、普段は別の仕事、政治、家庭生活、穏やかな暮らしなどを自由に送ります。
+巫女は7年ごとの大淫義に備えつつ、普段は別の仕事、政治、家庭生活、穏やかな暮らしなどを自由に送ります。
 
 ## 画面と機能（v16で追加）
 
