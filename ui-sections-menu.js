@@ -33,6 +33,7 @@
         {label:'推移グラフ',   ids:['trendPanels']},
         {label:'年齢構成',     ids:['ageGroups']},
         {label:'模擬戦',       ids:['battleResult']},
+        {label:'三点相撲',     ids:['sumoResult']},
         {label:'役務',         ids:['roles','roleMembers']},
         {label:'国家事業記録', ids:['history']},
         {label:'セーブ管理',   ids:['saveStatus']}
