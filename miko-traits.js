@@ -23,10 +23,11 @@
   }
   const SCENT=['','ほのかに甘い','甘く匂い立つ','濃厚に甘く漂う','むせ返るほど甘い'];
   const MEIKI=['','並','上物','絶品','比類なき名器'];
-  // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝5mm固定、
+  // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝4mm固定、
   // 以降は1世代ごとに+1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
+  // 10mm（＝7世代目）を超えると包皮に収まらず恥丘から常に突き出る。
   const CLIT_SENS=['','敏感','鋭敏','過敏','掠めるだけで達するほど過敏'];
-  function clitMm(gen){return 5+(Math.max(1,gen)-1);}
+  function clitMm(gen){return 4+(Math.max(1,gen)-1);}
   function clitSens(gen){return CLIT_SENS[Math.min(Math.max(1,gen),CLIT_SENS.length-1)];}
 
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
@@ -61,8 +62,8 @@
     if(p.favored)h+='<span class="badge">大寵愛の娘</span>';
     h+='</div>';
     h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
-    const gen=p.generation||1;
-    h+=`<div class="mt1">陰核：<b>${clitMm(gen)}mm</b>（${gen}世代目）　／　感度 <b>${clitSens(gen)}</b></div>`;
+    const gen=p.generation||1,cmm=clitMm(gen);
+    h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${cmm>=10?'・恥丘から常に突き出る':''}　／　感度 <b>${clitSens(gen)}</b></div>`;
     h+='<div class="mt1">性への構え：積極的に仕掛けるが、根は負けたがりで屈服欲が高い。'
       +(strongWilled?'気位は高く強気だが、いざ抱かれれば結局は攻め落とされ、悦んで屈する。'
                     :'責められると脆く、翻弄されて果てる側になりがち。')+'</div>';
