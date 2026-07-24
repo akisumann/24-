@@ -12,7 +12,8 @@ function bodyBase(){return BODY_BASE_START+BODY_BASE_RATE*(year/7);}
 // 初期採用・国家公募など外部出身者は、神の基準ではなく現実の日本人女性の平均からランダムに与える。
 // 中心はおおむね バスト84 / ウエスト64 / ヒップ91 / 身長158cm（JIS 9号相当）。
 function body(){return{height:rand(150,166),bust:rand(76,92),waist:rand(56,72),hip:rand(84,98),hair:pick(HAIR)}}
-function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,skills:makeSkills(maxStats,id)}}
+// generation：血の世代数。初期採用・一般公募など外部出身は必ず1世代目。神の娘は母＋1（makeChild）。
+function makePerson(age,base,origin,mother='—'){const id=nextId++,maxStats=makeStats(base);return{id,family:pick(FAMILY),given:pick(GIVEN),age,maxStats,body:body(),origin,mother,generation:1,skills:makeSkills(maxStats,id)}}
 let favoredMotherId=null; // 大寵愛：この大儀で「胸＋尻−腰×0.5」が最大の母のid（retirement.jsが毎大儀に設定）。
 function makeChild(m){
   const usedGodLevel=godLevel,id=nextId++,maxStats={},inheritance={};
@@ -24,7 +25,7 @@ function makeChild(m){
     inheritance[s]=multiplier;
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
-  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:srandom()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),skills:makeSkills(maxStats,id)};
+  const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:srandom()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),generation:(m.generation||1)+1,skills:makeSkills(maxStats,id)};
   if(favored)child.favored=true; // 大寵愛の子（娘バッジ用）
   const motherLevel=level(m);
   const raisedFromChildhood=m.origin==='神の娘・国家育成対象';

@@ -108,18 +108,24 @@
     currentBatch.push({
       id:m.id,
       name:full(m),
+      family:m.family,
+      given:m.given,
+      generation:m.generation||1,
       apt:ROLES[rank(m.maxStats)[0]],
       topStat:rank(m.maxStats)[0],
       age:m.age,
       level:level(m),
       potentialLevel:Math.round(avg(m.maxStats)),
+      maxStats:Object.assign({},m.maxStats),
+      body:{height:m.body.height,bust:m.body.bust,waist:m.body.waist,hip:m.body.hip,hair:m.body.hair},
       height:m.body.height,
       bust:m.body.bust,
       waist:m.body.waist,
       hip:m.body.hip,
       becameShinra:shinraMikos.length>shinraBefore,
       favored:(typeof favoredMotherId!=='undefined'&&favoredMotherId!==null&&m.id===favoredMotherId),
-      child:child.given
+      child:child.given,
+      skills:Array.isArray(m.skills)?m.skills.map(function(s){return{name:s.name,effect:s.effect,stat:s.stat};}):[]
     });
     return child;
   };
@@ -152,7 +158,7 @@
     // 十人は半円に立ち、中央布を外して足元へ横長に敷き、その布をまたいで（足は布に触れない）開脚のガニ股で全身を晒す。
     // その姿勢で自淫し、潮吹きの愛液が淫欲神を招き降ろす。以降、一位から十位まで一続きに自己紹介する。
     const introductions=c.mothers.map((m,i)=>{
-      return `<div class="node"><div class="flex wrap center between gap2"><span class="medium">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
+      return `<div class="node"><div class="flex wrap center between gap2"><span class="medium cere-person" data-ci="${i}" role="button" tabindex="0">第${i+1}位　${m.name}</span><span class="badge">${m.apt}・${m.age}歳・潜在Lv${m.potentialLevel}</span></div>`
         +`<div class="muted mt1">開脚のまま——「${m.name}、${m.age}歳、${m.apt}、潜在レベル${m.potentialLevel}。身長${m.height}、バスト${m.bust}、ウエスト${m.waist}、ヒップ${m.hip}にございます。」</div></div>`;
     }).join('');
 
@@ -190,7 +196,7 @@
       <div class="callout">十人は神の顕現位置を囲んで半円に立ち、各々の中央布を外して足元へ横長に敷く。布をまたぐように両足を布の両端の外側へ置いて大きく開脚し（足は布に触れないガニ股）、首の後ろで両腕を組んで全身を晒す。その姿勢のまま自淫し、十人の潮吹きの愛液が中央の肉袋（休眠した淫欲神の玉袋）へ降りかかると、袋が目覚めて部屋は触手部屋へ変貌し、淫欲神が七年ぶりに降臨する。</div>
       <div class="muted medium">神床殿・自己紹介（選抜順位一位から十位）</div>
       <div class="space3">${introductions}</div>
-      ${(function(){const f=c.mothers.find(m=>m.favored);return f?`<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b>${f.name}</b>（バスト${f.bust}・ウエスト${f.waist}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`:'';})()}
+      ${(function(){const fi=c.mothers.findIndex(m=>m.favored);if(fi<0)return'';const f=c.mothers[fi];return `<div class="callout">神は十人すべてを抱いたが、最も激しく求めたのは<b class="cere-person" data-ci="${fi}" role="button" tabindex="0">${f.name}</b>（バスト${f.bust}・ウエスト${f.waist}・ヒップ${f.hip}）であった——その大寵愛が、娘・${f.child}に宿る。</div>`;})()}
       <div class="flex wrap center between gap2"><span class="muted medium">神床殿・この七年の報告</span><button id="cereTease" class="btn" type="button">神のイタズラ</button></div>
       <div class="node"><div id="cereLogHead" class="medium"></div><div id="cereLogBody" class="muted mt1" style="white-space:pre-wrap;min-height:3.4em;"></div></div>
       <div class="flex wrap center gap2"><button id="cerePrev" class="btn" type="button">◀ 前</button><span id="cereCount" class="muted"></span><button id="cereNext" class="btn" type="button">次 ▶</button></div>
@@ -252,6 +258,75 @@
     }
     renderCeremonyUI();
   };
+
+  // ── 大儀の母をタップ→スナップショット詳細をポップアップ（表示のみ） ──
+  // 大儀の母は直後に退任・加齢して現役名簿に無いことがあるため、大儀時点の記録から表示する。
+  let pOverlay=null;
+  function buildPopup(){
+    if(pOverlay)return pOverlay;
+    pOverlay=document.createElement('div');
+    pOverlay.id='cerePersonOverlay';
+    pOverlay.innerHTML='<div class="cerePersonWrap"><div class="cerePersonHead"><span class="cerePersonTitle"></span><button type="button" class="cerePersonClose" aria-label="閉じる">×</button></div><div class="cerePersonBody"></div></div>';
+    document.body.appendChild(pOverlay);
+    pOverlay.querySelector('.cerePersonClose').addEventListener('click',hidePopup);
+    pOverlay.addEventListener('click',function(e){if(e.target===pOverlay)hidePopup();});
+    const st=document.createElement('style');
+    st.textContent=[
+      '.cere-person{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}',
+      '.cere-person:hover{color:var(--accent)}',
+      '#cerePersonOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:9998;overflow:auto;-webkit-overflow-scrolling:touch}',
+      '#cerePersonOverlay.show{display:block}',
+      '#cerePersonOverlay .cerePersonWrap{max-width:600px;margin:20px auto;padding:0 12px 48px}',
+      '#cerePersonOverlay .cerePersonHead{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 2px}',
+      '#cerePersonOverlay .cerePersonTitle{font-weight:700;font-size:1.1rem;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7)}',
+      '#cerePersonOverlay .cerePersonClose{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:22px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.35)}',
+      '#cerePersonOverlay .cerePersonBody{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.4)}'
+    ].join('');
+    (document.head||document.documentElement).appendChild(st);
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pOverlay.classList.contains('show'))hidePopup();});
+    return pOverlay;
+  }
+  function hidePopup(){if(pOverlay){pOverlay.classList.remove('show');document.body.style.overflow='';}}
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function personPopupHtml(m){
+    const stats=(typeof STATS!=='undefined'?STATS:[]).map(function(s){return '<span class="badge">'+s+' '+(m.maxStats?m.maxStats[s]:'—')+'</span>';}).join('');
+    let h='<div class="flex wrap center between gap2"><span class="medium">'+esc(m.name)+'</span><span class="badge">'+esc(m.apt)+'・'+m.age+'歳</span></div>';
+    h+='<div class="muted mt1">'+(m.family?esc(m.family)+'一族／':'')+(m.generation||1)+'世代目／潜在Lv'+m.potentialLevel+'・現Lv'+m.level+'</div>';
+    h+='<div class="trait-badges mt2">'+stats+'</div>';
+    h+='<div class="mt2">身長'+m.height+'／バスト'+m.bust+'／ウエスト'+m.waist+'／ヒップ'+m.hip+'</div>';
+    if(m.favored)h+='<div class="callout mt2">この大儀の<b>大寵愛</b>——神が最も激しく求めた母。</div>';
+    if(m.becameShinra)h+='<div class="callout mt2">この大儀で<b>神羅巫女</b>となり、神の力を一段と高めた。</div>';
+    h+='<div class="mt2">授かった娘：<b>'+esc(m.child)+'</b></div>';
+    if(window.MikoTraits&&MikoTraits.traitsHtml){
+      try{h+='<div class="space3 mt2" style="border-top:1px solid var(--border);padding-top:10px">'+MikoTraits.traitsHtml(m)+'</div>';}catch(e){}
+    }
+    if(Array.isArray(m.skills)&&m.skills.length){
+      h+='<div class="mt2 medium">技能</div><div class="space2">'+m.skills.map(function(s){return '<div class="muted">《'+esc(s.name)+'》'+esc(s.effect||'')+'</div>';}).join('')+'</div>';
+    }
+    return h;
+  }
+  function openPersonPopup(m){
+    if(!m)return;
+    buildPopup();
+    pOverlay.querySelector('.cerePersonTitle').textContent=m.name;
+    pOverlay.querySelector('.cerePersonBody').innerHTML=personPopupHtml(m);
+    pOverlay.classList.add('show');pOverlay.scrollTop=0;document.body.style.overflow='hidden';
+  }
+  // ceremonyCard 内の .cere-person タップ/Enter で開く（毎ターン再描画されるため委譲）。
+  document.addEventListener('click',function(e){
+    const t=e.target&&e.target.closest&&e.target.closest('.cere-person');
+    if(!t||!t.closest('#ceremonyCard'))return;
+    const i=parseInt(t.getAttribute('data-ci'),10);
+    if(lastCeremony&&lastCeremony.mothers&&lastCeremony.mothers[i])openPersonPopup(lastCeremony.mothers[i]);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    const t=document.activeElement;
+    if(!t||!t.classList||!t.classList.contains('cere-person')||!t.closest('#ceremonyCard'))return;
+    e.preventDefault();
+    const i=parseInt(t.getAttribute('data-ci'),10);
+    if(lastCeremony&&lastCeremony.mothers&&lastCeremony.mothers[i])openPersonPopup(lastCeremony.mothers[i]);
+  });
 
   ceremonyYear=(typeof year!=='undefined')?year:null;
   renderCeremonyUI();
