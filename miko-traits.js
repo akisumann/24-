@@ -53,6 +53,42 @@
     return'';
   }
 
+  // 性への構え：最高能力を「挑み方・得意」、最低能力を「崩れ方・弱み」として組み合わせる。
+  // 強みも弱みも最終的には高い屈服欲へつながり、乱数を使わず能力値だけで個体差を作る。
+  const SEX_STRENGTH={
+    HP:'尽きにくい体力で何度でも相手を求め、長く続くほど自ら深く絡みついていく。',
+    MP:'言葉や雰囲気で互いの気持ちを高め、甘く酔わせるように相手を誘い込む。',
+    ATK:'自ら激しく仕掛け、相手を押し切って主導権を奪おうとする。',
+    DEF:'どれほど激しく求められても受け止め、長く耐えながらじっくり乱されることを好む。',
+    INT:'相手の好みや反応を読み取り、言葉と触れ方を選んで巧みに悦ばせる。',
+    SPD:'火がつけば迷わず飛び込み、勢いのまま何度も昂ぶりを重ねていく。',
+    DEX:'細かな奉仕や触れ方に長け、相手を悦ばせることそのものに強い満足を覚える。'
+  };
+  const SEX_WEAKNESS={
+    HP:'ただし長く続けば体力が先に尽き、余裕を失うほど相手へ縋りついてしまう。',
+    MP:'ただし甘い言葉や熱い空気には抗えず、囁かれるだけで強がりより先に身体が蕩ける。',
+    ATK:'ただし自分から強く出るのは不得手で、相手に導かれるほど素直に身体を預けていく。',
+    DEF:'ただし本気で押し返されることには弱く、優位を奪われればたちまち身体から崩される。',
+    INT:'ただし駆け引きは不得手で、感じたことも欲しいことも声と身体にそのまま表れてしまう。',
+    SPD:'ただし火がつくまではゆっくりで、一度昂ぶれば長い余韻の中でいつまでも離れたがらない。',
+    DEX:'ただし技巧は不器用で、夢中になるほど必死で大胆な動きになり、その拙さまで相手を煽る。'
+  };
+  const SEX_SUBMISSION={
+    HP:'力が尽きるまで求め続けた末、抱き留められて何もできなくなるほど従わされることを望んでいる。',
+    MP:'心まで甘く支配され、自分からもっと深く屈したいと願う瞬間に最も満たされる。',
+    ATK:'強く抗うのも、最後にはその勢いごと完全に組み伏せられ、逆らえなくなるほど屈服させてもらうためである。',
+    DEF:'耐え抜いた末に限界を越えさせられ、意地も強張りもすべて解かれて屈する瞬間を何より待ち望んでいる。',
+    INT:'自分の読みも策も上回られ、考える余裕さえ奪われてただ従う側へ落とされることに深い悦びを覚える。',
+    SPD:'勢いも呼吸も相手に奪われ、追いつけないまま何度も翻弄されて完全に従うことを求めている。',
+    DEX:'相手を悦ばせ尽くしたあと、今度は自分の技も余裕も封じられ、隅々まで支配されることを願っている。'
+  };
+  function sexualAttitude(p){
+    const ordered=rank(p.maxStats);
+    const strongest=ordered[0];
+    const weakest=ordered[ordered.length-1];
+    return SEX_STRENGTH[strongest]+SEX_WEAKNESS[weakest]+SEX_SUBMISSION[strongest];
+  }
+
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
   function traitsHtml(p){
@@ -74,8 +110,6 @@
     const vol=volOf(b);
     const blood=bloodOf(vol);
     const rocket=(b.bust>=100&&vol.lv>=3);
-    const topStat=rank(p.maxStats)[0];
-    const strongWilled=(topStat==='ATK'||topStat==='DEF');
 
     let h='<h3>設定由来の特徴</h3>';
     h+='<div class="trait-badges">';
@@ -87,9 +121,7 @@
     h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
     const gen=p.generation||1,cmm=clitMm(gen);
     h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
-    h+='<div class="mt1">性への構え：積極的に仕掛けるが、根は負けたがりで屈服欲が高い。'
-      +(strongWilled?'気位は高く強気だが、いざ抱かれれば結局は攻め落とされ、悦んで屈する。'
-                    :'責められると脆く、翻弄されて果てる側になりがち。')+'</div>';
+    h+=`<div class="mt1">性への構え：${sexualAttitude(p)}</div>`;
     h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
     if(isMarried(p))h+=`<div class="mt1">婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
     else h+=`<div class="mt1">婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
@@ -98,7 +130,7 @@
   }
 
   // 他モジュール（大淫義の対話ポップアップ等）からも同じ特徴ブロックを使えるよう公開。
-  try{if(typeof window!=='undefined')window.MikoTraits={traitsHtml,volOf,clitMm,clitSens,clitStage};}catch(e){}
+  try{if(typeof window!=='undefined')window.MikoTraits={traitsHtml,volOf,clitMm,clitSens,clitStage,sexualAttitude};}catch(e){}
 
   try{
     const st=document.createElement('style');
