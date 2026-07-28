@@ -132,6 +132,9 @@
     const blood=bloodOf(vol);
     const rocket=(b.bust>=100&&vol.lv>=3);
 
+    const arLv=arousalLv(p);
+    const gen=p.generation||1,cmm=clitMm(gen);
+
     let h='<h3>設定由来の特徴</h3>';
     h+='<div class="trait-badges">';
     h+=`<span class="badge">豊満度：${vol.label}</span>`;
@@ -139,20 +142,26 @@
     h+=`<span class="badge">神の血の濃さ：${blood.label}</span>`;
     if(p.favored)h+='<span class="badge">大寵愛の娘</span>';
     h+='</div>';
-    h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
-    h+=`<div class="mt1">母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
-    const arLv=arousalLv(p);
-    h+=`<div class="mt1">発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
-    h+=`<div class="mt1">声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
-    const gen=p.generation||1,cmm=clitMm(gen);
-    h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
-    h+=`<div class="mt1">性への構え：${sexualAttitude(p)}</div>`;
-    h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
-    // 一般公募（外部出身の1世代目）の一部は、御種衣にまだ慣れず稀に恥じらう。
-    if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="mt1 muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
-    if(isMarried(p))h+=`<div class="mt1">婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
-    else h+=`<div class="mt1">婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
-    if(clanCount>=4)h+=`<div class="mt1 muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">体つき</div>';
+    h+=`<div>雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
+    h+=`<div>母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
+    h+=`<div>陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
+    h+='</div>';
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">淫らさ・反応</div>';
+    h+=`<div>発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
+    h+=`<div>声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
+    h+=`<div>性への構え：${sexualAttitude(p)}</div>`;
+    h+='</div>';
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">装い・立場</div>';
+    h+=`<div>御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
+    if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
+    if(isMarried(p))h+=`<div>婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
+    else h+=`<div>婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
+    if(clanCount>=4)h+=`<div class="muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
+    h+='</div>';
     return h;
   }
 
@@ -161,7 +170,12 @@
 
   try{
     const st=document.createElement('style');
-    st.textContent='.trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}';
+    st.textContent=[
+      '.trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}',
+      '.trait-grp{margin-top:10px;padding-left:10px;border-left:2px solid var(--border)}',
+      '.trait-grp-h{font-size:.75rem;color:var(--muted);letter-spacing:.06em;margin-bottom:3px}',
+      '.trait-grp>div:not(.trait-grp-h){margin-top:3px;line-height:1.5}'
+    ].join('');
     (document.head||document.documentElement).appendChild(st);
   }catch(e){}
 
