@@ -110,6 +110,55 @@
     return SEX_STRENGTH[strongest]+SEX_WEAKNESS[weakest]+SEX_SUBMISSION[strongest];
   }
 
+  // 淫技（エロスキル）：id 基準の決定論で選ぶ（乱数非消費）。成人のみ。
+  // 巫女は負けたがりで屈服欲が高いため、一人あたり攻め1つ＋屈服2つを持つ。
+  const ERO_ATTACK=[
+    ['名器締め','挿れた相手を思うままに締め上げ、追い込む。'],
+    ['吸茎','膣の蠕動で陰茎に吸いつき、離さず搾り取る。'],
+    ['腰づかい','自ら腰を振り、相手の精を残らず引き出す。'],
+    ['潮噴き','ひときわ勢いよく潮を高く吹き上げる。'],
+    ['乳しぼり','胸を押し付け、滋養の乳をたっぷり飲ませる。'],
+    ['口淫上手','舌と唇で念入りに奉仕し、相手を骨抜きにする。'],
+    ['誘い腰','尻を振って相手の欲を的確に煽り立てる。'],
+    ['おねだり','可愛くねだって相手の理性を溶かす。'],
+    ['底なし','幾度果てても鎮まらず、求め続ける。'],
+    ['屈服よがり','責められるほど深く感じ、あられもなく乱れる。'],
+    ['淫語責め','淫らな言葉で相手をいっそう昂ぶらせる。'],
+    ['締めどころ','相手が果てる寸前を見極めて追い込む。'],
+    ['全身性感','どこを触られても濃く感じ取る。'],
+    ['多重奉仕','複数の相手を同時に悦ばせる。'],
+    ['神迎え上手','潮吹きの儀で、神を招く潮が濃く速い。'],
+    ['クリ責め返し','育った陰核で相手を擦り立て、翻弄する。']
+  ];
+  const ERO_SUBMIT=[
+    ['即堕ち','少し責められただけで、たやすく陥落する。'],
+    ['泣き乱れ','感じすぎて涙をこぼしながら乱れきる。'],
+    ['連続絶頂','一度達すると止まらず、続けざまに昇りつめる。'],
+    ['従順よがり','命じられるまま従い、悦んで身を投げ出す。'],
+    ['アヘ堕ち','理性を飛ばし、だらしなく蕩けきる。'],
+    ['失神イキ','強すぎる絶頂に、気を失うほど追い上げられる。'],
+    ['命乞い','もう許してと乞いながら、なお奥を欲しがる。'],
+    ['種欲しがり','注がれることを強く求め、腰を押しつける。'],
+    ['全開放','気位も強がりもかなぐり捨て、あられもなく晒す。'],
+    ['マゾ悦び','責め苦や辱めを、かえって深い悦びに変える。'],
+    ['腰砕け','崩れ落ちて、支えなしでは立てなくなる。'],
+    ['甘え縋り','相手にしがみつき、離れられなくなる。'],
+    ['屈服濡れ','組み伏せられるほど、激しく濡れそぼる。'],
+    ['二穴堕ち','前も後ろも同時に責められ、なすすべなく落ちる。'],
+    ['拘束悦','縛られ動けぬまま責められることに強く感じる。'],
+    ['心まで明け渡し','身体だけでなく心まで支配されて満たされる。']
+  ];
+  function eroSkills(p){
+    const atk=ERO_ATTACK[(p.id*17)%ERO_ATTACK.length];
+    const sub=[],used=new Set();
+    for(let i=0;i<2;i++){
+      let n=(p.id*13+i*7)%ERO_SUBMIT.length;
+      while(used.has(n))n=(n+1)%ERO_SUBMIT.length;
+      used.add(n); sub.push(ERO_SUBMIT[n]);
+    }
+    return {atk,sub};
+  }
+
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
   function traitsHtml(p){
@@ -132,6 +181,9 @@
     const blood=bloodOf(vol);
     const rocket=(b.bust>=100&&vol.lv>=3);
 
+    const arLv=arousalLv(p);
+    const gen=p.generation||1,cmm=clitMm(gen);
+
     let h='<h3>設定由来の特徴</h3>';
     h+='<div class="trait-badges">';
     h+=`<span class="badge">豊満度：${vol.label}</span>`;
@@ -139,20 +191,32 @@
     h+=`<span class="badge">神の血の濃さ：${blood.label}</span>`;
     if(p.favored)h+='<span class="badge">大寵愛の娘</span>';
     h+='</div>';
-    h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
-    h+=`<div class="mt1">母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
-    const arLv=arousalLv(p);
-    h+=`<div class="mt1">発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
-    h+=`<div class="mt1">声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
-    const gen=p.generation||1,cmm=clitMm(gen);
-    h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
-    h+=`<div class="mt1">性への構え：${sexualAttitude(p)}</div>`;
-    h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
-    // 一般公募（外部出身の1世代目）の一部は、御種衣にまだ慣れず稀に恥じらう。
-    if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="mt1 muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
-    if(isMarried(p))h+=`<div class="mt1">婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
-    else h+=`<div class="mt1">婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
-    if(clanCount>=4)h+=`<div class="mt1 muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">体つき</div>';
+    h+=`<div>雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
+    h+=`<div>母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
+    h+=`<div>陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
+    h+='</div>';
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">淫らさ・反応</div>';
+    h+=`<div>発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
+    h+=`<div>声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
+    h+=`<div>性への構え：${sexualAttitude(p)}</div>`;
+    h+='</div>';
+
+    const es=eroSkills(p);
+    h+='<div class="trait-grp"><div class="trait-grp-h">淫技（攻め1・屈服2）</div>';
+    h+=`<div><span class="badge">攻</span>《${esc(es.atk[0])}》<span class="muted">${esc(es.atk[1])}</span></div>`;
+    es.sub.forEach(s=>{h+=`<div><span class="badge">屈</span>《${esc(s[0])}》<span class="muted">${esc(s[1])}</span></div>`;});
+    h+='</div>';
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">装い・立場</div>';
+    h+=`<div>御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
+    if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
+    if(isMarried(p))h+=`<div>婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
+    else h+=`<div>婚姻：まだ独り身（遅くとも二十七までには嫁ぐ）　／　夫との実子 0人</div>`;
+    if(clanCount>=4)h+=`<div class="muted">${esc(p.family)}一族は現役${clanCount}人の大氏族——神に長く愛され、豊満で濃い血を代々受け継いできた家門である。</div>`;
+    h+='</div>';
     return h;
   }
 
@@ -161,7 +225,12 @@
 
   try{
     const st=document.createElement('style');
-    st.textContent='.trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}';
+    st.textContent=[
+      '.trait-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}',
+      '.trait-grp{margin-top:10px;padding-left:10px;border-left:2px solid var(--border)}',
+      '.trait-grp-h{font-size:.75rem;color:var(--muted);letter-spacing:.06em;margin-bottom:3px}',
+      '.trait-grp>div:not(.trait-grp-h){margin-top:3px;line-height:1.5}'
+    ].join('');
     (document.head||document.documentElement).appendChild(st);
   }catch(e){}
 
