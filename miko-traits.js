@@ -41,6 +41,10 @@
     const gTier=g>=25?5:(g>=15?4:(g>=8?3:(g>=3?2:1)));   // 世代で底上げ（1〜5）
     return Math.max(1,Math.min(6,gTier+(hp(p.id,6,3)-1)));  // 個体差 ±1（1〜6）
   }
+  // 声：地声の個性（id個体差・8種）と、乱れたときの濃さ（発情レベル連動・6段階）。
+  const VOICE_TONE=['','甘く高い鼻にかかった声','鈴を転がすような澄んだ声','舌足らずでたどたどしい声','低くかすれた色っぽい声','けたたましく響く大声','必死に押し殺す忍び声','すぐ泣きじゃくる涙声','とめどなく淫語を垂れ流す声'];
+  function voiceTone(p){return VOICE_TONE[1+hp(p.id,7,VOICE_TONE.length-1)];}
+  const VOICE_DISORDER=['','声を抑えめに漏らす','素直に喘ぎを漏らす','甘く啼いて乱れる','あられもなく喘ぎ通す','淫語混じりに啼き狂う','淫語を垂れ流して絶叫する'];
   // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝6mm固定、
   // 以降は1世代ごとに+1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
   // 節目：5世代=10mmで生涯わずかに突出／10世代=15mmで明確に突出（並の下着不可）／
@@ -139,6 +143,7 @@
     h+=`<div class="mt1">母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
     const arLv=arousalLv(p);
     h+=`<div class="mt1">発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
+    h+=`<div class="mt1">声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
     const gen=p.generation||1,cmm=clitMm(gen);
     h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
     h+=`<div class="mt1">性への構え：${sexualAttitude(p)}</div>`;
