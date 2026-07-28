@@ -29,6 +29,7 @@
         {label:'契約状況',     ids:['candidateCount']},
         {label:'親類縁者',     ids:['kinSummary']},
         {label:'母系一族',     ids:['clans']},
+        {label:'母系の系図',   ids:['lineageTree']},
         {label:'神羅巫女',     ids:['shinraMikos']},
         {label:'推移グラフ',   ids:['trendPanels']},
         {label:'年齢構成',     ids:['ageGroups']},
