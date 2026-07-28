@@ -23,6 +23,9 @@
   }
   const SCENT=['','ほのかに甘い','甘く匂い立つ','濃厚に甘く漂う','むせ返るほど甘い'];
   const MEIKI=['','並','上物','絶品','比類なき名器'];
+  // 母乳：世代（血の濃さ）で味と濃さが増す。量は豊満さ（乳の大きさ）で決まる。
+  const MILK=['','さらりと甘い','甘く濃い','とろりと濃厚','蜜のごとく濃厚甘美'];
+  function milkFlow(b){return b.bust>=100?'あふれるほど豊富':(b.bust>=88?'よく出る':'並の量');}
   // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝6mm固定、
   // 以降は1世代ごとに+1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
   // 節目：5世代=10mmで生涯わずかに突出／10世代=15mmで明確に突出（並の下着不可）／
@@ -85,6 +88,7 @@
     if(p.favored)h+='<span class="badge">大寵愛の娘</span>';
     h+='</div>';
     h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
+    h+=`<div class="mt1">母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
     const gen=p.generation||1,cmm=clitMm(gen);
     h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
     h+='<div class="mt1">性への構え：積極的に仕掛けるが、根は負けたがりで屈服欲が高い。'
