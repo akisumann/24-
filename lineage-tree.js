@@ -1,59 +1,74 @@
-// 母系の系図（表示のみ・非侵襲）：現役巫女を母系一族ごとに「木の枝」で描く。
-// 母(p.mother=フルネーム文字列)が現役名簿にいれば娘をその下へ枝分かれさせ、
-// いなければ generation（世代数）を根の深さの目安として並べる。乱数・ロジックは触らない。
+// 母系の系図（表示のみ・非侵襲）：window.__lineage（過去の全巫女の記録）から、
+// 一族を選ぶとその一族の系図が初代→現役まで縦に伸びるツリーで見える。各ノードに潜在レベル。
+// lineage-record.js が記録した履歴を使う。無ければ現役名簿から簡易生成。
 (function(){
-  if(typeof render!=='function'||typeof full!=='function')return;
+  if(typeof render!=='function')return;
+  var selectedFam=null;
 
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
 
-  function build(){
-    var box=document.getElementById('lineageTree');
-    if(!box||typeof mikos==='undefined')return;
-
-    // フルネーム→人物（同名の曖昧さは最初の一人）。
-    var byName={};
-    mikos.forEach(function(p){var k=full(p); if(!byName[k])byName[k]=p;});
-    function motherOf(p){
-      if(!p.mother||p.mother==='—')return null;
-      var m=byName[p.mother];
-      return (m&&m.id!==p.id)?m:null;
-    }
-    // 一族ごとに集める。
-    var fams={};
-    mikos.forEach(function(p){(fams[p.family]=fams[p.family]||[]).push(p);});
-    var famList=Object.keys(fams).map(function(f){return[f,fams[f]];})
-      .sort(function(a,b){return b[1].length-a[1].length||a[0].localeCompare(b[0]);});
-
-    var html='';
-    famList.forEach(function(pair){
-      var fam=pair[0],members=pair[1];
-      var childrenOf={},roots=[];
-      members.forEach(function(p){
-        var m=motherOf(p);
-        if(m&&m.family===fam){(childrenOf[m.id]=childrenOf[m.id]||[]).push(p);}
-        else roots.push(p);
-      });
-      roots.sort(function(a,b){return (a.generation||1)-(b.generation||1)||b.age-a.age||a.id-b.id;});
-      var gens=members.map(function(p){return p.generation||1;});
-      var gmin=Math.min.apply(null,gens),gmax=Math.max.apply(null,gens);
-      html+='<div class="node space2"><div class="flex wrap center between gap2">'
-        +'<span class="medium">'+esc(fam)+'一族</span>'
-        +'<span class="badge">現役'+members.length+'人・'+(gmin===gmax?gmin+'世代目':gmin+'〜'+gmax+'世代目')+'</span></div>'
-        +'<ul class="ltree">'+roots.map(function(r){return node(r,childrenOf);}).join('')+'</ul></div>';
-    });
-    box.innerHTML=html||'<p class="muted">表示できる系図がありません。</p>';
-
-    var cnt=document.getElementById('lineageTreeCount');
-    if(cnt)cnt.textContent=famList.length+'一族';
+  function getLineage(){
+    var L=(window.__lineage&&window.__lineage.length)?window.__lineage:null;
+    if(L)return L;
+    // フォールバック：記録が無ければ現役から作る。
+    if(typeof mikos==='undefined')return [];
+    return mikos.map(function(p){return {id:p.id,name:p.given,family:p.family,gen:p.generation||1,mother:(p.motherId!=null?p.motherId:null),pot:Math.round((typeof avg==='function')?avg(p.maxStats):0),born:(typeof year!=='undefined'?year:0)};});
   }
 
-  function node(p,childrenOf){
-    var kids=(childrenOf[p.id]||[]).sort(function(a,b){return b.age-a.age||a.id-b.id;});
-    var tags=(p.favored?' <span class="ltag fav">大寵愛</span>':'')
-      +(p.age<20?' <span class="ltag ikusei">育成</span>':'');
-    var s='<li><span class="ltree-item" data-person="'+p.id+'" role="button" tabindex="0">'
-      +'<b>'+esc(p.given)+'</b>　'+p.age+'歳・'+(p.generation||1)+'世代目'+tags+'</span>';
-    if(kids.length)s+='<ul class="ltree">'+kids.map(function(k){return node(k,childrenOf);}).join('')+'</ul>';
+  function build(){
+    var box=document.getElementById('lineageTree');
+    if(!box)return;
+    var L=getLineage();
+    if(!L.length){box.innerHTML='<p class="muted">まだ系譜の記録がありません。</p>';return;}
+
+    // 現役idセット
+    var live={}; if(typeof mikos!=='undefined')mikos.forEach(function(p){live[p.id]=1;});
+
+    // 一族ごと
+    var fams={};
+    L.forEach(function(e){(fams[e.family]=fams[e.family]||[]).push(e);});
+    var famNames=Object.keys(fams).sort(function(a,b){return fams[b].length-fams[a].length||a.localeCompare(b);});
+    if(!selectedFam||!fams[selectedFam])selectedFam=famNames[0];
+
+    // 一族ピッカー
+    var picker='<div class="ltree-picker">'+famNames.map(function(f){
+      var liveN=fams[f].filter(function(e){return live[e.id];}).length;
+      return '<button type="button" class="ltree-fam'+(f===selectedFam?' on':'')+'" data-fam="'+esc(f)+'">'+esc(f)+'<span class="ltree-fam-n">'+fams[f].length+(liveN?'／現'+liveN:'')+'</span></button>';
+    }).join('')+'</div>';
+
+    // 選択一族のツリー
+    var entries=fams[selectedFam];
+    var byId={}; entries.forEach(function(e){byId[e.id]=e;});
+    var childrenOf={},roots=[];
+    entries.forEach(function(e){
+      var m=(e.mother!=null&&byId[e.mother])?byId[e.mother]:null; // 同一族内に母がいれば子
+      if(m){(childrenOf[m.id]=childrenOf[m.id]||[]).push(e);}
+      else roots.push(e);
+    });
+    roots.sort(function(a,b){return (a.born||0)-(b.born||0)||(a.gen||1)-(b.gen||1)||a.id-b.id;});
+
+    var gens=entries.map(function(e){return e.gen||1;});
+    var gmin=Math.min.apply(null,gens),gmax=Math.max.apply(null,gens);
+    var liveN=entries.filter(function(e){return live[e.id];}).length;
+    var head='<div class="flex wrap center between gap2 mt2"><span class="medium">'+esc(selectedFam)+'一族の系図</span>'
+      +'<span class="badge">総勢'+entries.length+'人・現役'+liveN+'人・'+(gmin===gmax?gmin+'世代':gmin+'〜'+gmax+'世代')+'</span></div>';
+
+    box.innerHTML=picker+head+'<ul class="ltree">'+roots.map(function(r){return node(r,childrenOf,live);}).join('')+'</ul>';
+
+    var cnt=document.getElementById('lineageTreeCount');
+    if(cnt)cnt.textContent=famNames.length+'一族';
+  }
+
+  function node(e,childrenOf,live){
+    var kids=(childrenOf[e.id]||[]).sort(function(a,b){return (a.born||0)-(b.born||0)||a.id-b.id;});
+    var isLive=!!live[e.id];
+    var cls='ltree-item'+(isLive?' live':'');
+    var attr=isLive?' data-person="'+e.id+'" role="button" tabindex="0"':'';
+    var status=isLive?'<span class="ltag live">現役</span>':'';
+    var s='<li><span class="'+cls+'"'+attr+'>'
+      +'<b>'+esc(e.name)+'</b>　'+(e.gen||1)+'世代目・潜在Lv'+(e.pot||0)
+      +'<span class="ltree-born">'+(e.born||0)+'年生</span>'+status+'</span>';
+    if(kids.length)s+='<ul class="ltree">'+kids.map(function(k){return node(k,childrenOf,live);}).join('')+'</ul>';
     return s+'</li>';
   }
 
@@ -61,15 +76,21 @@
     if(document.getElementById('ltree-style'))return;
     var st=document.createElement('style');st.id='ltree-style';
     st.textContent=[
+      '#lineageTree .ltree-picker{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}',
+      '#lineageTree .ltree-fam{font:inherit;color:var(--text);background:var(--chip);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:.82rem;cursor:pointer;display:inline-flex;gap:5px;align-items:center}',
+      '#lineageTree .ltree-fam:hover{border-color:var(--accent)}',
+      '#lineageTree .ltree-fam.on{background:var(--accent);color:var(--accentText);border-color:var(--accent);font-weight:650}',
+      '#lineageTree .ltree-fam-n{opacity:.75;font-size:.72rem}',
       '#lineageTree .ltree{list-style:none;margin:0;padding-left:0}',
       '#lineageTree .ltree .ltree{margin-left:14px;padding-left:12px;border-left:1px solid var(--border)}',
       '#lineageTree .ltree li{position:relative;padding:3px 0}',
-      '#lineageTree .ltree .ltree>li::before{content:"";position:absolute;left:-12px;top:14px;width:10px;border-top:1px solid var(--border)}',
-      '#lineageTree .ltree-item{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:8px;background:var(--chip);cursor:pointer;font-size:.9rem}',
-      '#lineageTree .ltree-item:hover{border-color:var(--accent)}',
-      '#lineageTree .ltag{font-size:.72rem;padding:0 5px;border-radius:6px;margin-left:2px;color:#fff}',
-      '#lineageTree .ltag.fav{background:#c2185b}',
-      '#lineageTree .ltag.ikusei{background:#607d8b}'
+      '#lineageTree .ltree .ltree>li::before{content:"";position:absolute;left:-12px;top:15px;width:10px;border-top:1px solid var(--border)}',
+      '#lineageTree .ltree-item{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:.88rem}',
+      '#lineageTree .ltree-item.live{cursor:pointer;background:var(--chip)}',
+      '#lineageTree .ltree-item.live:hover{border-color:var(--accent)}',
+      '#lineageTree .ltree-born{opacity:.6;font-size:.74rem;margin-left:6px}',
+      '#lineageTree .ltag{font-size:.7rem;padding:0 5px;border-radius:6px;margin-left:5px;color:#fff}',
+      '#lineageTree .ltag.live{background:#2e7d32}'
     ].join('');
     (document.head||document.documentElement).appendChild(st);
   }
@@ -77,21 +98,19 @@
   function bindTap(){
     var box=document.getElementById('lineageTree');
     if(!box||box._ltBound)return; box._ltBound=true;
-    function open(t){
-      var el=t&&t.closest&&t.closest('.ltree-item'); if(!el)return;
-      var id=parseInt(el.getAttribute('data-person'),10);
-      if(window.openMikoDetail)window.openMikoDetail(id);
-      else{try{selectedId=id;if(typeof renderDetail==='function')renderDetail();}catch(e){}}
-    }
-    box.addEventListener('click',function(e){open(e.target);});
-    box.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(e.target);}});
+    box.addEventListener('click',function(e){
+      var fam=e.target&&e.target.closest&&e.target.closest('.ltree-fam');
+      if(fam){selectedFam=fam.getAttribute('data-fam');build();return;}
+      var it=e.target&&e.target.closest&&e.target.closest('.ltree-item.live');
+      if(it){var id=parseInt(it.getAttribute('data-person'),10);
+        if(window.openMikoDetail)window.openMikoDetail(id);
+        else{try{selectedId=id;if(typeof renderDetail==='function')renderDetail();}catch(_){}}}
+    });
   }
 
-  function run(){ try{ injectStyle(); build(); bindTap(); }catch(e){} }
-
+  function run(){try{injectStyle();build();bindTap();}catch(e){}}
   var before=render;
-  render=function(){ before(); run(); };
-
+  render=function(){before();run();};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
   else run();
 })();
