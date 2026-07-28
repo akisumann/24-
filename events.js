@@ -97,7 +97,7 @@
     let now='';
     if(latest){
       if(latest.calm){
-        now=`<div class="callout">${latest.year}年：目立った波乱はなく、静かな七年が過ぎた。</div>`;
+        now=`<div class="callout">${latest.year}年：目立った波乱はなく、静かな7年が過ぎた。</div>`;
       }else{
         now=`<div class="callout"><div class="flex wrap center between gap2"><span class="medium">${latest.year}年・${latest.threat}</span><span class="badge">${latest.success?'切り抜けた':'被害'}</span></div>`
           +`<div class="mt1">${latest.text}。</div>`

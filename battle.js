@@ -139,13 +139,13 @@ function renderBattleResult(){
   const box=document.getElementById('battleResult');
   if(!box)return;
   if(!lastBattleResult){
-    box.innerHTML='二人を選び、「対戦開始」を押してください。';
+    box.innerHTML='2人を選び、「対戦開始」を押してください。';
     return;
   }
   const {a,b,rounds,wins,winner}=lastBattleResult;
   let previousWinner=null;
   box.innerHTML=`<div class="space3">
-    <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">三本勝負・二本先取</p></div><span class="badge">${full(winner)} 勝利</span></div>
+    <div class="flex between gap2"><div><h3>${full(a)} 対 ${full(b)}</h3><p class="muted">3本勝負・2本先取</p></div><span class="badge">${full(winner)} 勝利</span></div>
     ${rounds.map(r=>{
       const story=battleStory(r,previousWinner,a,b);
       previousWinner=r.winner;

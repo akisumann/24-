@@ -52,7 +52,7 @@
       });
       if(infoCards.length)SECTIONS.push({label:'制度・ルール',cardEls:infoCards});
 
-      // 退避対象：各セクションのカード＋冗長な七年の大淫義カード（HUDが代替）＋詳細カード（詳細はタップでモーダル）
+      // 退避対象：各セクションのカード＋冗長な7年の大淫義カード（HUDが代替）＋詳細カード（詳細はタップでモーダル）
       var toStash=[];
       SECTIONS.forEach(function(s){s.cardEls.forEach(function(c){if(toStash.indexOf(c)<0)toStash.push(c);});});
       var taigi=cardOf('advance'); if(taigi&&toStash.indexOf(taigi)<0)toStash.push(taigi);

@@ -54,7 +54,7 @@ function runTurnWithBottomFiveRetirement(){
     .slice(0,10);
 
   // 第2段階：子作りと神羅判定を全員分完了する。
-  // 大寵愛：十人の母のうち「胸＋尻−腰×0.5」が最大（腰が細いほど有利。同点は潜在レベル→id小）の一人を神が最も激しく求める。
+  // 大寵愛：10人の母のうち「胸＋尻−腰×0.5」が最大（腰が細いほど有利。同点は潜在レベル→id小）の1人を神が最も激しく求める。
   // その母の娘だけ、makeChild 内で能力乱数の下限が 0.6 に上がる。
   const favScore=p=>p.body.bust+p.body.hip-p.body.waist*0.5;
   const favoredMother=mothers.slice().sort((a,b)=>
