@@ -110,6 +110,35 @@
     return SEX_STRENGTH[strongest]+SEX_WEAKNESS[weakest]+SEX_SUBMISSION[strongest];
   }
 
+  // 淫技（エロスキル）：通常スキルと同じく id 基準の決定論で、16種から3つを選ぶ（乱数非消費）。成人のみ。
+  const ERO_SKILLS=[
+    ['名器締め','挿れた相手を思うままに締め上げ、追い込む。'],
+    ['吸茎','膣の蠕動で陰茎に吸いつき、離さず搾り取る。'],
+    ['腰づかい','自ら腰を振り、相手の精を残らず引き出す。'],
+    ['潮噴き','ひときわ勢いよく潮を高く吹き上げる。'],
+    ['乳しぼり','胸を押し付け、滋養の乳をたっぷり飲ませる。'],
+    ['口淫上手','舌と唇で念入りに奉仕し、相手を骨抜きにする。'],
+    ['誘い腰','尻を振って相手の欲を的確に煽り立てる。'],
+    ['おねだり','可愛くねだって相手の理性を溶かす。'],
+    ['底なし','幾度果てても鎮まらず、求め続ける。'],
+    ['屈服よがり','責められるほど深く感じ、あられもなく乱れる。'],
+    ['淫語責め','淫らな言葉で相手をいっそう昂ぶらせる。'],
+    ['締めどころ','相手が果てる寸前を見極めて追い込む。'],
+    ['全身性感','どこを触られても濃く感じ取る。'],
+    ['多重奉仕','複数の相手を同時に悦ばせる。'],
+    ['神迎え上手','潮吹きの儀で、神を招く潮が濃く速い。'],
+    ['クリ責め返し','育った陰核で相手を擦り立て、翻弄する。']
+  ];
+  function eroSkills(p){
+    const out=[],used=new Set();
+    for(let i=0;i<3;i++){
+      let n=(p.id*17+i*11)%ERO_SKILLS.length;
+      while(used.has(n))n=(n+1)%ERO_SKILLS.length;
+      used.add(n); out.push(ERO_SKILLS[n]);
+    }
+    return out;
+  }
+
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
   function traitsHtml(p){
@@ -153,6 +182,10 @@
     h+=`<div>発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
     h+=`<div>声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
     h+=`<div>性への構え：${sexualAttitude(p)}</div>`;
+    h+='</div>';
+
+    h+='<div class="trait-grp"><div class="trait-grp-h">淫技</div>';
+    eroSkills(p).forEach(s=>{h+=`<div>《${esc(s[0])}》<span class="muted">${esc(s[1])}</span></div>`;});
     h+='</div>';
 
     h+='<div class="trait-grp"><div class="trait-grp-h">装い・立場</div>';
