@@ -110,8 +110,9 @@
     return SEX_STRENGTH[strongest]+SEX_WEAKNESS[weakest]+SEX_SUBMISSION[strongest];
   }
 
-  // 淫技（エロスキル）：通常スキルと同じく id 基準の決定論で、16種から3つを選ぶ（乱数非消費）。成人のみ。
-  const ERO_SKILLS=[
+  // 淫技（エロスキル）：id 基準の決定論で選ぶ（乱数非消費）。成人のみ。
+  // 巫女は負けたがりで屈服欲が高いため、一人あたり攻め1つ＋屈服2つを持つ。
+  const ERO_ATTACK=[
     ['名器締め','挿れた相手を思うままに締め上げ、追い込む。'],
     ['吸茎','膣の蠕動で陰茎に吸いつき、離さず搾り取る。'],
     ['腰づかい','自ら腰を振り、相手の精を残らず引き出す。'],
@@ -129,14 +130,33 @@
     ['神迎え上手','潮吹きの儀で、神を招く潮が濃く速い。'],
     ['クリ責め返し','育った陰核で相手を擦り立て、翻弄する。']
   ];
+  const ERO_SUBMIT=[
+    ['即堕ち','少し責められただけで、たやすく陥落する。'],
+    ['泣き乱れ','感じすぎて涙をこぼしながら乱れきる。'],
+    ['連続絶頂','一度達すると止まらず、続けざまに昇りつめる。'],
+    ['従順よがり','命じられるまま従い、悦んで身を投げ出す。'],
+    ['アヘ堕ち','理性を飛ばし、だらしなく蕩けきる。'],
+    ['失神イキ','強すぎる絶頂に、気を失うほど追い上げられる。'],
+    ['命乞い','もう許してと乞いながら、なお奥を欲しがる。'],
+    ['種欲しがり','注がれることを強く求め、腰を押しつける。'],
+    ['全開放','気位も強がりもかなぐり捨て、あられもなく晒す。'],
+    ['マゾ悦び','責め苦や辱めを、かえって深い悦びに変える。'],
+    ['腰砕け','崩れ落ちて、支えなしでは立てなくなる。'],
+    ['甘え縋り','相手にしがみつき、離れられなくなる。'],
+    ['屈服濡れ','組み伏せられるほど、激しく濡れそぼる。'],
+    ['二穴堕ち','前も後ろも同時に責められ、なすすべなく落ちる。'],
+    ['拘束悦','縛られ動けぬまま責められることに強く感じる。'],
+    ['心まで明け渡し','身体だけでなく心まで支配されて満たされる。']
+  ];
   function eroSkills(p){
-    const out=[],used=new Set();
-    for(let i=0;i<3;i++){
-      let n=(p.id*17+i*11)%ERO_SKILLS.length;
-      while(used.has(n))n=(n+1)%ERO_SKILLS.length;
-      used.add(n); out.push(ERO_SKILLS[n]);
+    const atk=ERO_ATTACK[(p.id*17)%ERO_ATTACK.length];
+    const sub=[],used=new Set();
+    for(let i=0;i<2;i++){
+      let n=(p.id*13+i*7)%ERO_SUBMIT.length;
+      while(used.has(n))n=(n+1)%ERO_SUBMIT.length;
+      used.add(n); sub.push(ERO_SUBMIT[n]);
     }
-    return out;
+    return {atk,sub};
   }
 
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
@@ -184,8 +204,10 @@
     h+=`<div>性への構え：${sexualAttitude(p)}</div>`;
     h+='</div>';
 
-    h+='<div class="trait-grp"><div class="trait-grp-h">淫技</div>';
-    eroSkills(p).forEach(s=>{h+=`<div>《${esc(s[0])}》<span class="muted">${esc(s[1])}</span></div>`;});
+    const es=eroSkills(p);
+    h+='<div class="trait-grp"><div class="trait-grp-h">淫技（攻め1・屈服2）</div>';
+    h+=`<div><span class="badge">攻</span>《${esc(es.atk[0])}》<span class="muted">${esc(es.atk[1])}</span></div>`;
+    es.sub.forEach(s=>{h+=`<div><span class="badge">屈</span>《${esc(s[0])}》<span class="muted">${esc(s[1])}</span></div>`;});
     h+='</div>';
 
     h+='<div class="trait-grp"><div class="trait-grp-h">装い・立場</div>';
