@@ -78,9 +78,6 @@
       }catch(e){}
     };
 
-    // 他モジュール（系図ツリー等）から任意の巫女詳細モーダルを開けるよう公開。
-    try{ window.openMikoDetail=function(id){ try{ selectedId=id; pendingOpen=true; renderDetail(); }catch(e){} }; }catch(e){}
-
     // 初期化（#detail が存在する状態で overlay を用意）。
     function init(){ try{ build(); }catch(e){} }
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
