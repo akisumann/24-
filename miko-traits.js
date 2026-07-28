@@ -26,6 +26,19 @@
   // 母乳：世代（血の濃さ）で味と濃さが増す。量は豊満さ（乳の大きさ）で決まる。
   const MILK=['','さらりと甘い','甘く濃い','とろりと濃厚','蜜のごとく濃厚甘美'];
   function milkFlow(b){return b.bust>=100?'あふれるほど豊富':(b.bust>=88?'よく出る':'並の量');}
+  // 発情の強さ：世代で底上げしつつ、id基準の個体差で同世代でも差が出る（1〜5）。
+  const AROUSAL=['','淡泊め','人並み','強め','かなり強い','底なし'];
+  const AROUSAL_NOTE=['',
+    'ふだんは落ち着いており、時おり疼く程度。',
+    '人並みに濡れ、夫を求める。御種衣をまとえば自然と発情する。',
+    '濡れやすく乳も滲みがち。夜ごと夫を欲しがり、大淫義でも早くから乱れる。',
+    '少し気を抜けばすぐ発情し、我慢が利きにくい。日中もしばしば太腿をすり合わせる。',
+    '四六時中疼き、濡らし、乳を漏らす。相手なしでは平静を保ちがたく、夫を毎晩貪る。'];
+  function arousalLv(p){
+    const g=p.generation||1;
+    const gTier=g>=20?4:(g>=10?3:(g>=4?2:1));   // 世代で底上げ（1〜4）
+    return Math.max(1,Math.min(5,gTier+(hp(p.id,6,3)-1)));  // 個体差 ±1（1〜5）
+  }
   // 陰核は「実際の世代数」で決まる正確な指標。1世代目（初期採用・一般公募）＝6mm固定、
   // 以降は1世代ごとに+1mm。大きさを見れば何世代目かが一意にわかる。感度も世代で鋭くなる。
   // 節目：5世代=10mmで生涯わずかに突出／10世代=15mmで明確に突出（並の下着不可）／
@@ -122,6 +135,8 @@
     h+='</div>';
     h+=`<div class="mt2">雌の匂い：<b>${SCENT[blood.lv]}</b>　／　名器度：<b>${MEIKI[blood.lv]}</b></div>`;
     h+=`<div class="mt1">母乳：<b>${MILK[blood.lv]}</b>・${milkFlow(b)}（飲めば男を癒す滋養強壮の加護つき）</div>`;
+    const arLv=arousalLv(p);
+    h+=`<div class="mt1">発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
     const gen=p.generation||1,cmm=clitMm(gen);
     h+=`<div class="mt1">陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
     h+=`<div class="mt1">性への構え：${sexualAttitude(p)}</div>`;
