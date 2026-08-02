@@ -21,8 +21,8 @@ function makeChild(m){
   // 大寵愛の有無で srandom の消費回数は変わらない（各項目1回）ため、シード再現性は保たれる。
   const favored=(favoredMotherId!==null&&m.id===favoredMotherId);
   STATS.forEach(s=>{
-    const multiplier=favored?(.6+srandom()*.9):(.5+srandom());
-    inheritance[s]=Math.round(multiplier*100)/100; // 表示・保存用は小数2桁に丸める（能力計算は下の full multiplier を使うので結果は不変）
+    const multiplier=Math.round((favored?(.6+srandom()*.9):(.5+srandom()))*100)/100; // 継承倍率は小数2桁。表示・保存・計算すべてこの値で統一。
+    inheritance[s]=multiplier;
     maxStats[s]=Math.max(1,Math.round(((m.maxStats[s]+usedGodLevel)/2)*multiplier));
   });
   const child={id,family:m.family,given:pick(GIVEN),age:0,maxStats,inheritance,body:{height:Math.round(m.body.height*.7+162*.3+rand(-10,10)),bust:Math.round(m.body.bust*.8+bodyBase()*.2+rand(0,10)),waist:Math.round(m.body.waist*.5+62*.5+rand(-7,7)),hip:Math.round(m.body.hip*.8+bodyBase()*.2+rand(0,10)),hair:srandom()<.7?m.body.hair:pick(HAIR)},origin:'神の娘・国家育成対象',mother:full(m),generation:(m.generation||1)+1,skills:makeSkills(maxStats,id)};
