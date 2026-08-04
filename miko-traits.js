@@ -196,7 +196,7 @@
 
     // 育成対象（未成年）：非性的な表示にとどめる。
     if(p.age<20){
-      let h='<h3>設定由来の特徴</h3>';
+      let h='<h3>人物プロフィール</h3>';
       h+='<p class="mt1 muted">国家育成対象。年齢に応じた教育を受けて育つ段階であり、性的な特徴は成人後に現れる。</p>';
       h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）</div>`;
       h+=`<div class="mt1">口調：<b>${esc(speechTone(p)[0])}</b>　<span class="muted">${esc(speechTone(p)[1])}</span></div>`;
@@ -211,7 +211,7 @@
     const arLv=arousalLv(p);
     const gen=p.generation||1,cmm=clitMm(gen);
 
-    let h='<h3>設定由来の特徴</h3>';
+    let h='<h3>人物プロフィール</h3><p class="mt1 muted">世代・体型・血筋などから導く、設定由来の人物像。</p>';
     h+='<div class="trait-badges">';
     h+=`<span class="badge">豊満度：${vol.label}</span>`;
     if(rocket)h+='<span class="badge">垂れぬ砲弾型の胸</span>';
@@ -229,7 +229,7 @@
     h+=`<div>陰核：<b>${cmm}mm</b>（${gen}世代目）${clitStage(gen)}　／　感度 <b>${clitSens(gen)}</b></div>`;
     h+='</div>';
 
-    h+='<div class="trait-grp"><div class="trait-grp-h">淫らさ・反応</div>';
+    h+='<div class="trait-grp"><div class="trait-grp-h">色っぽさ・感じ方</div>';
     h+=`<div>発情の強さ：<b>${AROUSAL[arLv]}</b>　<span class="muted">${AROUSAL_NOTE[arLv]}</span></div>`;
     h+=`<div>声：<b>${voiceTone(p)}</b>　／　乱れると<b>${VOICE_DISORDER[arLv]}</b></div>`;
     h+=`<div>性への構え：${sexualAttitude(p)}</div>`;
@@ -241,7 +241,7 @@
     es.sub.forEach(s=>{h+=`<div><span class="badge">屈</span>《${esc(s[0])}》<span class="muted">${esc(s[1])}</span></div>`;});
     h+='</div>';
 
-    h+='<div class="trait-grp"><div class="trait-grp-h">装い・立場</div>';
+    h+='<div class="trait-grp"><div class="trait-grp-h">装いと立場</div>';
     h+=`<div>御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）。一枚布の生殖用装束で、身体を隠さず示す。</div>`;
     if((p.generation||1)===1&&hp(p.id,5,3)===0)h+=`<div class="muted">外部から入った身で御種衣にまだ慣れず、時折恥じらうことがある。</div>`;
     if(isMarried(p))h+=`<div>婚姻：<b>夫あり</b>　／　夫との実子 <b>${kidsByHusband(p)}人</b>（神の娘とは別）</div>`;
