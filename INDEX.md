@@ -97,6 +97,7 @@ AIがこの世界の物語を書く・ゲームを扱うときは、まずここ
 | 乳首の敏感さ・刷り込み・授乳の献身 | `MIKO_CLOTHING_AND_MARRIAGE.md`「乳首の敏感さと刷り込み」 |
 | 乳首契約（刷り込みの正式作法・簡単な価値観/約束事をガンガン刻む・複雑は小型触手） | `MIKO_CLOTHING_AND_MARRIAGE.md`「乳首契約」 |
 | 乳首当て（夫婦の遊び・御種衣越しに乳首を探る） | `MIKO_CLOTHING_AND_MARRIAGE.md`「乳首当て（夫婦の遊び）」 |
+| 帰った夫への発散の報告（留守中の自淫・絶頂回数を実演報告し己を卑しいと語る） | `MIKO_CLOTHING_AND_MARRIAGE.md`「帰った夫への発散の報告」 |
 | 夫の体を洗う（肌で擦り洗い・乳と愛液で癒す・浄化は最後に使わない） | `MIKO_CLOTHING_AND_MARRIAGE.md`「夫の体を洗う」 |
 | 孕巫女用の小型触手（自ら摂取・1週間の洗脳・夫の特殊性癖の受け皿・マンネリ解消） | `MIKO_CLOTHING_AND_MARRIAGE.md`「孕巫女用の小型触手」 |
 | レベルの強さ感（物語描写） | `LEVEL_GUIDE.md` |
