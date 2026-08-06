@@ -137,6 +137,10 @@ function runTurnWithBottomFiveRetirement(){
   const recruits=[...rerolledRecruits,...fallbackRecruits];
   const admittedBirths=newborns.length-droppedNewborns.length;
 
+  // 名簿確定後、フルネームの重複を解消する（今ターン生まれた神の娘＝赤子や公募採用者にも一意な名を与える）。
+  // srandom を消費しない決定的処理なので、シード再現性・能力・体格には影響しない。
+  dedupeNames(mikos);
+
   updateKin(retirees,[...performanceDepartures,...overlapDepartures]);
   year+=7;
 
