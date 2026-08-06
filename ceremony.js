@@ -169,19 +169,22 @@
     if(rank1){
       leadEntries.push({
         head:`時代について（首位　${rank1.name}）`,
+        motherIdx:0,
         serious:`「恐れながら、まず時代のことを。いまは${theme||'色の定まらぬ時代'}にございます。その求めに応じ、巫女らは務めを果たしてまいりました。」`,
         teased:teaseFrom(`「い、いまは${theme||'……'}`,rank1.id+c.year,rank1.topStat)
       });
       leadEntries.push({
         head:`この7年の出来事（首位　${rank1.name}）`,
+        motherIdx:0,
         serious:ev
           ?`「この7年の出来事にございます。${ev.threat}が起こり、${ev.success?'巫女たちの働きでこれを切り抜けました':'担い手が足らず、民に痛手が及びました'}。」`
           :`「この7年、大きな波乱はなく、国は穏やかに過ぎました。」`,
         teased:teaseFrom(ev?`「こ、この7年は${ev.threat}が`:`「こ、この7年は穏やかに`,rank1.id+c.year+7,rank1.topStat)
       });
     }
-    logEntries=leadEntries.concat(c.mothers.map(m=>({
+    logEntries=leadEntries.concat(c.mothers.map((m,i)=>({
       head:`${m.name}（${m.apt}・${m.age}歳・Lv${m.level}）`,
+      motherIdx:i,
       serious:seriousBody(m,c.year),
       teased:teaseFrom(`「こ、この7年は${cutFrag(LIFE[(m.id*7+c.year)%LIFE.length])}`,m.id+c.year,m.topStat)
     })));
@@ -229,7 +232,10 @@
     const e=logEntries[i];
     if(!e){bodyEl.textContent='';return;}
     const teased=teasedSet.has(i);
-    headEl.textContent=e.head+(teased?'　（神のイタズラ中）':'');
+    const hasM=lastCeremony&&lastCeremony.mothers&&lastCeremony.mothers[e.motherIdx];
+    headEl.innerHTML=(hasM
+      ?`<span class="cere-person" data-ci="${e.motherIdx}" role="button" tabindex="0">${esc(e.head)}</span>`
+      :esc(e.head))+(teased?'　（神のイタズラ中）':'');
     if(countEl)countEl.textContent=(i+1)+' / '+logEntries.length;
     if(teaseEl)teaseEl.textContent=teased?'イタズラをやめる':'神のイタズラ';
     typeOut(bodyEl,teased?e.teased:e.serious);
