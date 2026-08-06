@@ -76,7 +76,7 @@ h1{font-size:1.15rem;letter-spacing:.06em;text-align:center;color:var(--gold);ma
   <div class="card">
     <div class="head">
       <div class="who">
-        <div class="nm" id="wName"></div>
+        <div class="nm"><span id="wName"></span><span class="pill hidden" id="wBadge" style="border-color:var(--submit);color:#e6b8f0"></span></div>
         <div class="mt" id="wMeta"></div>
       </div>
       <button class="back" onclick="toPick()">別の妻を選ぶ</button>
@@ -184,7 +184,26 @@ function zana(w, lv){
 
 // ---- 状態 ----
 let W=null, st=null, sceneIdx=0, sceneStart=360;
-function newState(){return {desire:40,arousal:20,submit:15,sens:28,joy:0,milk:35,climax:0,squirt:false,clock:360};}
+function newState(){return {desire:40,arousal:20,submit:15,sens:28,joy:0,milk:35,climax:0,squirt:false,clock:360,
+  maxed:{desire:false,arousal:false,sens:false,joy:false,milk:false,submit:false}};}
+// ---- メーターが100に達した瞬間の一回きりの演出 ----
+function checkMaxed(){
+  const msgs=[];
+  if(!st.maxed.desire && st.desire>=100){ st.maxed.desire=true;
+    msgs.push('＜夫の欲・限界＞ 興奮が振り切れ、これ以上は堪えられない。今すぐ吐き出してしまいたい衝動が突き上げる。'); }
+  if(!st.maxed.arousal && st.arousal>=100){ st.maxed.arousal=true;
+    msgs.push('＜'+W.given+'の発情・限界＞ '+voice(W,'旦那様……お願い、もう待てません……わたしから、いっていいですか……？')+' 我慢の限界を超え、'+W.given+'は自ら腰を押しつけてねだり始める。'); }
+  if(!st.maxed.sens && st.sens>=100){ st.maxed.sens=true;
+    msgs.push('＜'+W.given+'の感度・限界＞ もはや軽く触れられただけで極まる身体になった。以後、触れるたびほぼ確実に絶頂へ飛ぶ。'); }
+  if(!st.maxed.joy && st.joy>=100){ st.maxed.joy=true;
+    msgs.push('＜'+W.given+'の悦び・限界＞ これ以上ないほど満たされ、蕩けきった顔で幸福そうに微笑み続ける。'); }
+  if(!st.maxed.milk && st.milk>=100){ st.maxed.milk=true;
+    msgs.push('＜母乳・限界＞ 張り詰めきった'+chichi(W)+'が堪えきれず、ぷしゅうっと母乳を噴き上げる。以後、乳は絶えず溢れ続ける。'); }
+  if(!st.maxed.submit && st.submit>=100){ st.maxed.submit=true;
+    msgs.push('＜完全従属＞ '+W.given+'の身体と心が、完全に君のオチンポ様に屈した。'+voice(W,'もう、旦那様のオチンポ様なしでは、生きられません……')+'');
+    const badge=el('wBadge'); if(badge){ badge.textContent='完全従属'; badge.classList.remove('hidden'); } }
+  return msgs;
+}
 const clamp=(n)=>Math.max(0,Math.min(100,Math.round(n)));
 function clockStr(){const c=st.clock%1440,h=Math.floor(c/60),m=c%60,p=h<11?'朝':h<17?'昼':h<19?'夕':'夜';return p+' '+h+':'+String(m).padStart(2,'0');}
 function tick(n){st.clock+=(n||5);}
@@ -288,6 +307,7 @@ function startGame(w){
   W=w; st=newState(); sceneIdx=0;
   el('screen-pick').classList.add('hidden'); el('screen-play').classList.remove('hidden');
   el('wName').textContent=w.family+' '+w.given;
+  el('wBadge').classList.add('hidden'); el('wBadge').textContent='';
   el('wMeta').textContent=`${w.role}・${w.age}歳／${w.tone}／B${w.body.b}・W${w.body.w}・H${w.body.hip}（陰核${w.clit}mm）`;
   el('log').innerHTML='';
   bars(); showScene();
@@ -349,6 +369,7 @@ function applyEffects(ch){
   log('<span class="u">▸ '+ch.tag+'</span>');
   if(extra) log(extra);
   if(before.submit!==st.submit) log('夫への弱さが深まった（'+before.submit+'→'+st.submit+'）');
+  checkMaxed().forEach(m=>log(m));
 }
 function doAction(ch){
   tick(); applyEffects(ch);
