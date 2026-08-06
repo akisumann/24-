@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>孕巫女の一日（プロト・朝／バトル制）</title>
+<style>
+:root{--bg:#0f0c14;--panel:#1c1521;--panel2:#26192e;--ink:#f3e9f2;--muted:#b39ec2;--line:#3d2c48;
+--gold:#e7c46b;--rose:#e06a9c;--mp:#4fa3d1;--hp:#5ec089;--hpmid:#e0b34a;--hplow:#e0563c;--ecchi:#e0568f;--accent:#d98cff;}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;background:radial-gradient(120% 80% at 50% 0%,#20142a,#0f0c14);color:var(--ink);line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;padding:14px 12px 60px}
+h1{font-size:1.1rem;letter-spacing:.06em;text-align:center;color:var(--gold);margin:.4em 0 .2em;font-weight:700}
+.sub{text-align:center;color:var(--muted);font-size:.78rem;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px}
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.wife{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:9px 10px;cursor:pointer;transition:.12s;text-align:left}
+.wife:hover{border-color:var(--rose);transform:translateY(-2px)}
+.wife .nm{font-weight:700;color:var(--gold);font-size:.93rem}
+.wife .rl{color:var(--muted);font-size:.7rem;margin:2px 0 4px}
+.wife .tg{color:var(--ink);font-size:.71rem;opacity:.85;min-height:2.2em}
+.wife .bd{color:var(--rose);font-size:.66rem;margin-top:4px;font-variant-numeric:tabular-nums}
+.bhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.bhead .nm{font-weight:700;color:var(--gold);font-size:1.02rem}
+.bhead .nm .pill{margin-left:6px}
+.back{color:var(--muted);font-size:.75rem;background:none;border:none;cursor:pointer;text-decoration:underline;padding:4px}
+.clock{color:var(--accent);font-size:.78rem;text-align:right;margin-bottom:6px;letter-spacing:.03em}
+.gauge{margin-bottom:8px}
+.gauge .lab{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:3px}
+.gauge .lab b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.gauge .lab b.neg{color:var(--hplow)}
+.gtrack{height:11px;border-radius:6px;background:#08060b;overflow:hidden;position:relative;border:1px solid #000}
+.gtrack.wide{height:13px}
+.gfill{display:block;height:100%;width:50%;transition:width .9s cubic-bezier(.22,.7,.2,1),background-color .9s ease;border-radius:6px 0 0 6px}
+.gfill.hp{background:var(--hp)}
+.gfill.hp.mid{background:var(--hpmid)}
+.gfill.hp.low{background:var(--hplow)}
+.gfill.mp{background:linear-gradient(90deg,#2c5f7a,var(--mp))}
+.gfill.ecchi{background:linear-gradient(90deg,#8a2f5e,var(--ecchi))}
+.gover{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,rgba(224,86,60,.55) 0 6px,rgba(224,86,60,.15) 6px 12px);width:0;transition:width .9s cubic-bezier(.22,.7,.2,1)}
+.msgbox{background:#120c17;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;min-height:4.4em}
+.msgbox .narr{font-size:.92rem;margin:0 0 6px}
+.msgbox .wline{color:#ffd9ec;font-size:.94rem;margin:0}
+.msgbox .wline .who{color:var(--rose);font-size:.68rem;display:block;margin-bottom:2px}
+.msgbox .clear{color:var(--gold);font-weight:700;font-size:.98rem}
+.cmdgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmd{appearance:none;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:10px;padding:13px 10px;font:inherit;font-weight:700;text-align:center;cursor:pointer;transition:.12s;font-size:.95rem}
+.cmd:hover:not(:disabled){border-color:var(--rose);background:#31213a}
+.cmd:disabled{opacity:.35;cursor:not-allowed}
+.sublist{display:flex;flex-direction:column;gap:7px}
+.subbtn{appearance:none;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:10px;padding:10px 12px;font:inherit;text-align:left;cursor:pointer;transition:.12s;line-height:1.4}
+.subbtn:hover:not(:disabled){border-color:var(--rose);background:#31213a}
+.subbtn:disabled{opacity:.35;cursor:not-allowed}
+.subbtn .k{font-weight:700}
+.subbtn .c{float:right;color:var(--mp);font-size:.76rem;font-variant-numeric:tabular-nums}
+.backrow{margin-top:8px}
+.backbtn{appearance:none;border:1px solid var(--line);background:none;color:var(--muted);border-radius:8px;padding:8px 12px;font:inherit;font-size:.82rem;cursor:pointer;width:100%}
+.backbtn:hover{color:var(--ink);border-color:var(--muted)}
+.log{margin-top:12px;border-top:1px solid var(--line);padding-top:9px;max-height:190px;overflow:auto}
+.log p{margin:0 0 6px;font-size:.78rem;color:var(--muted)}
+.log .u{color:var(--accent)}
+.log .cl{color:var(--gold)}
+.hidden{display:none}
+.pill{display:inline-block;font-size:.64rem;padding:1px 7px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+.pill.win{border-color:var(--gold);color:var(--gold)}
+.end{text-align:center;padding:8px 0}
+.end .big{color:var(--gold);font-size:1.05rem;font-weight:700;margin-bottom:6px}
+</style></head>
+<body><div class="wrap">
+
+<div id="screen-pick">
+  <h1>孕巫女の一日</h1>
+  <div class="sub">— 夫として、ある孕巫女の一日を過ごす（プロトタイプ・朝／コマンドバトル制）—</div>
+  <div class="card">
+    <div style="color:var(--muted);font-size:.8rem;margin-bottom:9px">妻を選ぶ。名簿はseed108／490年の成人巫女（20〜34歳）。家名・職務・口調・体つき・陰核が、この一日に反映される。</div>
+    <div class="pick-grid" id="pickGrid"></div>
+  </div>
+</div>
+
+<div id="screen-battle" class="hidden">
+  <div class="card">
+    <div class="bhead">
+      <span class="nm"><span id="wName"></span><span class="pill hidden" id="wBadge"></span></span>
+      <button class="back" onclick="toPick()">別の妻を選ぶ</button>
+    </div>
+    <div class="clock" id="scClock"></div>
+    <div class="gauge">
+      <div class="lab"><span>妻の余裕</span><b id="vHp">0</b></div>
+      <div class="gtrack wide"><i class="gfill hp" id="bHp"></i><i class="gover" id="bHpOver"></i></div>
+    </div>
+    <div class="gauge">
+      <div class="lab"><span>妻のエッチ度</span><b id="vEcchi">0</b></div>
+      <div class="gtrack"><i class="gfill ecchi" id="bEcchi"></i></div>
+    </div>
+    <div class="gauge">
+      <div class="lab"><span>夫の欲（MP）</span><b id="vMp">0</b></div>
+      <div class="gtrack"><i class="gfill mp" id="bMp"></i></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub" id="scTitle" style="margin-bottom:8px;text-align:left;color:var(--accent);font-size:.8rem;letter-spacing:.04em"></div>
+    <div class="msgbox">
+      <p class="narr" id="scNarr"></p>
+      <p class="wline hidden" id="scWlineBox"><span class="who" id="scWho"></span><span id="scWline"></span></p>
+    </div>
+    <div id="cmdArea"></div>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+const WIVES=[{"id":1025,"family":"霞野","given":"ダリア","age":34,"role":"巡行巫女","gen":1,"clit":6,"tone":"ぶっきらぼう","toneDesc":"一人称「私」。「〜。」「別に」と言葉を切り詰め、素っ気なく話す。","tag":"判断と切り替えが早い","body":{"h":156,"b":90,"waist":70,"w":70,"hip":94,"hair":"茶"}},{"id":1013,"family":"九条","given":"アカリ","age":20,"role":"奉工巫女","gen":20,"clit":25,"tone":"謎めいて思わせぶり","toneDesc":"一人称「私」。「…さあ、どうかしら」「見えているわ」と掴みどころなく話す。","tag":"状況に合わせ器用に立ち回る","body":{"h":153,"b":121,"waist":62,"w":62,"hip":128,"hair":"青"}},{"id":1021,"family":"九条","given":"アニエス","age":20,"role":"祈祷巫女","gen":19,"clit":24,"tone":"のんびり天然","toneDesc":"一人称「わたし」。「〜かなぁ」「〜だねぇ」と間延びしてマイペース。","tag":"精神的に落ち着き周囲を安心させる","body":{"h":155,"b":113,"waist":57,"w":57,"hip":113,"hair":"緑"}},{"id":1000,"family":"九条","given":"イオリ","age":27,"role":"巡行巫女","gen":20,"clit":25,"tone":"芝居がかった大仰","toneDesc":"一人称「我」。「〜なのだ！」「ふっ…」と大げさに芝居っぽく話す。","tag":"判断と切り替えが早い","body":{"h":173,"b":131,"waist":61,"w":61,"hip":124,"hair":"銀"}},{"id":982,"family":"九条","given":"イリス","age":34,"role":"巡行巫女","gen":19,"clit":24,"tone":"きっぷのいい早口","toneDesc":"一人称「あたし」。「〜っしょ」「〜じゃん」とテンポよくまくし立てる。","tag":"判断と切り替えが早い","body":{"h":165,"b":120,"waist":59,"w":59,"hip":118,"hair":"青"}},{"id":987,"family":"九条","given":"キヨラ","age":34,"role":"奉工巫女","gen":19,"clit":24,"tone":"明るい訛り","toneDesc":"一人称「うち」。「〜やで」「〜やん」「〜ちゃう？」と陽気な訛りで話す。","tag":"状況に合わせ器用に立ち回る","body":{"h":160,"b":123,"waist":65,"w":65,"hip":123,"hair":"茶"}},{"id":986,"family":"九条","given":"キリカ","age":34,"role":"守護巫女","gen":19,"clit":24,"tone":"凛と硬質","toneDesc":"一人称「私」。「〜だ」「〜である」と簡潔で武人めいた物言い。","tag":"自分なりの基準を持ち簡単には流されない","body":{"h":162,"b":120,"waist":58,"w":58,"hip":107,"hair":"茶"}},{"id":1003,"family":"九条","given":"サクラ","age":27,"role":"討魔巫女","gen":19,"clit":24,"tone":"律儀で堅物","toneDesc":"一人称「自分」。「〜であります」「〜します」と生真面目に話す。","tag":"意思表示が明確で必要なら強く押し通す","body":{"h":156,"b":122,"waist":57,"w":57,"hip":129,"hair":"桃"}},{"id":981,"family":"九条","given":"サツキ","age":34,"role":"祈祷巫女","gen":19,"clit":24,"tone":"のんびり天然","toneDesc":"一人称「わたし」。「〜かなぁ」「〜だねぇ」と間延びしてマイペース。","tag":"精神的に落ち着き周囲を安心させる","body":{"h":161,"b":123,"waist":62,"w":62,"hip":129,"hair":"桃"}},{"id":1001,"family":"九条","given":"シズク","age":27,"role":"守護巫女","gen":20,"clit":25,"tone":"のんびり天然","toneDesc":"一人称「わたし」。「〜かなぁ」「〜だねぇ」と間延びしてマイペース。","tag":"自分なりの基準を持ち簡単には流されない","body":{"h":158,"b":115,"waist":59,"w":59,"hip":126,"hair":"赤"}},{"id":988,"family":"九条","given":"セツナ","age":34,"role":"典儀巫女","gen":19,"clit":24,"tone":"甘えた幼い調子","toneDesc":"一人称は自分の名。「〜なの」「〜だもん」と舌足らずに甘える。","tag":"理解が早く筋道を立てて考える","body":{"h":150,"b":117,"waist":62,"w":62,"hip":112,"hair":"銀"}},{"id":979,"family":"九条","given":"ソフィア","age":34,"role":"巡行巫女","gen":20,"clit":25,"tone":"物静かで寡黙","toneDesc":"一人称「私」。言葉少なで「…ええ」「…そう」と静かに応じる。","tag":"判断と切り替えが早い","body":{"h":157,"b":129,"waist":69,"w":69,"hip":125,"hair":"銀"}},{"id":984,"family":"九条","given":"ダリア","age":34,"role":"討魔巫女","gen":19,"clit":24,"tone":"おっとり丁寧","toneDesc":"一人称「わたくし」。「〜ですわ」「〜ますの」と柔らかく上品に話す。","tag":"意思表示が明確で必要なら強く押し通す","body":{"h":161,"b":124,"waist":66,"w":66,"hip":125,"hair":"青"}},{"id":1002,"family":"九条","given":"ツバキ","age":27,"role":"巡行巫女","gen":19,"clit":24,"tone":"きっぷのいい早口","toneDesc":"一人称「あたし」。「〜っしょ」「〜じゃん」とテンポよくまくし立てる。","tag":"判断と切り替えが早い","body":{"h":155,"b":124,"waist":56,"w":56,"hip":125,"hair":"桃"}},{"id":980,"family":"九条","given":"ニーナ","age":34,"role":"地鎮巫女","gen":19,"clit":24,"tone":"芝居がかった大仰","toneDesc":"一人称「我」。「〜なのだ！」「ふっ…」と大げさに芝居っぽく話す。","tag":"粘り強く多少の無理ではへこたれない","body":{"h":155,"b":121,"waist":59,"w":59,"hip":118,"hair":"白"}},{"id":1016,"family":"九条","given":"ネリネ","age":20,"role":"討魔巫女","gen":20,"clit":25,"tone":"お嬢様高飛車","toneDesc":"一人称「わたくし」。「〜ですのよ」「〜なさい」と勝ち気で高慢に話す。","tag":"意思表示が明確で必要なら強く押し通す","body":{"h":148,"b":122,"waist":66,"w":66,"hip":116,"hair":"銀"}},{"id":1008,"family":"九条","given":"ハルカ","age":27,"role":"討魔巫女","gen":19,"clit":24,"tone":"甘えた幼い調子","toneDesc":"一人称は自分の名。「〜なの」「〜だもん」と舌足らずに甘える。","tag":"意思表示が明確で必要なら強く押し通す","body":{"h":164,"b":107,"waist":58,"w":58,"hip":112,"hair":"白"}},{"id":1020,"family":"九条","given":"フユカ","age":20,"role":"典儀巫女","gen":19,"clit":24,"tone":"芝居がかった大仰","toneDesc":"一人称「我」。「〜なのだ！」「ふっ…」と大げさに芝居っぽく話す。","tag":"理解が早く筋道を立てて考える","body":{"h":164,"b":115,"waist":65,"w":65,"hip":119,"hair":"茶"}},{"id":1006,"family":"九条","given":"ホタル","age":27,"role":"祈祷巫女","gen":19,"clit":24,"tone":"凛と硬質","toneDesc":"一人称「私」。「〜だ」「〜である」と簡潔で武人めいた物言い。","tag":"精神的に落ち着き周囲を安心させる","body":{"h":164,"b":120,"waist":61,"w":61,"hip":107,"hair":"紫"}},{"id":1015,"family":"九条","given":"ミーナ","age":20,"role":"討魔巫女","gen":19,"clit":24,"tone":"快活で砕けた","toneDesc":"一人称「あたし」。「〜だよ！」「〜だね！」と明るく元気に話す。","tag":"意思表示が明確で必要なら強く押し通す","body":{"h":153,"b":115,"waist":56,"w":56,"hip":122,"hair":"青"}},{"id":1017,"family":"九条","given":"ミレイ","age":20,"role":"祈祷巫女","gen":19,"clit":24,"tone":"古風な巫女口調","toneDesc":"一人称「わらわ」。「〜じゃ」「〜のう」と古めかしく話す。","tag":"精神的に落ち着き周囲を安心させる","body":{"h":164,"b":117,"waist":69,"w":69,"hip":121,"hair":"金"}},{"id":1014,"family":"九条","given":"ユノ","age":20,"role":"巡行巫女","gen":19,"clit":24,"tone":"大和撫子な淑やか","toneDesc":"一人称「わたし」。「〜でございます」「〜くださいまし」と控えめで奥ゆかしい。","tag":"判断と切り替えが早い","body":{"h":162,"b":125,"waist":66,"w":66,"hip":122,"hair":"白"}},{"id":1012,"family":"九条","given":"ロゼ","age":20,"role":"巡行巫女","gen":20,"clit":25,"tone":"小生意気","toneDesc":"一人称「うち」。「〜でしょ？」「〜じゃない」と生意気に言い返す。","tag":"判断と切り替えが早い","body":{"h":165,"b":130,"waist":63,"w":63,"hip":119,"hair":"銀"}},{"id":1026,"family":"星守","given":"レイナ","age":20,"role":"奉工巫女","gen":1,"clit":6,"tone":"凛と硬質","toneDesc":"一人称「私」。「〜だ」「〜である」と簡潔で武人めいた物言い。","tag":"状況に合わせ器用に立ち回る","body":{"h":164,"b":78,"waist":59,"w":59,"hip":89,"hair":"桃"}},{"id":1018,"family":"星川","given":"シルヴィ","age":20,"role":"巡行巫女","gen":2,"clit":7,"tone":"おどおど気弱","toneDesc":"一人称「わたし」。「あ、あの…」「〜、かも…」と小声で自信なげに話す。","tag":"判断と切り替えが早い","body":{"h":150,"b":94,"waist":63,"w":63,"hip":99,"hair":"銀"}},{"id":983,"family":"雪代","given":"カスミ","age":34,"role":"守護巫女","gen":18,"clit":23,"tone":"律儀で堅物","toneDesc":"一人称「自分」。「〜であります」「〜します」と生真面目に話す。","tag":"自分なりの基準を持ち簡単には流されない","body":{"h":158,"b":124,"waist":60,"w":60,"hip":122,"hair":"青"}},{"id":1052,"family":"早瀬","given":"ハルカ","age":20,"role":"地鎮巫女","gen":1,"clit":6,"tone":"小生意気","toneDesc":"一人称「うち」。「〜でしょ？」「〜じゃない」と生意気に言い返す。","tag":"粘り強く多少の無理ではへこたれない","body":{"h":158,"b":89,"waist":61,"w":61,"hip":90,"hair":"桃"}},{"id":1050,"family":"如月","given":"エマ","age":34,"role":"地鎮巫女","gen":1,"clit":6,"tone":"姉御肌の伝法","toneDesc":"一人称「あたい」。「〜だぜ」「〜さ」と勝ち気にさばけて話す。","tag":"粘り強く多少の無理ではへこたれない","body":{"h":150,"b":91,"waist":69,"w":69,"hip":98,"hair":"黒"}},{"id":1051,"family":"鳴海","given":"アネット","age":20,"role":"奉工巫女","gen":1,"clit":6,"tone":"人懐こく甘ったるい","toneDesc":"一人称「あたし」。「ねぇねぇ〜」「〜だよぉ」と距離が近く甘えて話す。","tag":"状況に合わせ器用に立ち回る","body":{"h":166,"b":86,"waist":62,"w":62,"hip":95,"hair":"銀"}}];
+
+function voice(w, base){
+  const t=w.tone||'';
+  if(/古風|古めかし/.test(t)) return base.replace(/です|ます/g,'じゃ').replace(/わたくし|わたし|私/g,'わらわ').replace(/ませ/g,'や');
+  if(/丁寧|敬語|上品/.test(t)) return base;
+  if(/甘え|甘い|舌足らず/.test(t)) return base.replace(/。$/,'ぅ…♡').replace(/…$/,'ぅ…♡');
+  if(/元気|活発|明る/.test(t)) return base.replace(/。$/,'っ♡');
+  if(/クール|無口|寡黙|冷/.test(t)) return base.replace(/、[^、]*$/,'。');
+  return base;
+}
+const MOAN_CORE=[[],
+  ['んっ……ぁ……♡','はぅ……ん、んっ♡','ふぁ……ぁ……♡','んんっ……ぁ……♡','ぁ……はぁ……っ♡','ん、ふっ……ぁ……♡'],
+  ['あっ♡ あぁっ♡ んっ、ふぁあっ♡','ひぁっ♡ んくぅっ♡ あっ、あっ♡','あぁんっ♡ そこ、そこぉっ♡','んっ♡ んんーっ♡ はぁっ、あっ♡','やっ♡ あっ、あっ♡ ふぁあっ♡','ひゃうっ♡ んあっ、あぁっ♡'],
+  ['イ、イくぅっ……♡♡ あぁあっ、だめ、だめぇっ♡','ひぃっ♡ イくイクっ♡ もうっ、あああっ♡','んあぁあっ♡♡ とんじゃう、とんじゃうっ♡','だめっ、だめぇっ♡ イっ……ぁあああっ♡♡','おかしくっ、なるっ♡♡ ひぐっ、あぁあっ♡','ひぎぃっ♡♡ ぶっ壊れちゃうっ、あぁああっ♡']];
+const MOAN_PLEA=[[],
+  ['はしたない声が、出てしまいます……','こんな朝から、わたし……','旦那様の視線だけで、疼いてしまいます……','恥ずかしい……見ないでくださいませ……','身体が、勝手に……','だめ、なのに……止まりません……'],
+  ['旦那様ぁ……もっと、してくださいませ……♡','そんなにされたら、おかしくなっちゃう……♡','お願い、もっと奥まで……♡','気持ちよくて、腰が止まりません……♡','わたしの全部、あなたのものです……♡','あっ、そこ弱いのに……ずるいです……♡'],
+  ['イっちゃう……オチンポ様に、負けますっ……♡♡','もう、あなたのものですっ……♡♡','孕む……孕んじゃうっ……♡♡','オチンポ様が一番ですっ……ずっと下にいさせて……♡♡','負けオマンコに、なっちゃうっ……♡♡','弱くされたら、もう戻れませんっ……♡♡']];
+let _lastMoan='';
+function pickR(a){return a[Math.floor(Math.random()*a.length)];}
+function moan(w, lv){
+  const c=MOAN_CORE[lv], p=MOAN_PLEA[lv];
+  let line='';
+  for(let i=0;i<6;i++){ line=pickR(c)+'　'+voice(w, pickR(p)); if(line!==_lastMoan) break; }
+  _lastMoan=line; return line;
+}
+
+function chichi(w){
+  const b=w.body.b;
+  const t=b>=125?'規格外の超乳':b>=112?'たわわに実った爆乳':b>=98?'豊かに張った巨乳':'まろやかな乳房';
+  return `バスト${b}センチ、加護に育てられた垂れぬ砲弾型の${t}`;
+}
+function chichiAct(w){
+  const b=w.body.b;
+  return b>=112?`${b}センチの重たい乳房がぶるんっ、ぶるんっと大きく波打ち、桜色の乳首が宙で踊る`
+       :b>=98?`${b}センチの豊かな乳がたぷんと揺れ、乳首がぷっくりと尖る`
+       :`張りのある乳房がふるりと揺れる`;
+}
+function shiri(w){
+  const h=w.body.hip;
+  const t=h>=122?'たっぷりと肉のついた極上の尻':h>=108?'むっちりと張り出した豊満な尻':'丸くやわらかな尻';
+  return `ヒップ${h}センチの${t}`;
+}
+function kubire(w){
+  const d=w.body.hip-w.body.w;
+  return d>=48?`ウエスト${w.body.w}センチのきゅっと絞れた細腰`:d>=38?`ウエスト${w.body.w}センチの引き締まった腰`:`ウエスト${w.body.w}センチの腰`;
+}
+function manko(w){
+  const c=w.clit;
+  const meiki=c>=22?'代を重ねて練り上げられた極上の名器':c>=14?'吸いつくような名器':'よく熟れた蜜壺';
+  return `${c}mmまで育った陰核を持つ、${meiki}`;
+}
+function mankoAct(w){
+  const c=w.clit;
+  return c>=18?`奥のうねる肉ひだが${c}mmの陰核ごとオチンポ様を締めつけ、みちみちと吸い上げる`:`熱いぬめりがきゅうきゅうと絡みつく`;
+}
+
+// ---- シーン定義：各シーンに「見る／イタズラ／挿入／その他」のサブメニューを持たせる ----
+// dmg=妻の余裕への削り（マイナスまで落ちる）／ecchi=エッチ度の上がり幅／cost=夫の欲消費／climax=絶頂カウント加算
+const SCENES=[
+ {
+  t:'目覚め ─ 深い膣礼', hpMax:55,
+  narr:(w)=>`目を覚ますと、${w.given}が枕元で膝を大きく開き、前垂れをめくって己のマンコを晒していた。${kubire(w)}から続く${shiri(w)}が朝日に艶めき、その上では${chichi(w)}が呼吸に合わせてゆっくり上下する。朝の深い膣礼だ。`,
+  wline:(w)=>voice(w,`旦那様、おはようございます。……どうか今日も、この${w.given}を存分にお使いくださいませ。`),
+  menu:{
+    見る:[{k:'割れ目をじっくり見て讃えさせる',dmg:3,ecchi:9,fx:(s)=>{},res:(w)=>`晒された${manko(w)}を、朝の光の下でたっぷりと眺めてやる。見られるほどに${w.given}は羞じらって腰をもじつかせる。`,moan:(w)=>moan(w,1)}],
+    イタズラ:[
+      {k:'クリトリスをつまんでこねる',cost:8,dmg:9,ecchi:15,res:(w)=>`${w.clit}mmまで育った${w.given}のクリトリスをつまみ、くりくりとこねてやる。腰がびくびく跳ね、${shiri(w)}がぷるぷると震える。`,moan:(w)=>moan(w,2)},
+      {k:'乳を揉みしだき乳首をいじる',cost:8,dmg:8,ecchi:13,res:(w)=>`${chichi(w)}を両手で揉みしだき、尖った乳首をいじる。${chichiAct(w)}、${w.given}は切なげに喘ぐ。`,moan:(w)=>moan(w,1)}
+    ],
+    挿入:[
+      {k:'晒したマンコにそのまま挿入',cost:18,dmg:20,ecchi:22,climax:1,res:(w)=>`差し出された${manko(w)}へ、朝一番からずぶりと突き入れる。${mankoAct(w)}。${w.given}はのけ反って達し、締めつけながらしがみついてきた。`,moan:(w)=>moan(w,3)},
+      {k:'組み敷いて突き、弱い体へ躾ける',cost:24,dmg:26,ecchi:24,climax:1,res:(w)=>`${w.given}を組み敷き、逃げ場のない体位で奥を突き上げる。「誰のオマンコだ」と問えば、${w.given}は喘ぎながら「旦那様の、ものですっ」と啼く。`,moan:(w)=>moan(w,3)}
+    ],
+    その他:[
+      {k:'尻を撫で回し、ぴしゃりと叩く',cost:6,dmg:7,ecchi:10,res:(w)=>`差し出された${shiri(w)}を撫で回し、ぴしゃりと叩く。${w.given}は「ひぅっ」と尻を跳ねさせて悦ぶ。`,moan:(w)=>moan(w,1)},
+      {k:'下腹に押し当ててなぞる',cost:10,dmg:12,ecchi:14,res:(w)=>`いきり立ちの切っ先で${w.given}の下腹をぐりぐりとなぞる。${w.given}が「ひぅっ」と震え、腰を引く。`,moan:(w)=>moan(w,2)}
+    ]
+  }
+ },
+ {
+  t:'朝跨ぎ体操', hpMax:60,
+  narr:(w)=>`${w.given}が君の腰を跨ぎ、ガニ股に腰を落として体を上下させる朝跨ぎ体操。${chichi(w)}が目の前でたぷんたぷんと弾み、${shiri(w)}が沈んでは持ち上がる。`,
+  wline:(w)=>voice(w,`ん、しょ……朝の、体操です……旦那様の目の前で、恥ずかしいところ、ぜんぶ見せて……。`),
+  menu:{
+    見る:[{k:'揺れる乳と尻を眺める',dmg:3,ecchi:10,res:(w)=>`${chichiAct(w)}、${shiri(w)}が上下するさまをただ眺める。${w.given}のマンコはもう濡れそぼって糸を引く。`,moan:(w)=>moan(w,1)}],
+    イタズラ:[
+      {k:'クリを吸いながら跨がせる',cost:9,dmg:10,ecchi:16,res:(w)=>`跨いだ${w.given}の${w.clit}mmのクリトリスに吸いつき、舌で転がす。腰を落としきれずに${w.given}はがくがくと震える。`,moan:(w)=>moan(w,2)},
+      {k:'揺れる乳に吸いつき揉みしだく',cost:9,dmg:9,ecchi:14,res:(w)=>`目の前で弾む${chichi(w)}に顔を埋め、乳首を吸い、揉みしだく。${w.given}は背をしならせて喘ぐ。`,moan:(w)=>moan(w,2)}
+    ],
+    挿入:[
+      {k:'そのまま貫いて朝から一発',cost:20,dmg:22,ecchi:23,climax:1,res:(w)=>`跨いだ一番深いところで、下から一気に貫く。${mankoAct(w)}なか、${w.given}は嬌声を上げて朝から果てた。`,moan:(w)=>moan(w,3)},
+      {k:'腰を掴んで奥を穿ち屈服させる',cost:25,dmg:28,ecchi:25,climax:1,res:(w)=>`${kubire(w)}を鷲掴みにして固定し、逃さず子宮口を穿つ。${w.given}は白目を剥きかけ、「まけ、ましたっ……♡」と啼く。`,moan:(w)=>moan(w,3)}
+    ],
+    その他:[
+      {k:'尻をつかんで上下に揺さぶらせる',cost:8,dmg:9,ecchi:13,res:(w)=>`${shiri(w)}をわしづかみにし、跨いだ腰をさらに深く上下させる。ぱちゅ、ぱちゅと濡れた音が鳴る。`,moan:(w)=>moan(w,2)},
+      {k:'跨ぎの一番深いところで下腹をなぞる',cost:10,dmg:11,ecchi:15,res:(w)=>`腰を落とした瞬間、いきり立ちの根元で${w.given}の下腹をぐりっとなぞる。${w.given}が背を反らして震える。`,moan:(w)=>moan(w,2)}
+    ]
+  }
+ },
+ {
+  t:'移動 ─ 三歩前歩きかガニ股開脚手綱', hpMax:50,
+  narr:(w)=>`朝餉へ移る。${shiri(w)}を左右に振る${w.given}を、どう連れて歩くか。`,
+  wline:(w)=>voice(w,`お食事の間へ、ご案内します……どうぞ、うしろから好きなだけ見てくださいませ。`),
+  menu:{
+    見る:[{k:'三歩前歩き＋尻鳴らしで眺める',dmg:3,ecchi:8,res:(w)=>`三歩前を、${shiri(w)}をフリフリ鳴らしながら歩かせる。一歩ごとに${kubire(w)}がしなり、割れ目がちらつく。`,moan:(w)=>moan(w,1)}],
+    イタズラ:[
+      {k:'尻をつかみクリをいじりながら歩かせる',cost:9,dmg:11,ecchi:15,res:(w)=>`後ろから${shiri(w)}をつかみ、歩かせながら割れ目と${w.clit}mmのクリをいじり倒す。${w.given}は膝を震わせよろよろ進む。`,moan:(w)=>moan(w,2)},
+      {k:'後ろから乳を揉んで歩かせる',cost:8,dmg:9,ecchi:12,res:(w)=>`背後から手を回して${chichi(w)}を揉みしだきながら歩かせる。${w.given}は君に体重を預け、とろけた声を漏らす。`,moan:(w)=>moan(w,1)}
+    ],
+    挿入:[
+      {k:'立ったまま後ろから挿れて運ぶ',cost:20,dmg:23,ecchi:22,climax:1,res:(w)=>`歩かせるのももどかしく、立ったまま後ろから挿れ、${shiri(w)}を抱えて繋がったまま運ぶ。一歩ごとに奥を突かれ、${w.given}は膝を震わせてよがった。`,moan:(w)=>moan(w,3)},
+      {k:'廊下に押し倒して屈服させる',cost:22,dmg:25,ecchi:23,climax:1,res:(w)=>`移動の途中で我慢が切れ、${w.given}を廊下に押し倒して犯す。${w.given}の身体はまた一段、君のオチンポ様なしではいられなくなる。`,moan:(w)=>moan(w,3)}
+    ],
+    その他:[
+      {k:'ガニ股開脚手綱で引き回す',cost:7,dmg:8,ecchi:11,res:(w)=>`ガニ股に開かせて手綱を取り、${kubire(w)}を引き寄せながら歩く。恥ずかしい歩き方を晒しながら、${w.given}は従順に引かれていく。`,moan:(w)=>moan(w,1)},
+      {k:'密着して下腹をなぞりながら歩かせる',cost:10,dmg:12,ecchi:14,res:(w)=>`ぴったり身を寄せ、いきり立ちで${w.given}の下腹をなぞりながら歩かせる。歩みが乱れ、${w.given}はたびたび足を止めそうになる。`,moan:(w)=>moan(w,2)}
+    ]
+  }
+ },
+ {
+  t:'授乳の朝餉（淫膳）', hpMax:58,
+  narr:(w)=>`朝餉。${w.given}が寄り添い、${chichi(w)}から母乳を差し出して飲ませながら食べさせる。膳の前では、膣穴衆たちが小種衣一枚で淫膳（いんぜん）を披露している。`,
+  wline:(w)=>voice(w,`お食事の前に、まずはわたしのお乳を……どうぞ、たっぷり召し上がってくださいませ。`),
+  menu:{
+    見る:[{k:'淫膳の舞を眺めながら乳を飲む',dmg:4,ecchi:11,res:(w)=>`${w.given}の${chichi(w)}に吸いつきながら、膣穴衆の淫膳の舞に見入る。乳首を吸われるたび${w.given}は切なげに息をつき、母乳がとろとろと溢れる。`,moan:(w)=>moan(w,1)}],
+    イタズラ:[
+      {k:'クリをいじりながら授乳させる',cost:9,dmg:10,ecchi:16,res:(w)=>`乳を吸いつつ、片手で${w.given}の${w.clit}mmのクリをいじり倒す。母乳が噴き、${w.given}は手を震わせて喘ぐ。`,moan:(w)=>moan(w,2)},
+      {k:'尻を揉みしだきながら食べさせる',cost:8,dmg:9,ecchi:12,res:(w)=>`給仕する${w.given}の${shiri(w)}を、膳の下でこね回す。${w.given}は取り繕いながら腰をくねらせて悶える。`,moan:(w)=>moan(w,1)}
+    ],
+    挿入:[
+      {k:'乳を吸いながらそのまま挿入',cost:22,dmg:24,ecchi:23,climax:1,res:(w)=>`飯より先に${w.given}を求める。${chichi(w)}を吸い、揉みしだき、そのまま貫く。母乳と愛液を撒き散らして${w.given}はまた果てた。`,moan:(w)=>moan(w,3)},
+      {k:'膳を退け組み敷いて屈服させる',cost:24,dmg:27,ecchi:25,climax:1,res:(w)=>`膳を脇へ退け、淫膳の舞を背に${w.given}を組み敷いて犯す。${w.given}は「旦那様の、負けオマンコですっ」と啼く。`,moan:(w)=>moan(w,3)}
+    ],
+    その他:[
+      {k:'淫膳の舞い手を眺めつつ乳を吸う',cost:6,dmg:7,ecchi:12,res:(w)=>`妻の乳を含みながら、膣穴衆の淫らな舞にも視線をやる。${w.given}は少し拗ねたように、より強く乳を押しつけてくる。`,moan:(w)=>moan(w,1)},
+      {k:'下腹をなぞりながら授乳させる',cost:10,dmg:12,ecchi:15,res:(w)=>`${w.given}を膝に抱え、下腹をなぞりながら乳を含む。${w.given}は甘い声で喘ぎながら乳を差し出し続ける。`,moan:(w)=>moan(w,2)}
+    ]
+  }
+ }
+];
+
+// ---- 状態 ----
+let W=null, sceneIdx=0;
+let day=null;      // {desire, ecchi, climax, squirt, milk, clock}
+let scene=null;     // {hp, hpMax}
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function newDay(){return {desire:35,ecchi:20,climax:0,squirt:false,milk:false,clock:360,maxed:{ecchi:false}};}
+function newScene(){const sc=SCENES[sceneIdx];return {hp:sc.hpMax,hpMax:sc.hpMax};}
+function clockStr(){const c=day.clock%1440,h=Math.floor(c/60),m=c%60,p=h<11?'朝':h<17?'昼':h<19?'夕':'夜';return p+' '+h+':'+String(m).padStart(2,'0');}
+function tick(n){day.clock+=(n||5);}
+
+function el(id){return document.getElementById(id);}
+function renderPick(){
+  const g=el('pickGrid'); g.innerHTML='';
+  WIVES.forEach(w=>{
+    const d=document.createElement('button'); d.className='wife';
+    d.innerHTML=`<div class="nm">${w.family} ${w.given}</div>
+      <div class="rl">${w.role}・${w.age}歳<span class="pill">${w.tone}</span></div>
+      <div class="tg">${w.tag||''}</div>
+      <div class="bd">B${w.body.b}/W${w.body.w}/H${w.body.hip}・陰核${w.clit}mm</div>`;
+    d.onclick=()=>startGame(w);
+    g.appendChild(d);
+  });
+}
+function log(t,cls){const p=document.createElement('p');if(cls)p.className=cls;p.innerHTML=t;el('log').prepend(p);}
+
+// ---- ゲージ描画（ゆっくりアニメーション：数値カウントとバー幅を一緒に補間） ----
+let numTweens={};
+function tweenNumber(elId,from,to,ms){
+  if(numTweens[elId])cancelAnimationFrame(numTweens[elId]);
+  const t0=performance.now();
+  const node=el(elId);
+  function step(t){
+    const p=Math.min(1,(t-t0)/ms);
+    const cur=Math.round(from+(to-from)*p);
+    node.textContent=cur;
+    node.classList.toggle('neg',cur<0);
+    if(p<1)numTweens[elId]=requestAnimationFrame(step);
+  }
+  numTweens[elId]=requestAnimationFrame(step);
+}
+let prevShown={hp:null,ecchi:null,mp:null};
+function renderGauges(){
+  const hpPct=clamp(scene.hp/scene.hpMax*100,0,100);
+  const overPct=scene.hp<0?clamp(-scene.hp/scene.hpMax*100,0,100):0;
+  const hpFill=el('bHp');
+  hpFill.style.width=hpPct+'%';
+  hpFill.classList.remove('mid','low');
+  if(hpPct<60&&hpPct>=25)hpFill.classList.add('mid'); else if(hpPct<25)hpFill.classList.add('low');
+  el('bHpOver').style.width=overPct+'%';
+  el('bEcchi').style.width=clamp(day.ecchi,0,100)+'%';
+  el('bMp').style.width=clamp(day.desire,0,100)+'%';
+  tweenNumber('vHp', prevShown.hp==null?scene.hp:prevShown.hp, scene.hp, 900);
+  tweenNumber('vEcchi', prevShown.ecchi==null?day.ecchi:prevShown.ecchi, day.ecchi, 900);
+  tweenNumber('vMp', prevShown.mp==null?day.desire:prevShown.mp, day.desire, 900);
+  prevShown={hp:scene.hp,ecchi:day.ecchi,mp:day.desire};
+}
+
+function startGame(w){
+  W=w; day=newDay(); sceneIdx=0; scene=newScene();
+  prevShown={hp:null,ecchi:null,mp:null};
+  el('screen-pick').classList.add('hidden'); el('screen-battle').classList.remove('hidden');
+  el('wName').textContent=w.family+' '+w.given;
+  el('wBadge').classList.add('hidden'); el('wBadge').textContent='';
+  el('log').innerHTML='';
+  showScene(true);
+  window.scrollTo(0,0);
+}
+function toPick(){el('screen-battle').classList.add('hidden');el('screen-pick').classList.remove('hidden');window.scrollTo(0,0);}
+
+function showScene(fresh){
+  const sc=SCENES[sceneIdx];
+  if(fresh){ scene=newScene(); }
+  el('scClock').textContent=clockStr();
+  el('scTitle').textContent=sc.t;
+  el('scNarr').textContent=sc.narr(W);
+  el('scWho').textContent=W.family+' '+W.given;
+  el('scWline').textContent=sc.wline(W);
+  el('scWlineBox').classList.remove('hidden');
+  renderGauges();
+  renderTopMenu();
+}
+function renderTopMenu(){
+  const area=el('cmdArea'); area.innerHTML='';
+  const grid=document.createElement('div'); grid.className='cmdgrid';
+  ['見る','イタズラ','挿入','その他'].forEach(key=>{
+    const b=document.createElement('button'); b.className='cmd'; b.textContent=key;
+    b.onclick=()=>renderSubmenu(key);
+    grid.appendChild(b);
+  });
+  area.appendChild(grid);
+}
+function renderSubmenu(key){
+  const sc=SCENES[sceneIdx];
+  const moves=sc.menu[key];
+  const area=el('cmdArea'); area.innerHTML='';
+  const list=document.createElement('div'); list.className='sublist';
+  moves.forEach(mv=>{
+    const b=document.createElement('button'); b.className='subbtn';
+    const lack=mv.cost&&day.desire<mv.cost;
+    b.innerHTML=`<span class="k">${mv.k}</span>${mv.cost?`<span class="c">${lack?'欲が足りない':'欲 -'+mv.cost}</span>`:''}`;
+    b.disabled=!!lack;
+    b.onclick=()=>runMove(mv);
+    list.appendChild(b);
+  });
+  area.appendChild(list);
+  const row=document.createElement('div'); row.className='backrow';
+  const back=document.createElement('button'); back.className='backbtn'; back.textContent='◀ 戻る';
+  back.onclick=renderTopMenu;
+  row.appendChild(back); area.appendChild(row);
+}
+
+function runMove(mv){
+  tick();
+  if(mv.cost) day.desire=clamp(day.desire-mv.cost,0,100);
+  scene.hp -= mv.dmg;
+  day.ecchi=clamp(day.ecchi+mv.ecchi,0,999);
+  if(mv.climax) day.climax+=mv.climax;
+  el('scClock').textContent=clockStr();
+  el('scNarr').textContent=mv.res(W);
+  el('scWho').textContent=W.family+' '+W.given;
+  el('scWline').textContent=mv.moan(W);
+  el('scWlineBox').classList.remove('hidden');
+  log('<span class="u">▸ '+mv.k+'</span>');
+
+  // エッチ度100到達＝波の絶頂（場面は続く。50へ戻り、余裕も少し削れる）
+  if(day.ecchi>=100){
+    day.ecchi=50; day.climax+=1; day.squirt=true; scene.hp-=6;
+    log('<span class="u">＜エッチ絶頂＞</span> 高まりきったエッチ度が弾け、'+W.given+'は「イ、イくぅっ……♡♡」と一つ大きく達した。昂ぶりは少し収まり、また次の波へ向けて溜まりはじめる。');
+  }
+  renderGauges();
+
+  // 余裕が尽きた（マイナスに落ちた）＝この場面の決着
+  if(scene.hp<0){
+    day.squirt=true;
+    const last=sceneIdx>=SCENES.length-1;
+    log('<span class="cl">■ 決着</span> '+W.given+'の余裕が尽きた。');
+    el('scWlineBox').classList.add('hidden');
+    el('scNarr').innerHTML='<span class="clear">'+W.given+'は「イ、イっ……ぁあああああっ♡♡」と大きくのけ反り、ブシュッと潮を撒いて失禁した。膝から崩れ落ち、しばらく身体を痙攣させて動けない。</span>';
+    const area=el('cmdArea'); area.innerHTML='';
+    const btn=document.createElement('button'); btn.className='cmd'; btn.style.width='100%';
+    btn.textContent=last?'朝を終える':'次の場面へ ▸';
+    btn.onclick=()=> last?endMorning():(sceneIdx++,showScene(true),window.scrollTo(0,0));
+    area.appendChild(btn);
+    return;
+  }
+  renderTopMenu();
+}
+
+function endMorning(){
+  el('scWlineBox').classList.add('hidden');
+  el('scTitle').textContent='朝 ─ 締め';
+  el('scNarr').innerHTML=`${W.given}との朝が終わった。何度も余裕を失わされたその身体は、明日以降もっと君のオチンポ様に弱くなっているはずだ。`;
+  const area=el('cmdArea'); area.innerHTML='';
+  const wrap=document.createElement('div'); wrap.className='end';
+  wrap.innerHTML=`<div class="big">◇ 朝ブロック 終了 ◇</div>
+    <div style="color:var(--muted);font-size:.84rem">絶頂 ${day.climax}回${day.squirt?'・潮吹き失禁':''} ／ エッチ度 ${day.ecchi}</div>
+    <div style="color:var(--accent);font-size:.8rem;margin-top:10px">＝ここまでがプロトタイプ。この先「日中→夕→夜→就寝」を足していく。＝</div>`;
+  area.appendChild(wrap);
+  const again=document.createElement('button'); again.className='cmd';again.style.marginTop='10px';again.style.width='100%';
+  again.textContent='別の妻でもう一度'; again.onclick=toPick;
+  area.appendChild(again);
+}
+
+renderPick();
+</script>
+</div></body></html>
