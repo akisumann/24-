@@ -35,8 +35,25 @@ function makeChild(m){
   }
   return child;
 }
+// 同じ家（family）のなかでフルネーム（家名＋下の名前）が重複しないよう、下の名前を決定的に付け直す。
+// 先に居る者が元の名を保持し、後から重なった者だけを GIVEN プール内の未使用名へずらす（現在名の次から走査）。
+// srandom を一切消費しないため、rngState・能力・体格ほか他の一切に影響せず、名前ラベルのみを整える（＝シード再現性を保つ）。
+// 初期名簿の生成後と、毎ターンの名簿確定後（神の娘＝赤子や公募採用を含む）に通す。
+function dedupeNames(list){
+  const takenByFamily={};
+  for(const p of list){
+    const taken=takenByFamily[p.family]||(takenByFamily[p.family]=new Set());
+    if(!taken.has(p.given)){taken.add(p.given);continue;}
+    let start=GIVEN.indexOf(p.given);if(start<0)start=0;
+    let chosen=null;
+    for(let i=1;i<=GIVEN.length;i++){const cand=GIVEN[(start+i)%GIVEN.length];if(!taken.has(cand)){chosen=cand;break;}}
+    if(chosen===null){let n=2;while(taken.has(p.given+n))n++;chosen=p.given+n;} // 同一家が100語を超える稀な場合のみ番号付与
+    p.given=chosen;taken.add(chosen);
+  }
+  return list;
+}
 function initial(){const out=[];AGES.forEach(age=>{for(let i=0;i<10;i++)out.push(makePerson(age,rand(18,38),age<20?'初期採用・仮巫女':'初期採用・正式巫女'))});return out}
-let mikos=initial();
+let mikos=dedupeNames(initial());
 
 const KIN_AGE_LABELS=['0〜6歳','7〜13歳','14〜20歳','21〜27歳','28〜34歳','35〜41歳','42〜48歳','49〜55歳','56〜62歳'];
 const kin={};
