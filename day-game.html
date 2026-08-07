@@ -251,6 +251,16 @@ const SCENES=[
  }
 ];
 
+// カテゴリごとに夫の欲の増減を割り当てる。前戯（見る/イタズラ/その他）は欲を"溜め"、挿入だけが欲を"使う"。
+SCENES.forEach(sc=>{
+  Object.keys(sc.menu).forEach(cat=>{
+    sc.menu[cat].forEach(mv=>{
+      if(cat==='挿入'){ /* mv.cost をそのまま消費に使う */ }
+      else { mv.gain=(cat==='見る')?20:12; delete mv.cost; }
+    });
+  });
+});
+
 // ---- 状態 ----
 let W=null, sceneIdx=0;
 let day=null;      // {desire, ecchi, climax, squirt, milk, clock}
@@ -350,7 +360,8 @@ function renderSubmenu(key){
   moves.forEach(mv=>{
     const b=document.createElement('button'); b.className='subbtn';
     const lack=mv.cost&&day.desire<mv.cost;
-    b.innerHTML=`<span class="k">${mv.k}</span>${mv.cost?`<span class="c">${lack?'欲が足りない':'欲 -'+mv.cost}</span>`:''}`;
+    const tag=mv.cost?`<span class="c">${lack?'欲が足りない':'欲 -'+mv.cost}</span>`:(mv.gain?`<span class="c" style="color:var(--gold)">欲 +${mv.gain}</span>`:'');
+    b.innerHTML=`<span class="k">${mv.k}</span>${tag}`;
     b.disabled=!!lack;
     b.onclick=()=>runMove(mv);
     list.appendChild(b);
@@ -365,6 +376,7 @@ function renderSubmenu(key){
 function runMove(mv){
   tick();
   if(mv.cost) day.desire=clamp(day.desire-mv.cost,0,100);
+  if(mv.gain) day.desire=clamp(day.desire+mv.gain,0,100);
   scene.hp -= mv.dmg;
   day.ecchi=clamp(day.ecchi+mv.ecchi,0,999);
   if(mv.climax) day.climax+=mv.climax;
