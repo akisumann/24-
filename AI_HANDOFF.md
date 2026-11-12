@@ -17,7 +17,7 @@
 
 完全セーブが無い・壊れている、または名簿・時代・出来事を確認できないなら書き始めない。確認できたことと欠けていることを述べ、人物名・氏族人数・時代・出来事・成否を推測や創作で埋めない。
 
-（注：本simはシード付きの決定的乱数を備え、同じ `seed` ＋経過年から同一のゲーム状態を再現できる。`buildSaveData()` は `seed` と `rngState` を保存し、URLに `?seed=&year=` を渡すと自動進行する（再現コードUIは `seed-repro.js`）。したがって現在データは「完全セーブを直接読む」か「本物の無改変コードを seed+year で最後まで走らせて `exportAuthoritativeGameState()` で読む」かのいずれかで得る。どちらの場合も推測・再実装・乱数順の手動再現はしない（`ai-policy.js` の実行規約を参照）。なお `savedAt` は実行時刻なので毎回変わる。`eventLog` は直近 `MAXLOG` 件までしか残らない。）
+（注：本simはシード付きの決定的乱数を備え、同じ `seed` ＋経過年から同一のゲーム状態を再現できる。`buildSaveData()` は `seed` と `rngState` を保存し、URLに `?seed=&year=` を渡すと自動進行する（再現コードUIは `seed-repro.js`）。したがって現在データは「完全セーブを直接読む」か「本物の無改変コードを seed+year で最後まで走らせて `exportAuthoritativeGameState()` で読む」かのいずれかで得る。後者はブラウザ無しでも、Node で `node miko-headless.js <seed> <year> > save.json` を実行すれば得られる（`index.html` の全スクリプトを無改変・同順に実行する。実ブラウザの結果と `savedAt` 以外完全一致することを確認済み）。どちらの場合も推測・再実装・乱数順の手動再現はしない（`ai-policy.js` の実行規約を参照）。なお `savedAt` は実行時刻なので毎回変わる。`eventLog` は直近 `MAXLOG` 件までしか残らない。）
 
 ## 最優先：一人の孕巫女にスポットを当てる時
 
@@ -290,6 +290,8 @@ SPD 52 → 1d52
   - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
 - `ceremony.js`
   - 大淫義の対話。7年ごとに神が顕現し、選ばれた10人が7年間の報告と暮らしを過去形で語る物語サイクルを表示する。
+- `miko-headless.js`
+  - ヘッドレス実行版（Node・外部依存なし）。`node miko-headless.js <seed> <year> > save.json` で、その時点の完全セーブを JSON で出力する。`index.html` の `<script src>` を記載順に読むので、モジュールを足したときも `index.html` 側だけ直せばよい。
 - `GAME_RULES.md`
   - ゲームルールの説明。
 - `WORLD_SETTING.md`
