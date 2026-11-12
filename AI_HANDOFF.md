@@ -267,15 +267,13 @@ SPD 52 → 1d52
 - `data.js`
   - ステータス名、姓、名前、スキル候補、性格文など。
 - `core.js`
-  - 巫女生成、能力、神の娘、一族人口、役務配属など。
+  - 巫女生成、能力、神の娘、一族人口、役務配属（上限なし・第一適性へそのまま配属）など。
 - `ui.js`
-  - 7年進行、名簿、詳細、一族、履歴などの表示。
+  - 名簿、詳細、一族、履歴などの表示。7年進行ボタンのクリックを `runTurn` へつなぐ。
 - `battle.js`
   - 現在のタイマン模擬戦試作。
 - `batch.js`
   - 70年進行（`advance70` ボタンの処理）。
-- `hold.js`
-  - 7年進行ボタンの長押し連続進行。
 - `trend.js`
   - 推移グラフ（神レベル・国家評判・親類縁者・成人平均レベル）。
 - `collapse.js`
@@ -284,8 +282,10 @@ SPD 52 → 1d52
   - タイル型ダッシュボードUIと上部固定HUD。既存カードを移設する。
 - `chronicle.js`
   - 巫女詳細の「国での活躍」物語生成。
+- `retirement.js`
+  - **1ターン（7年）の本体 `runTurn`**：大淫義・子作り・神羅判定 → 任期終了・下位5人退任・脱会 → 公募補充。7年進行ボタンの長押し連続進行もここ。
 - `role-balance.js`
-  - 役務の上限撤廃と時代の需要（時代年表・`window.MikoEra` API）。
+  - 時代の需要（時代年表・`window.MikoEra` API）。役務の配属そのものは `core.js` の `assignments`。
 - `events.js`
   - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
 - `ceremony.js`
@@ -322,6 +322,7 @@ v16では、固定版の既存関数を極力書き換えず、グローバル�
 
 - `core.js`：`reputation()` を動的な `fame` 方式へ変更（`GAME_RULES.md`「国家評判」参照）。`reputationTarget()` / `syncFame()` を追加した。
 - `save.js`：`fame` / `fameYear` / `fameShinra` を保存・復元する。
+- 上書きで死んでいた旧コードを整理した：`ui.js` の旧 `runTurn`（本体は `retirement.js`）、`hold.js`（ボタン差し替えで無効化されていた）、`core.js` の定員6人の再配分（`ROLE_LIMIT`）、`ui.js` の旧 `renderHistory`。ゲーム結果は整理前と完全一致（ヘッドレス版で seed×year 40通りを照合）。
 - `trend.js` と `role-balance.js` が `buildSaveData` / `restoreSaveData` をラップし、`trendLog` / `eraLog` を追記する。
 
 ### セーブ形式の追加キー

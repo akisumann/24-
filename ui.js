@@ -1,61 +1,3 @@
-function runTurn(){
-  const mothers=mikos
-    .filter(p=>p.age>=20&&p.age<=34)
-    .sort((a,b)=>avg(b.maxStats)-avg(a.maxStats))
-    .slice(0,10);
-  const newborns=mothers.map(m=>makeChild(m,mikos.length));
-  const retirees=mikos.filter(p=>p.age===34);
-
-  let survivors=mikos.filter(p=>p.age!==34);
-  survivors.forEach(p=>{
-    if(p.age===6)p.age=13;
-    else if(p.age===13)p.age=20;
-    else if(p.age===20)p.age=27;
-    else if(p.age===27)p.age=34;
-  });
-
-  newborns.forEach(child=>child.age=6);
-  mikos=[...survivors,...newborns];
-
-  const overlapDepartures=shuffle(mikos.filter(p=>p.age>=20)).slice(0,srandom()<.38?1:0);
-  const overlapIds=new Set(overlapDepartures.map(p=>p.id));
-  mikos=mikos.filter(p=>!overlapIds.has(p.id));
-
-  const voluntary=shuffle(mikos).slice(0,rand(0,2));
-  const voluntaryIds=new Set(voluntary.map(p=>p.id));
-  mikos=mikos.filter(p=>!voluntaryIds.has(p.id));
-
-  const recruits=[];
-  while(mikos.length<50){
-    const age=pick(AGES);
-    const p=makePerson(age,recruitLevel(),age<20?'国家公募採用・仮巫女':'国家公募採用・正式巫女');
-    ensureKin(p.family);
-    recruits.push(p);
-    mikos.push(p);
-  }
-
-  updateKin(retirees,[...voluntary,...overlapDepartures]);
-  year+=7;
-
-  history.unshift({
-    year,
-    births:newborns.length,
-    retirees:retirees.length,
-    voluntary:voluntary.length,
-    overlap:overlapDepartures.length,
-    recruits:recruits.length,
-    kinChange:lastKinChange,
-    kinTotal:totalKin()
-  });
-  history=history.slice(0,8);
-
-  document.getElementById('turnResult').textContent=
-    `${year}年目：神の娘${newborns.length}人、任期終了${retirees.length}人、任意脱会${voluntary.length}人、妊娠時期重複による脱会${overlapDepartures.length}人、新規採用${recruits.length}人。`;
-
-  if(!mikos.some(p=>p.id===selectedId))selectedId=null;
-  render();
-}
-
 function clanData(){
   const map={};
   mikos.forEach(p=>{
@@ -227,7 +169,7 @@ function renderRoles(){
   document.getElementById('roles').innerHTML=STATS.map(role=>{
     const m=[...a.groups[role]].sort((x,y)=>y.stats[role]-x.stats[role]);
     return `<button type="button" data-role="${role}" class="metric ${selectedRole===role?'selected':''}" style="text-align:left">
-      <div class="flex between gap2"><span class="medium">${ROLES[role]}</span><span class="badge">${m.length}/6</span></div>
+      <div class="flex between gap2"><span class="medium">${ROLES[role]}</span><span class="badge">${m.length}人</span></div>
       <div class="mt2 muted">${m[0]?`巫女長：${full(m[0].person)}`:'巫女長：不在'}</div>
     </button>`;
   }).join('');
@@ -249,7 +191,7 @@ function renderRoleMembers(){
   const m=[...assignments().groups[selectedRole]].sort((a,b)=>b.stats[selectedRole]-a.stats[selectedRole]);
   box.classList.remove('hidden');
   box.innerHTML=`<div class="flex between">
-    <div><h2>${ROLES[selectedRole]}</h2><p class="muted">所属${m.length}人・定員6人</p></div>
+    <div><h2>${ROLES[selectedRole]}</h2><p class="muted">所属${m.length}人・上限なし</p></div>
     <button id="closeRole" type="button" class="btn">閉じる</button>
   </div>
   <div class="scroll">
@@ -277,8 +219,8 @@ function renderHistory(){
   document.getElementById('history').innerHTML=history.length
     ?history.map(h=>`<div class="node">
       <div class="medium">${h.year}年目</div>
-      <div class="muted">神の娘${h.births}人／任期終了${h.retirees}人／任意脱会${h.voluntary}人／妊娠重複脱会${h.overlap}人／新規採用${h.recruits}人</div>
-      <div class="mt1">親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
+      <div class="muted">大淫義・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人${h.droppedNewborns?`／定員で娘${h.droppedNewborns}人入団見送り`:''}</div>
+      <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
     </div>`).join('')
     :'<p class="muted">まだ記録はない。</p>';
 }
@@ -301,6 +243,7 @@ function render(){
   renderHistory();
 }
 
-document.getElementById('advance').addEventListener('click',runTurn);
+// 7年進行の本体 runTurn は retirement.js が定義する（呼び出し時に解決するので読み込み順に依存しない）。
+document.getElementById('advance').addEventListener('click',()=>runTurn());
 document.getElementById('ageFilter').addEventListener('change',renderRoster);
 render();

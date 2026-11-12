@@ -157,7 +157,7 @@ function updateKin(retirees,departures){
   lastKinChange=totalKin()-before;
 }
 
-function assignments(){const workers=mikos.filter(p=>p.age>=13).map(p=>{const stats=current(p);return{person:p,stats,prefs:rank(stats),role:null}}),groups=Object.fromEntries(STATS.map(s=>[s,[]]));workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w)});let changed=true,safe=0;while(changed&&safe++<100){changed=false;for(const role of STATS){if(groups[role].length<=ROLE_LIMIT)continue;groups[role].sort((a,b)=>a.stats[role]-b.stats[role]);const overflow=groups[role].slice(0,groups[role].length-ROLE_LIMIT);for(const w of overflow){const dest=w.prefs.find(s=>s!==role&&groups[s].length<ROLE_LIMIT);if(!dest)continue;groups[role]=groups[role].filter(x=>x.person.id!==w.person.id);w.role=dest;groups[dest].push(w);changed=true}}}return{workers,groups}}
+function assignments(){const workers=mikos.filter(p=>p.age>=13).map(p=>{const stats=current(p);return{person:p,stats,prefs:rank(stats),role:null}}),groups=Object.fromEntries(STATS.map(s=>[s,[]]));workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w)});return{workers,groups}} // 役務の上限なし：各巫女を第一適性へそのまま配属する
 function roleOf(p){return assignments().workers.find(w=>w.person.id===p.id)?.role||null}
 // 国家評判は「現在の実力に基づく均衡値」へ毎ターン緩やかに減衰しつつ、
 // 神羅巫女の実績でスパイク加点する動的な値。経過年による無制限の増加はしない。
