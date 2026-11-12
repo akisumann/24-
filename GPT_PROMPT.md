@@ -28,7 +28,7 @@
 
 - セーブJSONの `year` / `godLevel` / `shinraMikos` / `mikos` / `kin` / `history` / `eventLog` などを実データとして読む。次回大淫義候補は `mikos` の20〜34歳・素質上位10人。
 - 設定・世界観は GitHub の設定資料を読む。**まず `INDEX.md`（文書地図）** で該当ファイルを特定し、その本文を読む。
-  - 世界観・制度・政治・婚姻・遺伝・加護 → `WORLD_SETTING.md`
+  - 世界観・制度・政治・婚姻・遺伝・加護 → `WORLD_SETTING.md`（目次）から話題ごとの `WORLD_*.md` を引く
   - 大淫義の場面（降臨→自己紹介→対話→子作り・大寵愛）→ `SHINSHODEN.md`
   - 巫女服（構造／露出の意味／機能）→ `MIKO_FORMAL_WEAR.md` / `MIKO_FORMAL_ATTIRE.md` / `MIKO_CLOTHING_AND_MARRIAGE.md`
   - ゲーム数値仕様 → `GAME_RULES.md`、退任 → `RETIREMENT_RULE.md`、強さの目安 → `LEVEL_GUIDE.md`

@@ -20,7 +20,7 @@
 - [`RETIREMENT_RULE.md`](RETIREMENT_RULE.md) — 成人巫女の下位5人退任ルール
 - [`MIKO_TURNOVER_SETTING.md`](MIKO_TURNOVER_SETTING.md) — 登録枠の流動制度と神羅巫女の初出時期
 - [`LEVEL_GUIDE.md`](LEVEL_GUIDE.md) — 世界共通の1〜100レベル指標と物語上の強さの目安
-- [`WORLD_SETTING.md`](WORLD_SETTING.md) — 巫女の生活、仕事、政治、婚姻、遺伝、加護、国家制度としての意味
+- [`WORLD_SETTING.md`](WORLD_SETTING.md) — 世界設定の目次（巫女の生活、仕事、政治、婚姻、遺伝、加護、国家制度としての意味）。本文は話題ごとの `WORLD_*.md` 6ファイル
 - [`SHINSHODEN.md`](SHINSHODEN.md) — 神床殿（大淫義の場）の進行
 - [`MIKO_FORMAL_WEAR.md`](MIKO_FORMAL_WEAR.md) — 巫女の基本正装＝御種衣の構造仕様
 - [`MIKO_FORMAL_ATTIRE.md`](MIKO_FORMAL_ATTIRE.md) — 正装の露出と役割・対人での意味
