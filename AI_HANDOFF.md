@@ -109,6 +109,7 @@ AIがこのゲームを用いて数百年を進行させ、その時点から物
 4. 既存機能を消したり、別設計へ置き換えたりする前に確認する。
 5. コードを変更する前に、必ずGitHub上の最新版ファイルを取得する。
 6. 変更後は、触ったファイルと変更内容を具体的に説明する。
+7. コードや設定を変えたら `node tests/game-check.js` を実行する（GitHub でも main への push とプルリクで自動実行される）。決まった seed の結果が基準値（`tests/golden.json`）と変わっていたら NG になる。ゲームの仕組みをわざと変えたときだけ `node tests/game-check.js --update` で基準値を作り直してコミットする。
 
 ## 3. 基本ゲーム
 
@@ -290,6 +291,8 @@ SPD 52 → 1d52
   - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
 - `ceremony.js`
   - 大淫義の対話。7年ごとに神が顕現し、選ばれた10人が7年間の報告と暮らしを過去形で語る物語サイクルを表示する。
+- `tests/game-check.js` / `tests/golden.json` / `.github/workflows/game-check.yml`
+  - ゲームの自動チェック。ヘッドレス版で数千年分まで走らせ、エラー・決まり違反・基準値からの結果の変化を検出する。
 - `miko-headless.js`
   - ヘッドレス実行版（Node・外部依存なし）。`node miko-headless.js <seed> <year> > save.json` で、その時点の完全セーブを JSON で出力する。`index.html` の `<script src>` を記載順に読むので、モジュールを足したときも `index.html` 側だけ直せばよい。
 - `GAME_RULES.md`
