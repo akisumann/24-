@@ -109,6 +109,7 @@ AIがこのゲームを用いて数百年を進行させ、その時点から物
 4. 既存機能を消したり、別設計へ置き換えたりする前に確認する。
 5. コードを変更する前に、必ずGitHub上の最新版ファイルを取得する。
 6. 変更後は、触ったファイルと変更内容を具体的に説明する。
+7. コードや設定を変えたら `node tests/game-check.js` を実行する（GitHub でも main への push とプルリクで自動実行される）。決まった seed の結果が基準値（`tests/golden.json`）と変わっていたら NG になる。ゲームの仕組みをわざと変えたときだけ `node tests/game-check.js --update` で基準値を作り直してコミットする。
 
 ## 3. 基本ゲーム
 
@@ -267,15 +268,13 @@ SPD 52 → 1d52
 - `data.js`
   - ステータス名、姓、名前、スキル候補、性格文など。
 - `core.js`
-  - 巫女生成、能力、神の娘、一族人口、役務配属など。
+  - 巫女生成、能力、神の娘、一族人口、役務配属（上限なし・第一適性へそのまま配属）など。
 - `ui.js`
-  - 7年進行、名簿、詳細、一族、履歴などの表示。
+  - 名簿、詳細、一族、履歴などの表示。7年進行ボタンのクリックを `runTurn` へつなぐ。
 - `battle.js`
   - 現在のタイマン模擬戦試作。
 - `batch.js`
   - 70年進行（`advance70` ボタンの処理）。
-- `hold.js`
-  - 7年進行ボタンの長押し連続進行。
 - `trend.js`
   - 推移グラフ（神レベル・国家評判・親類縁者・成人平均レベル）。
 - `collapse.js`
@@ -284,12 +283,16 @@ SPD 52 → 1d52
   - タイル型ダッシュボードUIと上部固定HUD。既存カードを移設する。
 - `chronicle.js`
   - 巫女詳細の「国での活躍」物語生成。
+- `retirement.js`
+  - **1ターン（7年）の本体 `runTurn`**：大淫義・子作り・神羅判定 → 任期終了・下位5人退任・脱会 → 公募補充。7年進行ボタンの長押し連続進行もここ。
 - `role-balance.js`
-  - 役務の上限撤廃と時代の需要（時代年表・`window.MikoEra` API）。
+  - 時代の需要（時代年表・`window.MikoEra` API）。役務の配属そのものは `core.js` の `assignments`。
 - `events.js`
   - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
 - `ceremony.js`
   - 大淫義の対話。7年ごとに神が顕現し、選ばれた10人が7年間の報告と暮らしを過去形で語る物語サイクルを表示する。
+- `tests/game-check.js` / `tests/golden.json` / `.github/workflows/game-check.yml`
+  - ゲームの自動チェック。ヘッドレス版で数千年分まで走らせ、エラー・決まり違反・基準値からの結果の変化を検出する。
 - `miko-headless.js`
   - ヘッドレス実行版（Node・外部依存なし）。`node miko-headless.js <seed> <year> > save.json` で、その時点の完全セーブを JSON で出力する。`index.html` の `<script src>` を記載順に読むので、モジュールを足したときも `index.html` 側だけ直せばよい。
 - `GAME_RULES.md`
@@ -322,6 +325,7 @@ v16では、固定版の既存関数を極力書き換えず、グローバル�
 
 - `core.js`：`reputation()` を動的な `fame` 方式へ変更（`GAME_RULES.md`「国家評判」参照）。`reputationTarget()` / `syncFame()` を追加した。
 - `save.js`：`fame` / `fameYear` / `fameShinra` を保存・復元する。
+- 上書きで死んでいた旧コードを整理した：`ui.js` の旧 `runTurn`（本体は `retirement.js`）、`hold.js`（ボタン差し替えで無効化されていた）、`core.js` の定員6人の再配分（`ROLE_LIMIT`）、`ui.js` の旧 `renderHistory`。ゲーム結果は整理前と完全一致（ヘッドレス版で seed×year 40通りを照合）。
 - `trend.js` と `role-balance.js` が `buildSaveData` / `restoreSaveData` をラップし、`trendLog` / `eraLog` を追記する。
 
 ### セーブ形式の追加キー

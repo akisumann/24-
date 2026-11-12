@@ -1,20 +1,8 @@
 // 役務の上限撤廃＋時代の需要（v16）。
-// 固定版のコードは書き換えず、assignments と役務表示を上書き／ラップする。
+// 役務表示をラップして、時代の寸評と偏りを足す（役務の配属そのものは core.js の assignments）。
 // 巫女の役務構成から「その時代が必要とするもの」を割り出し、歴代の移り変わりを記録する。
-// このファイルを外せば定員6人の再分配（固定版の挙動）に戻る。
 (function(){
   if(typeof assignments!=='function'||typeof render!=='function')return;
-
-  // 1) 役職の上限を撤廃：各巫女を第一適性へそのまま配属する（再分配なし）。
-  assignments=function(){
-    const workers=mikos.filter(p=>p.age>=13).map(p=>{
-      const stats=current(p);
-      return{person:p,stats,prefs:rank(stats),role:null};
-    });
-    const groups=Object.fromEntries(STATS.map(s=>[s,[]]));
-    workers.forEach(w=>{w.role=w.prefs[0];groups[w.role].push(w);});
-    return{workers,groups};
-  };
 
   // 役務を「国の需要」ドメインへまとめる。戦闘系（討魔＋守護）は〈武〉。
   const DOMAINS=[
@@ -75,23 +63,13 @@
     };
   }
 
-  // 2) 表示の「/6」「定員6人」を上限なし表記へ、説明文も更新する。
+  // 2) 役務カードの下に時代の寸評を足す。
   const renderRolesBefore=renderRoles;
   renderRoles=function(){
     renderRolesBefore();
-    const box=document.getElementById('roles');
-    if(box)box.querySelectorAll('.badge').forEach(b=>{b.textContent=b.textContent.replace(/^(\d+)\/6$/,'$1人');});
     renderRoleBalance();
   };
 
-  const renderRoleMembersBefore=renderRoleMembers;
-  renderRoleMembers=function(){
-    renderRoleMembersBefore();
-    const box=document.getElementById('roleMembers');
-    if(!box||box.classList.contains('hidden'))return;
-    const p=box.querySelector('p.muted');
-    if(p)p.textContent=p.textContent.replace('定員6人','上限なし');
-  };
 
   // 3) 「この時代が必要とするもの」の寸評＋役務の偏り
   function ensureEl(id,cls,afterEl){

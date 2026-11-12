@@ -169,22 +169,11 @@ function runTurnWithBottomFiveRetirement(){
   render();
 }
 
-runTurn=runTurnWithBottomFiveRetirement;
+var runTurn=runTurnWithBottomFiveRetirement;
 
-renderHistory=function(){
-  document.getElementById('history').innerHTML=history.length
-    ?history.map(h=>`<div class="node">
-      <div class="medium">${h.year}年目</div>
-      <div class="muted">大淫義・子作り完了 → 任期終了${h.retirees}人／成人潜在能力下位5人入替${h.performanceDepartures??h.talentDepartures??h.voluntary}人／妊娠重複脱会${h.overlap}人 → 下位5人潜在Lv+5公募${h.rerolledRecruits??h.recruits}人／通常補充${h.fallbackRecruits??0}人${h.droppedNewborns?`／定員で娘${h.droppedNewborns}人入団見送り`:''}</div>
-      <div class="mt1">神の娘${h.births}人／親類縁者 ${h.kinTotal}人（${h.kinChange>=0?'+':''}${h.kinChange}人）</div>
-    </div>`).join('')
-    :'<p class="muted">まだ記録はない。</p>';
-};
 
-const oldAdvanceButton=document.getElementById('advance');
-const newAdvanceButton=oldAdvanceButton.cloneNode(true);
-oldAdvanceButton.replaceWith(newAdvanceButton);
-newAdvanceButton.addEventListener('click',runTurn);
+// 7年進行ボタンの長押し連続進行（クリックでの1回進行は ui.js が登録済み）。
+const newAdvanceButton=document.getElementById('advance');
 
 let bottomFiveHoldStartTimer=null;
 let bottomFiveHoldRepeatTimer=null;
