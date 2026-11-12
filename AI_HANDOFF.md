@@ -298,7 +298,7 @@ SPD 52 → 1d52
 - `GAME_RULES.md`
   - ゲームルールの説明。
 - `WORLD_SETTING.md`
-  - 世界設定の説明。ただし一部は最新の会話内容へまだ完全追従していない可能性がある。
+  - 世界設定の目次。節の名前から担当ファイルを引く表。本文は話題ごとに `WORLD_GOD_AND_STATE.md`（神と国家）／`WORLD_MANNERS.md`（作法と遊び）／`WORLD_LIFE_AND_DUTIES.md`（暮らしと役務）／`WORLD_MARRIAGE.md`（婚姻と夫）／`WORLD_UPBRINGING.md`（育成と成人）／`WORLD_BLESSING_AND_BLOOD.md`（加護と血筋）に分けている。
 
 ## 8. 現在の注意点
 
