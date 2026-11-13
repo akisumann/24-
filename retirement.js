@@ -112,6 +112,7 @@ function runTurnWithBottomFiveRetirement(){
     const rerollN=Math.min(openSlots,performanceDepartures.length);
     for(let i=0;i<rerollN;i++){
       const p=makeRecruitFromDeparture(performanceDepartures[i]);
+      p.family=freshFamily(p.family);
       ensureKin(p.family);
       rerolledRecruits.push(p);
       mikos.push(p);
@@ -119,6 +120,7 @@ function runTurnWithBottomFiveRetirement(){
     // まだ50人に満たなければ、通常の一般公募で残り枠を補充する。
     while(mikos.length<50){
       const p=makePerson(pick(AGES),recruitLevel(),'国家公募採用・通常補充');
+      p.family=freshFamily(p.family);
       ensureKin(p.family);
       fallbackRecruits.push(p);
       mikos.push(p);
