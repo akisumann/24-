@@ -72,6 +72,7 @@ AIがこの世界の物語を書く・ゲームを扱うときは、まずここ
 | 能力の計算式／娘の生成 | `GAME_RULES.md`「神の娘の能力」 |
 | 誰が大淫義で母になるか | `GAME_RULES.md`「7年の大淫義」 |
 | 誰が退任するか（下位5人） | `RETIREMENT_RULE.md`／`GAME_RULES.md`「成人巫女の継続判定」 |
+| 一族の分派（現役30人超で母系の枝ごとに分家・本家の一字を継ぐ新姓） | `GAME_RULES.md`「一族の分派」／`WORLD_BLESSING_AND_BLOOD.md`「一族の分派（分家）」 |
 | 神レベルの上昇条件（≤100） | `GAME_RULES.md`「神レベル」「レベル上限」 |
 | 神羅巫女の条件・初出時期 | `GAME_RULES.md`「神羅巫女の記録」／`MIKO_TURNOVER_SETTING.md`／`WORLD_GOD_AND_STATE.md`「神羅巫女」 |
 | 国家評判・時代・出来事 | `GAME_RULES.md`「国家評判」「時代の需要」「時代の出来事」 |
