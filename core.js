@@ -80,6 +80,16 @@ function kinMarried(k){return sumBands(k.marriedBands)}
 function kinPopulation(k){return kinRelatives(k)+kinPartners(k)}
 // 親類縁者の集計単位（本家筋）。分家した巫女も、親類縁者の人口計算は元の一族のまま行う（clan-split.js）。
 function kinKeyOf(p){return p.clanRoot||p.family}
+// 公募採用者の家名：引いた姓が現役の家（分家の元の一族を含む）と重なれば、FAMILY の並びで次の空いている姓へずらす。
+// 同じ家名の巫女は必ず母系でつながる、を保つため。乱数は追加で使わない（引いた姓から決定的に決める）。
+function freshFamily(name){
+  const used=new Set();
+  mikos.forEach(p=>{used.add(p.family);if(p.clanRoot)used.add(p.clanRoot);});
+  if(!used.has(name))return name;
+  const start=Math.max(0,FAMILY.indexOf(name));
+  for(let i=1;i<=FAMILY.length;i++){const c=FAMILY[(start+i)%FAMILY.length];if(!used.has(c))return c;}
+  return name;   // 50家すべてが現役で使われている場合のみ（実際には起きない）
+}
 // 表示用：その家の親類縁者。分家は clan-split.js が本家筋の人口を現役人数比で割り振った値を返す。
 function kinOf(family){
   if(kin[family])return kin[family];
