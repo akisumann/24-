@@ -12,8 +12,8 @@ function clanData(){
     .map(c=>({
       ...c,
       power:c.count?Math.round(c.total/c.count):0,
-      kin:kinPopulation(kin[c.family]),
-      totalSociety:c.count+kinPopulation(kin[c.family])
+      kin:kinPopulation(kinOf(c.family)),
+      totalSociety:c.count+kinPopulation(kinOf(c.family))
     }))
     .sort((a,b)=>b.count-a.count||b.kin-a.kin);
 }
@@ -50,7 +50,7 @@ function renderKin(){
 function renderClans(){
   const cs=clanData().slice(0,8);
   document.getElementById('clans').innerHTML=cs.map((c,i)=>{
-    const k=kin[c.family];
+    const k=kinOf(c.family);
     const age0to20=k.bands.slice(0,3).reduce((n,x)=>n+x,0);
     const spouses=kinPartners(k);
     const former=kinFormer(k);
@@ -58,7 +58,7 @@ function renderClans(){
 
     return `<div class="metric">
       <div class="flex center between gap2">
-        <span class="medium">${c.family}一族</span>
+        <span class="medium">${c.family}一族${houseNote(c.family)}</span>
         ${i===0&&c.count>=4?'<span class="badge">巫女最大氏族</span>':''}
       </div>
       <div class="grid g3 gap2 mt2">
@@ -127,7 +127,7 @@ function renderDetail(){
   const stats=current(p);
   const role=roleOf(p);
   const clan=mikos.filter(x=>x.family===p.family);
-  const k=kin[p.family];
+  const k=kinOf(p.family);
 
   box.innerHTML=`<div class="flex between gap3">
     <div><h2>${full(p)}</h2><p class="muted">${p.age}歳・${p.origin}</p></div>
@@ -156,7 +156,7 @@ function renderDetail(){
     ${p.skills.map((s,i)=>`<button type="button" data-skill="${i}" class="btn">${s.name}</button>`).join('')}
   </div><p id="skillEffect" class="mt2 muted">スキルを押すと、その人に働くプラス効果を表示する。</p></div>
   <div class="muted">母：${p.mother}</div>
-  <div class="muted">${p.family}一族：現役巫女${clan.length}人・親類縁者${kinPopulation(k)}人</div>`;
+  <div class="muted">${p.family}一族${houseNote(p.family)}：現役巫女${clan.length}人・親類縁者${kinPopulation(k)}人</div>`;
 
   document.querySelectorAll('[data-skill]').forEach(b=>b.addEventListener('click',()=>{
     const s=p.skills[Number(b.dataset.skill)];

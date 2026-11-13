@@ -51,6 +51,9 @@ function rules(state, seed, year) {
   if (!Array.isArray(state.mikos) || state.mikos.length !== 50) errs.push(`${where}: 現役が ${state.mikos && state.mikos.length} 人（50人のはず）`);
   if (!(state.godLevel >= 1 && state.godLevel <= 100)) errs.push(`${where}: 神レベル ${state.godLevel}（1〜100のはず）`);
   if (!(typeof state.fame === 'number' && state.fame >= 0 && isFinite(state.fame))) errs.push(`${where}: 国家評判 ${state.fame}`);
+  const byFamily = {};
+  for (const p of state.mikos || []) byFamily[p.family] = (byFamily[p.family] || 0) + 1;
+  for (const [f, n] of Object.entries(byFamily)) if (n > 30) errs.push(`${where}: ${f}一族の現役が ${n} 人（30人を超えたら分派するはず）`);
   const ids = new Set();
   for (const p of state.mikos || []) {
     if (!AGES.includes(p.age)) errs.push(`${where}: ${p.family} ${p.given} の年齢 ${p.age}`);

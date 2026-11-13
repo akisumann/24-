@@ -287,6 +287,8 @@ SPD 52 → 1d52
   - **1ターン（7年）の本体 `runTurn`**：大淫義・子作り・神羅判定 → 任期終了・下位5人退任・脱会 → 公募補充。7年進行ボタンの長押し連続進行もここ。
 - `role-balance.js`
   - 時代の需要（時代年表・`window.MikoEra` API）。役務の配属そのものは `core.js` の `assignments`。
+- `clan-split.js`
+  - 一族の分派。現役が30人を超えた一族を母系の枝ごとに分家させる（本家の一字を継ぐ新しい姓）。乱数を使わないのでゲームの流れは変えない。`window.MikoClans` API を公開。
 - `events.js`
   - 時代の出来事（危機と結果）。担い手の人数で成否が決まり、評判が上下する。`window.MikoEvents` API を公開。
 - `ceremony.js`
@@ -330,7 +332,7 @@ v16では、固定版の既存関数を極力書き換えず、グローバル�
 
 ### セーブ形式の追加キー
 
-`fame` `fameYear` `fameShinra`（core/save）、`trendLog`（trend.js）、`eraLog`（role-balance.js）、`eventLog`（events.js）。旧セーブは各モジュールが後方互換で補完する。
+`fame` `fameYear` `fameShinra`（core/save）、`trendLog`（trend.js）、`eraLog`（role-balance.js）、`eventLog`（events.js）、`clanLineage` `clanHouses` `clanSplits`（clan-split.js）。巫女の `clanRoot`（分家した巫女の本家筋＝親類縁者の集計単位）。旧セーブは各モジュールが後方互換で補完する。
 
 ### `window.MikoEra` API（`role-balance.js` が公開）
 
@@ -342,6 +344,7 @@ v16では、固定版の既存関数を極力書き換えず、グローバル�
 ### 既知の課題・未対応
 
 - **氏族の一強化は不具合ではなく仕様・物語資産**：長期進行で1氏族が現役の大半を占めうる（強い娘が残る仕様＋大寵愛で豊満な血筋がさらに残る帰結）。抑制はしない方針。むしろ「神に長く愛された一族の台頭」として物語へ積極的に使う——権威と発言力、他氏族との軋轢や均衡、寡占への反発、新興一族の挑戦、婚姻戦略、神前決闘などの題材になる（`WORLD_SETTING.md` 「母系一族への影響」参照）。
+- 一族が現役30人を超えると分派する（`clan-split.js`、`GAME_RULES.md`「一族の分派」）。一族の台頭そのものは今も抑制しない：分派は人数を減らすための仕組みではなく、膨らんだ血筋が枝分かれする物語上の節目として扱う。
 - 時代の需要は `events.js` の「時代の出来事」で評判へ接続済み。人口・一族への影響は未接続（現状は評判のみ）。
 - `chronicle.js` の物語は「現在の状態」からの生成で、巫女ごとの実際の功績履歴（大淫義で産んだ娘の数、就任年など）は蓄積していない。
 - 70年（×10）進行は `batch.js` が担当する（かつて同じ処理で重複し未使用だった `advance70.js` は削除済み）。

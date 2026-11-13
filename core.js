@@ -78,6 +78,16 @@ function kinPartners(k){return sumBands(k.partnerBands)}
 function kinFormer(k){return sumBands(k.formerBands)}
 function kinMarried(k){return sumBands(k.marriedBands)}
 function kinPopulation(k){return kinRelatives(k)+kinPartners(k)}
+// 親類縁者の集計単位（本家筋）。分家した巫女も、親類縁者の人口計算は元の一族のまま行う（clan-split.js）。
+function kinKeyOf(p){return p.clanRoot||p.family}
+// 表示用：その家の親類縁者。分家は clan-split.js が本家筋の人口を現役人数比で割り振った値を返す。
+function kinOf(family){
+  if(kin[family])return kin[family];
+  const p=mikos.find(x=>x.family===family&&x.clanRoot);   // 分家（clan-split.js の読み込み前でも本家筋の値を返す）
+  return p?kin[p.clanRoot]:undefined;
+}
+// 表示用：家名に添える注記（分家なら「白鷺の分家」など）。
+function houseNote(family){return ''}
 function totalKin(){return Object.values(kin).reduce((n,k)=>n+kinPopulation(k),0)}
 function advanceKinBands(bands){
   const removed=bands[bands.length-1];
@@ -116,8 +126,8 @@ function updateKin(retirees,departures){
   });
 
   [...retirees,...departures].forEach(p=>{
-    ensureKin(p.family);
-    const k=kin[p.family];
+    ensureKin(kinKeyOf(p));
+    const k=kin[kinKeyOf(p)];
     const band=kinBandForAge(p.age);
     k.bands[band]++;
     k.formerBands[band]++;
@@ -129,7 +139,7 @@ function updateKin(retirees,departures){
   });
 
   const activeByFamily={};
-  mikos.forEach(p=>activeByFamily[p.family]=(activeByFamily[p.family]||0)+1);
+  mikos.forEach(p=>activeByFamily[kinKeyOf(p)]=(activeByFamily[kinKeyOf(p)]||0)+1);
 
   Object.entries(kin).forEach(([family,k])=>{
     let marriages=0;
