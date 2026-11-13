@@ -197,7 +197,7 @@
     if(p.age<20){
       let h='<h3>人物プロフィール</h3>';
       h+='<p class="mt1 muted">国家育成対象。年齢に応じた教育を受けて育つ段階であり、性的な特徴は成人後に現れる。</p>';
-      h+=`<div class="mt1">御種衣：役務色 <b>${esc(color)}</b>（${esc(roleName)}）</div>`;
+      h+=`<div class="mt1">役務色：<b>${esc(color)}</b>（${esc(roleName)}）</div>`;
       h+=`<div class="mt1">口調：<b>${esc(speechTone(p)[0])}</b>　<span class="muted">${esc(speechTone(p)[1])}</span></div>`;
       if(clanCount>=3)h+=`<div class="mt1">${esc(p.family)}一族の血を引く（現役${clanCount}人）。豊満さや資質は将来の素質として見込まれる。</div>`;
       return h;
