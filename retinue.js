@@ -8,7 +8,7 @@
 // - 生成の決まり（名前の一覧・人数・体型の幅）を変えると、全員の顔ぶれが入れ替わる。変えるときは GENERATOR_VERSION を上げる。
 // clan-split.js の後、seed-repro.js の前に読む。
 (function(){
-  const GENERATOR_VERSION=2;   // 2: 体つきを主の値を中心にばらけさせる
+  const GENERATOR_VERSION=3;   // 2: 体つきを主の値を中心にばらけさせる／3: 陰核も主にある程度沿わせる
 
   // --- 専用の乱数（ゲーム本体とは独立） ---
   function hashSeed(...parts){
@@ -147,7 +147,7 @@
         surname:sur[0],surnameReading:sur[1],given,name,
         age,hair:r.pick(HAIR),
         body:bodyNow,
-        clitorisMm:r.int(8,9),
+        clitorisMm:Math.max(6,Math.round(8+((6+((p.generation||1)-1))-8)*0.6)+r.int(-2,2)),   // 主の陰核（6+(世代−1)mm）との差を6割に縮め±2mm
         voluptuousness:VOL_LABEL[vl],
         breastShape:vl>=3?(r.next()<.7?'垂れぬ砲弾型':'ロケット型'):r.pick(BREAST_SHAPES),
         scent:SCENT[clamp(mLv+r.int(-1,1),1,4)],
