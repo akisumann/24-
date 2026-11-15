@@ -64,6 +64,19 @@ function rules(state, seed, year) {
       if (!(typeof v === 'number' && isFinite(v) && v >= 1)) errs.push(`${where}: ${p.family} ${p.given} の ${k}=${v}`);
     }
   }
+  // 膣穴衆・補佐人員（retinue.js）：成人の巫女全員に13人ずつ、全員18歳以上、膣妾は2〜5人、育成対象には付かない。
+  if (Array.isArray(state.retinue)) {
+    const adultIds = new Set((state.mikos || []).filter(p => p.age >= 20).map(p => p.id));
+    const withRt = new Set(state.retinue.map(t => t.mikoId));
+    if (adultIds.size !== withRt.size || [...adultIds].some(id => !withRt.has(id))) errs.push(`${where}: 膣穴衆の付いている巫女が成人の巫女と一致しない`);
+    for (const t of state.retinue) {
+      if (t.attendants.length !== 13) errs.push(`${where}: ${t.mikoName} の膣穴衆が ${t.attendants.length} 人`);
+      if (t.attendants.some(a => a.age < 18)) errs.push(`${where}: ${t.mikoName} の膣穴衆に18歳未満`);
+      const c = t.attendants.filter(a => a.concubine).length;
+      if (c < 2 || c > 5) errs.push(`${where}: ${t.mikoName} の膣妾が ${c} 人`);
+      if (t.staff.length < 10 || t.staff.length > 20) errs.push(`${where}: ${t.mikoName} の補佐人員が ${t.staff.length} 人`);
+    }
+  } else errs.push(`${where}: 完全セーブに膣穴衆（retinue）が無い`);
   if (/"(?:HP|MP|ATK|DEF|INT|SPD|DEX)":null/.test(JSON.stringify(state))) {
     errs.push(`${where}: 能力値に null（NaN）が混入`);
   }

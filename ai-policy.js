@@ -31,7 +31,10 @@
       throw new Error("ゲームの実行が完了していません（MIKO_GAME_RUNTIME_READY が未設定）。");
     if(typeof buildSaveData!=='function')
       throw new Error("buildSaveData が見つかりません。本物のゲームが読み込まれていない可能性があります。");
-    return structuredClone(Object.assign({executionPolicy:"UNMODIFIED_GAME_CODE_RUN_IN_FULL_ANY_JS_RUNTIME"},buildSaveData()));
+    const state=Object.assign({executionPolicy:"UNMODIFIED_GAME_CODE_RUN_IN_FULL_ANY_JS_RUNTIME"},buildSaveData());
+    // 成人巫女ごとの膣穴衆・補佐人員（retinue.js）。セーブには保存せず、シード＋巫女の id から毎回同じ顔ぶれを計算して添える。
+    if(window.MikoRetinue)state.retinue=window.MikoRetinue.all();
+    return structuredClone(state);
   };
 
   // 画面にも小さく注意書きを出す（人間の遊びを邪魔しない程度に、末尾へ控えめに）。
