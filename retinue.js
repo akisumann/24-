@@ -8,7 +8,7 @@
 // - 生成の決まり（名前の一覧・人数・体型の幅）を変えると、全員の顔ぶれが入れ替わる。変えるときは GENERATOR_VERSION を上げる。
 // clan-split.js の後、seed-repro.js の前に読む。
 (function(){
-  const GENERATOR_VERSION=1;
+  const GENERATOR_VERSION=2;   // 2: 体つきを主の値を中心にばらけさせる
 
   // --- 専用の乱数（ゲーム本体とは独立） ---
   function hashSeed(...parts){
@@ -91,6 +91,23 @@
   const STAFF_GIVEN_M=['弥平','宗助','健吾','慎之介','与一','孝蔵','直人','源太','清十郎','亮','恭平','朔','耕作','誠一','伊織'];
   const STAFF_GIVEN_F=['千代','いと','ふみ','さよ','はる','結','楓','初音','志乃','葵','みのり','咲','雪','澪','節'];
 
+  // --- 体つき：主（巫女）の値を中心に、一人ひとりばらける ---
+  // 物差しは miko-traits.js と同じ（豊満度＝バスト＋ヒップ−ウエスト×0.5）。
+  function volLv(b){const sc=b.bust+b.hip-b.waist*0.5;return sc>=215?4:sc>=195?3:sc>=170?2:1;}
+  const VOL_LABEL=['','並','ふくよか','豊満','絶豊満'];
+  const SCENT=['','ほのかに甘い','甘く匂い立つ','濃厚に甘く漂う','むせ返るほど甘い'];
+  const MEIKI=['','並','上物','絶品','比類なき名器'];
+  const MILK=['','さらりと甘い','甘く濃い','とろりと濃厚','蜜のごとく濃厚甘美'];
+  const AROUSAL=['','強め','かなり強い','底なし','淫乱','淫獣','発情狂い'];
+  const VOICES=['甘く高い鼻にかかった声','鈴を転がすような澄んだ声','舌足らずでたどたどしい声','低くかすれた色っぽい声','けたたましく響く大声','必死に押し殺す忍び声','すぐ泣きじゃくる涙声','とめどなく淫語を垂れ流す声'];
+  const BREAST_SHAPES=['お椀型','釣鐘型','砲弾型','ロケット型','たわわに垂れかけた釣鐘型'];
+  function masterArousal(p){   // miko-traits.js の arousalLv と同じ式
+    const g=p.generation||1;
+    const gTier=g>=25?5:(g>=15?4:(g>=8?3:(g>=3?2:1)));
+    return Math.max(1,Math.min(6,gTier+((p.id*31+6*17)%3-1)));
+  }
+  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+
   function isAdultMiko(p){return p&&p.age>=20;}
   function isOutsider(p){return !!(p.origin&&p.origin.indexOf('公募')>=0);}
 
@@ -112,10 +129,16 @@
       let age;
       if(outsider)age=r.int(18,40);                               // 御子宮殿からの配属
       else age=Math.max(18,p.age+r.int(-2,4));                    // 寮でともに育った幼馴染
-      let height=r.int(148,168),bust=r.int(88,108),waist=r.int(56,66),hip=r.int(90,108);
+      const mb=p.body||{height:160,bust:100,waist:60,hip:100};
+      let height=clamp(mb.height+r.int(-8,8),142,180),bust=clamp(mb.bust+r.int(-10,10),70,140),waist=clamp(mb.waist+r.int(-5,5),50,80),hip=clamp(mb.hip+r.int(-10,10),80,140);
       if(role.key==='guard')height+=r.int(3,7);
       if(role.key==='nurse')bust+=r.int(3,6);
       if(role.key==='dance')hip+=r.int(3,6);
+      const bodyNow={height,bust,waist,hip};
+      const vl=volLv(bodyNow);
+      const mLv=volLv(mb);
+      const meikiLv=clamp(mLv+r.int(-1,1),2,4);              // 膣穴衆はどれも名器（最低でも上物）
+      const arLv=clamp(masterArousal(p)+r.int(-1,1),1,6);
       const tone=r.pick(TONES);
       const traits=r.shuffle(TRAITS).slice(0,2);
       const name=sur[0]+given;
@@ -123,8 +146,15 @@
         role:role.title,duty:role.duty,
         surname:sur[0],surnameReading:sur[1],given,name,
         age,hair:r.pick(HAIR),
-        body:{height,bust,waist,hip},
+        body:bodyNow,
         clitorisMm:r.int(8,9),
+        voluptuousness:VOL_LABEL[vl],
+        breastShape:vl>=3?(r.next()<.7?'垂れぬ砲弾型':'ロケット型'):r.pick(BREAST_SHAPES),
+        scent:SCENT[clamp(mLv+r.int(-1,1),1,4)],
+        meiki:MEIKI[meikiLv],
+        milk:MILK[clamp(mLv+r.int(-1,1),1,4)]+'・'+(bust>=100?'あふれるほど豊富':(bust>=88?'よく出る':'並の量')),
+        arousal:AROUSAL[arLv],
+        voice:r.pick(VOICES),
         tone:tone.name,firstPerson:tone.first,speech:tone.ex,
         traits,
         childhoodFriend:!outsider,
@@ -176,7 +206,7 @@
   // --- 画面：巫女の詳細に表示 ---
   function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
   function attendantLine(a){
-    return `<div class="mt1"><b>${esc(a.name)}</b>（${esc(a.surnameReading)}）　${esc(a.role)}${a.concubine?'・<b>膣妾</b>':''}　<span class="muted">${a.age}歳・髪${esc(a.hair)}・身長${a.body.height}・B${a.body.bust}/W${a.body.waist}/H${a.body.hip}・陰核${a.clitorisMm}mm・${esc(a.tone)}（一人称「${esc(a.firstPerson)}」）・${esc(a.traits.join('、'))}${a.childhoodFriend?'・幼馴染':'・御子宮殿より配属'}</span><div class="muted">${esc(a.introduction)}</div></div>`;
+    return `<div class="mt1"><b>${esc(a.name)}</b>（${esc(a.surnameReading)}）　${esc(a.role)}${a.concubine?'・<b>膣妾</b>':''}　<span class="muted">${a.age}歳・髪${esc(a.hair)}・身長${a.body.height}・B${a.body.bust}/W${a.body.waist}/H${a.body.hip}（${esc(a.voluptuousness)}・${esc(a.breastShape)}の胸）・名器度${esc(a.meiki)}・母乳${esc(a.milk)}・発情${esc(a.arousal)}・${esc(a.voice)}・雌の匂い${esc(a.scent)}・陰核${a.clitorisMm}mm・${esc(a.tone)}（一人称「${esc(a.firstPerson)}」）・${esc(a.traits.join('、'))}${a.childhoodFriend?'・幼馴染':'・御子宮殿より配属'}</span><div class="muted">${esc(a.introduction)}</div></div>`;
   }
   function retinueHtml(p){
     const rt=retinueOf(p);
